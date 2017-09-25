@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package navalBattleGui;
+package navalBattle.gui;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -14,7 +14,7 @@ import javafx.fxml.Initializable;
  *
  * @author javr
  */
-public class GUI_RegistrarController implements Initializable {
+public class GUI_PrepararPartidaController implements Initializable {
 
     /**
      * Initializes the controller class.
