@@ -14,7 +14,7 @@ import javafx.fxml.Initializable;
  *
  * @author Mari
  */
-public class GUI_PrepararPartidaController implements Initializable {
+public class GUI_JugarPartidaController implements Initializable {
 
   /**
    * Initializes the controller class.
