@@ -68,12 +68,12 @@
         <RowConstraints maxHeight="50.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
       </rowConstraints>
     </GridPane>
-    <Label id="labelPuntuacionHost" layoutX="441.0" layoutY="507.0" text="labelPuntuacionHost">
+    <Label id="labelPuntuacionHost" layoutX="410.0" layoutY="487.0" text="labelPuntuacionHost">
       <font>
         <Font name="Century Gothic" size="16.0" fx:id="x1" />
       </font>
     </Label>
-    <Label id="labelPuntuacionAdversario" font="$x1" layoutX="392.0" layoutY="565.0" text="labelPuntuacionAdversario" />
+    <Label id="labelPuntuacionAdversario" font="$x1" layoutX="392.0" layoutY="569.0" text="labelPuntuacionAdversario" />
     <Label id="labelCronometro" font="$x1" layoutX="90.0" layoutY="518.0" text="labelCronometro" />
     <Label id="labelTiempoRestante" font="$x1" layoutX="80.0" layoutY="565.0" prefWidth="179.0" text="labelTiempoRestante" />
   </children>
