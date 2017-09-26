@@ -5,14 +5,16 @@
  */
 package navalBattle.gui;
 
+import com.jfoenix.controls.JFXButton;
+import javafx.scene.control.Button;
+import javafx.scene.text.Font;
 import java.net.URL;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.text.Font;
+import javafx.scene.layout.GridPane;
 
 /**
  * FXML Controller class
@@ -30,7 +32,9 @@ public class GUI_JugarPartidaController implements Initializable {
   @FXML
   private Label labelRotar;
   @FXML
-  private Button buttonContinuar;
+  private JFXButton buttonContinuar;
+  @FXML
+  private GridPane gridTableroNaves;
   
 
   /**
@@ -38,12 +42,12 @@ public class GUI_JugarPartidaController implements Initializable {
    */
   @Override
   public void initialize(URL url, ResourceBundle rb) {
-    // TODO
-   cargarIdioma();
+   
+   Locale locale = Locale.getDefault();
+   cargarIdioma(locale);
   }  
    
-  public void cargarIdioma(){
-      Locale locale = Locale.getDefault();
+  public void cargarIdioma(Locale locale){
       ResourceBundle resources = ResourceBundle.getBundle("navalBattle.recursos.Idioma",locale);
       labelColocaNaves.setText(resources.getString("labelColocaNaves"));
       labelColocaNaves2.setText(resources.getString("labelColocaNaves2"));

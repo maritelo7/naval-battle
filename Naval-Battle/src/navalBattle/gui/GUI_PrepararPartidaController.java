@@ -5,15 +5,13 @@
  */
 package navalBattle.gui;
 
+import com.jfoenix.controls.JFXButton;
 import java.net.URL;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.text.Font;
-
 /**
  * FXML Controller class
  *
@@ -21,18 +19,16 @@ import javafx.scene.text.Font;
  */
 public class GUI_PrepararPartidaController implements Initializable {
 
-  @FXML
-  private Font x1;
-  @FXML
-  private Label labelCronometro;
-  @FXML
-  private Label labelTiempoRestante;
-  @FXML
-  private Label labelPuntuacionHost;
-  @FXML
-  private Label labelPuntuacionAdversario;
-  @FXML
-  private Button buttonRendirse;
+   @FXML
+   private Label labelCronometro;
+   @FXML
+   private Label labelTiempoRestante;
+   @FXML
+   private Label labelPuntuacionHost;
+   @FXML
+   private JFXButton buttonRendirse;
+   @FXML
+   private Label labelPuntuacionAdversario;
   
   
   /**
@@ -40,16 +36,17 @@ public class GUI_PrepararPartidaController implements Initializable {
    */
   @Override
   public void initialize(URL url, ResourceBundle rb) {
-    // TODO
+      Locale locale = Locale.getDefault();
+      cargarIdioma(locale);
   }  
   
-  public void cargarIdioma(){
-      Locale locale = Locale.getDefault();
-      ResourceBundle resources = ResourceBundle.getBundle("navalBattle.recursos.Idioma",locale);
+  public void cargarIdioma(Locale locale){
+      
+      ResourceBundle resources = ResourceBundle.getBundle("NavalBattle.recursos.idioma",locale);
       labelCronometro.setText(resources.getString("labelCronometro"));
       labelTiempoRestante.setText(resources.getString("labelTiempoRestante"));
       labelPuntuacionHost.setText(resources.getString("labelPuntuacionHost"));
-      labelPuntuacionHost.setText(resources.getString("labelPuntuacionAdversario"));
+      labelPuntuacionAdversario.setText(resources.getString("labelPuntuacionAdversario"));
       buttonRendirse.setText(resources.getString("buttonRendirse"));
    }
 }

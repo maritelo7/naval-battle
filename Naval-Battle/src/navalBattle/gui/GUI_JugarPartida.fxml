@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import com.jfoenix.controls.JFXButton?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefHeight="685.0" prefWidth="1280.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="navalBattle.gui.GUI_JugarPartidaController">
+<AnchorPane id="AnchorPane" prefHeight="685.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="navalBattle.gui.GUI_JugarPartidaController">
   <children>
     <ImageView id="FondoBlanco" layoutX="0.0" layoutY="0.0" pickOnBounds="true">
       <image>
-        <Image url="@../recursos/FondoBlanco.jpg" preserveRatio="true" smooth="true" />
+        <Image preserveRatio="true" smooth="true" url="@../recursos/FondoBlanco.jpg" />
       </image>
     </ImageView>
     <GridPane id="gridTableroNaves" gridLinesVisible="true" layoutX="666.0" layoutY="112.0" prefHeight="500.0" prefWidth="500.0">
@@ -41,18 +43,22 @@
         <RowConstraints maxHeight="50.0" minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
       </rowConstraints>
     </GridPane>
-    <Label id="labelColocaNaves" layoutX="62.0" layoutY="93.0" text="labelColocaNaves">
+    <Label id="labelColocaNaves" fx:id="labelColocaNaves" layoutX="62.0" layoutY="93.0" text="labelColocaNaves">
       <font>
         <Font name="Century Gothic" size="16.0" fx:id="x1" />
       </font>
     </Label>
-    <Label id="labelColocaNaves2" font="$x1" layoutX="62.0" layoutY="125.0" text="labelColocaNaves2" />
-    <Button id="buttonContinuar" layoutX="1047.0" layoutY="630.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="120.0" styleClass="" text="buttonContinuar" underline="false" />
+    <Label id="labelColocaNaves2" fx:id="labelColocaNaves2" font="$x1" layoutX="62.0" layoutY="125.0" text="labelColocaNaves2" />
     <ImageView id="rotar" fitHeight="50.0" fitWidth="50.0" layoutX="255.0" layoutY="487.0" pickOnBounds="true">
       <image>
-        <Image url="@../recursos/rotar.png" preserveRatio="true" smooth="true" />
+        <Image preserveRatio="true" smooth="true" url="@../recursos/rotar.png" />
       </image>
     </ImageView>
-    <Label id="labelRotar" font="$x1" layoutX="240.0" layoutY="553.0" text="labelRotar" />
+    <Label id="labelRotar" fx:id="labelRotar" font="$x1" layoutX="240.0" layoutY="553.0" text="labelRotar" />
+      <JFXButton fx:id="buttonContinuar" layoutX="1046.0" layoutY="631.0" minHeight="30.0" minWidth="120.0" style="-fx-background-color: e7a46c;" text="buttonContinuar">
+         <font>
+            <Font name="Century Gothic" size="16.0" />
+         </font>
+      </JFXButton>
   </children>
 </AnchorPane>

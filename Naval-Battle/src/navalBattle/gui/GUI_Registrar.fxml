@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.jfoenix.controls.JFXButton?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
@@ -59,6 +60,17 @@
          </children>
       </GridPane>
       <JFXButton fx:id="buttonGuardar" layoutX="299.0" layoutY="560.0" minHeight="30.0" minWidth="120.0" style="-fx-background-color: #e7a46c;">
+         <font>
+            <Font name="Century Gothic" size="16.0" />
+         </font>
+      </JFXButton>
+      <Label fx:id="labelIdioma" layoutX="585.0" layoutY="324.0" text="labelIdioma" textFill="WHITE">
+         <font>
+            <Font name="Century Gothic" size="16.0" />
+         </font>
+      </Label>
+      <ComboBox fx:id="comboIdioma" layoutX="580.0" layoutY="356.0" prefWidth="150.0" />
+      <JFXButton fx:id="buttonBaja" layoutX="888.0" layoutY="561.0" minHeight="30.0" minWidth="120.0" style="-fx-background-color: #f82d13;" text="buttonBaja">
          <font>
             <Font name="Century Gothic" size="16.0" />
          </font>
