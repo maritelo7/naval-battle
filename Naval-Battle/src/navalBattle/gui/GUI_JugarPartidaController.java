@@ -36,12 +36,14 @@ public class GUI_JugarPartidaController implements Initializable {
    */
   @Override
   public void initialize(URL url, ResourceBundle rb) {
-      Locale locale = Locale.getDefault();
-      cargarIdioma(locale);
+      cargarIdioma();
+      buttonRendirse.setOnAction( event -> {
+         
+      });
   }  
   
-  public void cargarIdioma(Locale locale){
-      
+  public void cargarIdioma( ){
+      Locale locale = Locale.getDefault();
       ResourceBundle resources = ResourceBundle.getBundle("NavalBattle.recursos.idioma",locale);
       labelCronometro.setText(resources.getString("labelCronometro"));
       labelTiempoRestante.setText(resources.getString("labelTiempoRestante"));

@@ -20,6 +20,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
+import navalBattle.Util.Utileria;
 
 /**
  * FXML Controller class
@@ -65,7 +66,7 @@ public class GUI_MenuPartidaController implements Initializable {
          Node node = (Node) event.getSource();
          Stage stage = (Stage) node.getScene().getWindow();
          Parent root;
- 
+
          try {
             //Pasar objeto Usuario
             root = FXMLLoader.load(getClass().getResource("GUI_Registrar.fxml"));

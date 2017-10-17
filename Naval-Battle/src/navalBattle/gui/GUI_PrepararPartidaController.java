@@ -49,8 +49,7 @@ public class GUI_PrepararPartidaController implements Initializable {
   public void initialize(URL url, ResourceBundle rb) {
 
    cargarIdioma();
-   buttonContinuar.setOnAction( event -> {
-         
+   buttonContinuar.setOnAction( event -> {   
       try {
          Node node = (Node) event.getSource();
          Stage stage = (Stage) node.getScene().getWindow();
@@ -63,9 +62,8 @@ public class GUI_PrepararPartidaController implements Initializable {
       } catch (IOException ex) {
          Logger.getLogger(GUI_PrepararPartidaController.class.getName()).log(Level.SEVERE, null, ex);
       }
-
-
-   });   
+   });
+   
   }  
    
   public void cargarIdioma(){

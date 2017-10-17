@@ -5,8 +5,10 @@
  */
 package navalBattle.gui;
 
+import com.jfoenix.controls.JFXButton;
 import java.net.URL;
 import java.util.ResourceBundle;
+import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 
 /**
@@ -15,7 +17,8 @@ import javafx.fxml.Initializable;
  * @author javr
  */
 public class GUI_ReglasController implements Initializable {
-
+   @FXML 
+   private JFXButton buttonRegresar;
    /**
     * Initializes the controller class.
     */
