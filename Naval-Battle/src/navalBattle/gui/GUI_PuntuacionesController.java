@@ -28,9 +28,9 @@ public class GUI_PuntuacionesController implements Initializable {
     */
    @Override
    public void initialize(URL url, ResourceBundle rb) {
-      cargarIdioma();
+      cargarIdioma();      
       
-   }   
+   }      
    public void cargarIdioma(){
       Locale locale = Locale.getDefault();
       ResourceBundle resources = ResourceBundle.getBundle("navalBattle.recursos.Idioma", locale);

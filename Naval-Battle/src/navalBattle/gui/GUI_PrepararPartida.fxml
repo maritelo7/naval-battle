@@ -48,11 +48,6 @@
         <Font name="Century Gothic" size="16.0" fx:id="x1" />
       </font>
     </Label>
-    <ImageView id="rotar" fitHeight="50.0" fitWidth="50.0" layoutX="255.0" layoutY="487.0" pickOnBounds="true">
-      <image>
-        <Image preserveRatio="true" smooth="true" url="@../recursos/rotar.png" />
-      </image>
-    </ImageView>
     <Label id="labelRotar" fx:id="labelRotar" font="$x1" layoutX="240.0" layoutY="553.0" text="labelRotar" />
       <JFXButton fx:id="buttonContinuar" layoutX="1046.0" layoutY="631.0" minHeight="30.0" minWidth="120.0" style="-fx-background-color: e7a46c;" text="buttonContinuar">
          <font>

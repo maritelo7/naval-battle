@@ -39,7 +39,7 @@ public class GUI_PrepararPartidaController implements Initializable {
   @FXML
   private JFXButton buttonContinuar;
   @FXML
-  private GridPane gridTableroNaves;
+  private Font x1;
   
 
   /**

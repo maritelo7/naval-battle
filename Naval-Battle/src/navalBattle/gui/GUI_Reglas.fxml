@@ -1,18 +1,69 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.jfoenix.controls.JFXButton?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
 
-
-<AnchorPane id="AnchorPane" prefHeight="685.0" prefWidth="1280.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.141" fx:controller="navalBattle.gui.GUI_ReglasController">
+<AnchorPane id="AnchorPane" prefHeight="685.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="navalBattle.gui.GUI_ReglasController">
    <children>
       <ImageView pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@../recursos/FondoBlancoRegreso.jpg" />
+            <Image url="@../recursos/FondoRegreso.jpg" />
          </image>
       </ImageView>
       <JFXButton fx:id="buttonRegreso" layoutX="31.0" />
+      <Label fx:id="labelReglaUno" layoutX="82.0" layoutY="179.0" prefHeight="25.0" prefWidth="525.0" text="labelReglaUno" textFill="WHITE">
+         <font>
+            <Font name="Century Gothic" size="14.0" />
+         </font>
+      </Label>
+      <Label fx:id="labelReglasDelJuego" layoutX="544.0" layoutY="94.0" prefHeight="44.0" prefWidth="294.0" text="labelReglasDelJuego" textFill="WHITE">
+         <font>
+            <Font name="Century Gothic" size="16.0" />
+         </font>
+      </Label>
+      <Label fx:id="labelReglaDos" layoutX="67.0" layoutY="424.0" prefHeight="52.0" prefWidth="525.0" text="labelReglaDos" textFill="WHITE">
+         <font>
+            <Font name="Century Gothic" size="14.0" />
+         </font>
+      </Label>
+      <Label fx:id="labelReglaCinco" layoutX="656.0" layoutY="503.0" prefHeight="95.0" prefWidth="558.0" text="labelReglaCinco" textFill="WHITE">
+         <font>
+            <Font name="Century Gothic" size="14.0" />
+         </font>
+      </Label>
+      <Label fx:id="labelReglaCuatro" layoutX="656.0" layoutY="384.0" prefHeight="73.0" prefWidth="544.0" text="labelReglaCuatro" textFill="WHITE">
+         <font>
+            <Font name="Century Gothic" size="14.0" />
+         </font>
+      </Label>
+      <Label fx:id="labelReglaTres" layoutX="656.0" layoutY="183.0" prefHeight="18.0" prefWidth="510.0" text="labelReglaTres" textFill="WHITE">
+         <font>
+            <Font name="Century Gothic" size="14.0" />
+         </font>
+      </Label>
+      <ImageView fitHeight="126.0" fitWidth="158.0" layoutX="373.0" layoutY="221.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../recursos/reglaUnoCheck.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="127.0" fitWidth="158.0" layoutX="162.0" layoutY="220.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../recursos/reglaUnoWrong.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="126.0" fitWidth="158.0" layoutX="256.0" layoutY="474.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../recursos/reglaDosRight.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="841.0" layoutY="189.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../recursos/reglaTresWrong.png" />
+         </image>
+      </ImageView>
    </children>
 </AnchorPane>
