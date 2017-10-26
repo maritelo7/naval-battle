@@ -22,7 +22,7 @@ public class NavalBattle extends Application {
     
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("gui/GUI_Reglas.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("gui/GUI_IniciarSesion.fxml"));
         Scene scene = new Scene(root);
         primaryStage.setScene(scene);
         primaryStage.setResizable(false);

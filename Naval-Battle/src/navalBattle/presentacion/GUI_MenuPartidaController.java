@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package navalBattle.gui;
+package navalBattle.presentacion;
 
 import com.jfoenix.controls.JFXButton;
 import java.io.IOException;
@@ -20,7 +20,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
-import navalBattle.Util.Utileria;
+import navalBattle.recursos.Utileria;
 
 /**
  * FXML Controller class
