@@ -28,12 +28,15 @@ public class GUI_PuntuacionesController implements Initializable {
     */
    @Override
    public void initialize(URL url, ResourceBundle rb) {
-      cargarIdioma();      
+      cargarIdioma();  
+      buttonRegresar.setOnAction( event -> {
+         
+      });
       
    }      
    public void cargarIdioma(){
       Locale locale = Locale.getDefault();
-      ResourceBundle resources = ResourceBundle.getBundle("navalBattle.recursos.Idioma", locale);
+      ResourceBundle resources = ResourceBundle.getBundle("navalBattle.recursos.idiomas.Idioma", locale);
       labelPuntuaciones.setText(resources.getString("labelPuntuaciones"));
    }   
 }

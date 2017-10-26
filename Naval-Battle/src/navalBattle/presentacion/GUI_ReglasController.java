@@ -20,40 +20,42 @@ import javafx.scene.image.ImageView;
  * @author javr
  */
 public class GUI_ReglasController implements Initializable {
-   @FXML 
-   private JFXButton buttonRegreso;
-  @FXML
-  private Label labelReglaUno;
-  @FXML
-  private Label labelReglasDelJuego;
-  @FXML
-  private Label labelReglaDos;
-  
-  @FXML
-  private Label labelReglaCuatro;
-  @FXML
-  private Label labelReglaTres;
-  @FXML
-  private Label labelReglaCinco;
 
- 
+   @FXML
+   private JFXButton buttonRegreso;
+   @FXML
+   private Label labelReglaUno;
+   @FXML
+   private Label labelReglasDelJuego;
+   @FXML
+   private Label labelReglaDos;
+   @FXML
+   private Label labelReglaCuatro;
+   @FXML
+   private Label labelReglaTres;
+   @FXML
+   private Label labelReglaCinco;
+
    /**
     * Initializes the controller class.
     */
    @Override
    public void initialize(URL url, ResourceBundle rb) {
-        cargarIdioma();      
-   }   
-   
-   public void cargarIdioma(){
+      cargarIdioma();
+      buttonRegreso.setOnAction( event -> {
+         
+      });
+   }
+
+   public void cargarIdioma() {
       Locale locale = Locale.getDefault();
-      ResourceBundle resources = ResourceBundle.getBundle("navalBattle.recursos.Idioma", locale);
+      ResourceBundle resources = ResourceBundle.getBundle("navalBattle.recursos.idiomas.Idioma", locale);
       labelReglaUno.setText(resources.getString("labelReglaUno"));
       labelReglaDos.setText(resources.getString("labelReglaDos"));
       labelReglaTres.setText(resources.getString("labelReglaTres"));
       labelReglaCuatro.setText(resources.getString("labelReglaCuatro"));
       labelReglaCinco.setText(resources.getString("labelReglaCinco"));
-      labelReglasDelJuego.setText(resources.getString("labelReglasDelJuego"));     
-   }  
-   
+      labelReglasDelJuego.setText(resources.getString("labelReglasDelJuego"));
+   }
+
 }

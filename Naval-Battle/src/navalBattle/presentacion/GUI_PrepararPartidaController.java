@@ -7,7 +7,6 @@ package navalBattle.presentacion;
 
 import com.jfoenix.controls.JFXButton;
 import java.io.IOException;
-import javafx.scene.control.Button;
 import javafx.scene.text.Font;
 import java.net.URL;
 import java.util.Locale;
@@ -21,7 +20,6 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
-import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
 /**
@@ -39,7 +37,9 @@ public class GUI_PrepararPartidaController implements Initializable {
   @FXML
   private JFXButton buttonContinuar;
   @FXML
-  private Font x1;
+  private Font x1; //No tengo idea qué hace :l
+  @FXML
+  private JFXButton buttonRegresar;
   
 
   /**
@@ -63,12 +63,27 @@ public class GUI_PrepararPartidaController implements Initializable {
          Logger.getLogger(GUI_PrepararPartidaController.class.getName()).log(Level.SEVERE, null, ex);
       }
    });
+   buttonRegresar.setOnAction( event -> {
+      //Aquí se debe cerrar la conexión y avisar al otro jugador
+      try {
+         Node node = (Node) event.getSource();
+         Stage stage = (Stage) node.getScene().getWindow();
+         Parent root;
+         root = FXMLLoader.load(getClass().getResource("GUI_MenuPartida.fxml"));
+         Scene scene = new Scene(root);
+         stage.setScene(scene);
+         stage.setResizable(false);
+         stage.show();
+      } catch (IOException ex) {
+         Logger.getLogger(GUI_PrepararPartidaController.class.getName()).log(Level.SEVERE, null, ex);
+      }
+   });
    
   }  
    
   public void cargarIdioma(){
       Locale locale = Locale.getDefault();
-      ResourceBundle resources = ResourceBundle.getBundle("navalBattle.recursos.Idioma", locale);
+      ResourceBundle resources = ResourceBundle.getBundle("navalBattle.recursos.idioma.Idioma", locale);
       labelColocaNaves.setText(resources.getString("labelColocaNaves"));
       labelRotar.setText(resources.getString("labelRotar"));
       buttonContinuar.setText(resources.getString("buttonContinuar"));

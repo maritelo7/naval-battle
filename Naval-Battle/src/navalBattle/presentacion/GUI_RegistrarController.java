@@ -21,7 +21,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
-import navalBattle.recursos.Utileria;
 
 /**
  * FXML Controller class
@@ -97,7 +96,7 @@ public class GUI_RegistrarController implements Initializable {
    }   
    public void cargarIdioma(){
       Locale locale = Locale.getDefault();
-      ResourceBundle resources = ResourceBundle.getBundle("navalBattle.recursos.Idioma", locale);
+      ResourceBundle resources = ResourceBundle.getBundle("navalBattle.recursos.idiomas.Idioma", locale);
       buttonGuardar.setText(resources.getString("buttonGuardar"));
       buttonBaja.setText(resources.getString("buttonBaja"));
       labelNick.setText(resources.getString("labelNick"));
