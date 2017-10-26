@@ -47,7 +47,7 @@ public class GUI_ReglasController implements Initializable {
    
    public void cargarIdioma(){
       Locale locale = Locale.getDefault();
-      ResourceBundle resources = ResourceBundle.getBundle("navalBattle.recursos.Idioma", locale);
+      ResourceBundle resources = ResourceBundle.getBundle("navalBattle.recursos.idiomas.Idioma", locale);
       labelReglaUno.setText(resources.getString("labelReglaUno"));
       labelReglaDos.setText(resources.getString("labelReglaDos"));
       labelReglaTres.setText(resources.getString("labelReglaTres"));

@@ -8,6 +8,7 @@ package navalBattle.presentacion;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
+import java.io.File;
 import java.io.IOException;
 
 import java.net.URL;
@@ -31,8 +32,9 @@ import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.Label;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
-import navalBattle.recursos.Utileria;
 
 /**
  * FXML Controller class
@@ -40,6 +42,7 @@ import navalBattle.recursos.Utileria;
  * @author javr
  */
 public class GUI_IniciarSesionController implements Initializable {
+
    @FXML
    private JFXButton buttonIdioma;
    @FXML
@@ -59,38 +62,37 @@ public class GUI_IniciarSesionController implements Initializable {
    @FXML
    private Label labelClave;
    public String idioma;
-   
-    /**
-     * Initializes the controller class.
-     */
-    @Override
+
+   /**
+    * Initializes the controller class.
+    */
+   @Override
    public void initialize(URL url, ResourceBundle rb) {
-      
+
       cargarIdioma();
-      
+      cargarSonido();
+
       buttonIdioma.setOnAction((ActionEvent event) -> {
          Locale localeSelect = Locale.getDefault();
          idioma = cargarAviso();
-         System.out.println("Idioma"+ idioma);
-         Utileria util = new Utileria();
-         switch (idioma){
+         switch (idioma) {
             case "English":
                Locale localeEng = new Locale("en", "US");
                Locale.setDefault(localeEng);
                cargarIdioma();
-            break;
+               break;
             case "Français":
                Locale localeFran = new Locale("fr", "FR");
                Locale.setDefault(localeFran);
                cargarIdioma();
-            break;
+               break;
             default:
                Locale locale = Locale.ROOT;
                Locale.setDefault(locale);
                cargarIdioma();
          }
       });
-      buttonIniciar.setOnAction( event -> {
+      buttonIniciar.setOnAction(event -> {
          try {
             Node node = (Node) event.getSource();
             Stage stage = (Stage) node.getScene().getWindow();
@@ -99,14 +101,14 @@ public class GUI_IniciarSesionController implements Initializable {
             root = FXMLLoader.load(getClass().getResource("GUI_MenuPartida.fxml"));
             Scene scene = new Scene(root);
             stage.setScene(scene);
-            stage.setResizable(false);   
+            stage.setResizable(false);
             stage.show();
          } catch (IOException ex) {
             Logger.getLogger(GUI_IniciarSesionController.class.getName()).log(Level.SEVERE, null, ex);
          }
 
       });
-      buttonRegistrar.setOnAction( event -> {
+      buttonRegistrar.setOnAction(event -> {
          Node node = (Node) event.getSource();
          Stage stage = (Stage) node.getScene().getWindow();
          Parent root;
@@ -114,45 +116,45 @@ public class GUI_IniciarSesionController implements Initializable {
             root = FXMLLoader.load(getClass().getResource("GUI_Registrar.fxml"));
             Scene scene = new Scene(root);
             stage.setScene(scene);
-            stage.setResizable(false);   
+            stage.setResizable(false);
             stage.show();
          } catch (IOException ex) {
             Logger.getLogger(GUI_IniciarSesionController.class.getName()).log(Level.SEVERE, null, ex);
          }
       });
-      buttonReglas.setOnAction( event -> {
-        try {
+      buttonReglas.setOnAction(event -> {
+         try {
             Node node = (Node) event.getSource();
             Stage stage = (Stage) node.getScene().getWindow();
             Parent root;
             root = FXMLLoader.load(getClass().getResource("GUI_Reglas.fxml"));
             Scene scene = new Scene(root);
             stage.setScene(scene);
-            stage.setResizable(false);   
+            stage.setResizable(false);
             stage.show();
          } catch (IOException ex) {
             Logger.getLogger(GUI_IniciarSesionController.class.getName()).log(Level.SEVERE, null, ex);
-         }         
+         }
       });
-      buttonPuntuacion.setOnAction( event -> {
-        try {
+      buttonPuntuacion.setOnAction(event -> {
+         try {
             Node node = (Node) event.getSource();
             Stage stage = (Stage) node.getScene().getWindow();
             Parent root;
             root = FXMLLoader.load(getClass().getResource("GUI_Puntuaciones.fxml"));
             Scene scene = new Scene(root);
             stage.setScene(scene);
-            stage.setResizable(false);   
+            stage.setResizable(false);
             stage.show();
          } catch (IOException ex) {
             Logger.getLogger(GUI_IniciarSesionController.class.getName()).log(Level.SEVERE, null, ex);
-         }          
+         }
       });
    }
-   
-   public void cargarIdioma(){
+
+   public void cargarIdioma() {
       Locale locale = Locale.getDefault();
-      ResourceBundle resources = ResourceBundle.getBundle("navalBattle.recursos.Idioma", locale);
+      ResourceBundle resources = ResourceBundle.getBundle("navalBattle.recursos.idiomas.Idioma", locale);
       buttonIdioma.setText(resources.getString("buttonIdioma"));
       buttonReglas.setText(resources.getString("buttonReglas"));
       buttonPuntuacion.setText(resources.getString("buttonPuntuacion"));
@@ -161,6 +163,7 @@ public class GUI_IniciarSesionController implements Initializable {
       labelClave.setText(resources.getString("labelClave"));
 
    }
+
    public void cargarAviso(String title, String mensaje) {
       Alert confirmacion = new Alert(Alert.AlertType.INFORMATION);
       confirmacion.setTitle(title);
@@ -173,8 +176,8 @@ public class GUI_IniciarSesionController implements Initializable {
 
    public String cargarAviso() {
       Locale locale = Locale.getDefault();
-      ResourceBundle resources = ResourceBundle.getBundle("navalBattle.recursos.Idioma",locale);
-      final String [] data = {"Español","Français","English"};
+      ResourceBundle resources = ResourceBundle.getBundle("navalBattle.recursos.Idioma", locale);
+      final String[] data = {"Español", "Français", "English"};
       List<String> listIdiomas = new ArrayList<>();
       listIdiomas = Arrays.asList(data);
       ChoiceDialog choiceIdioma = new ChoiceDialog(listIdiomas.get(0), listIdiomas);
@@ -185,5 +188,14 @@ public class GUI_IniciarSesionController implements Initializable {
          return choiceIdioma.getResult().toString();
       }
       return " ";
+   }
+
+   public void cargarSonido() {
+      final String resourceSonido = this.getClass().getResource("/navalBattle/recursos/sonidos/Main Theme on Marimba.mp3").toExternalForm();
+      Media sound = new Media(new File(resourceSonido).toString());
+      MediaPlayer mediaP = new MediaPlayer(sound);
+      mediaP.setVolume(1);
+      mediaP.play();
+
    }
 }

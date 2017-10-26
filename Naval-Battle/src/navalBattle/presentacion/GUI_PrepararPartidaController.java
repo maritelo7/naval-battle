@@ -7,7 +7,6 @@ package navalBattle.presentacion;
 
 import com.jfoenix.controls.JFXButton;
 import java.io.IOException;
-import javafx.scene.control.Button;
 import javafx.scene.text.Font;
 import java.net.URL;
 import java.util.Locale;
@@ -21,7 +20,6 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
-import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
 /**
@@ -68,7 +66,7 @@ public class GUI_PrepararPartidaController implements Initializable {
    
   public void cargarIdioma(){
       Locale locale = Locale.getDefault();
-      ResourceBundle resources = ResourceBundle.getBundle("navalBattle.recursos.Idioma", locale);
+      ResourceBundle resources = ResourceBundle.getBundle("navalBattle.recursos.idioma.Idioma", locale);
       labelColocaNaves.setText(resources.getString("labelColocaNaves"));
       labelRotar.setText(resources.getString("labelRotar"));
       buttonContinuar.setText(resources.getString("buttonContinuar"));

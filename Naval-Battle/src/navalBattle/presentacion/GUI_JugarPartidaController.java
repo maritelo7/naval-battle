@@ -245,7 +245,7 @@ public class GUI_JugarPartidaController implements Initializable {
   
   public void cargarIdioma( ){
       Locale locale = Locale.getDefault();
-      ResourceBundle resources = ResourceBundle.getBundle("NavalBattle.recursos.idioma",locale);
+      ResourceBundle resources = ResourceBundle.getBundle("NavalBattle.recursos.idiomas.idioma",locale);
       labelCronometro.setText(resources.getString("labelCronometro"));
       labelTiempoRestante.setText(resources.getString("labelTiempoRestante"));
       labelPuntuacionHost.setText(resources.getString("labelPuntuacionHost"));
