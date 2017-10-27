@@ -59,7 +59,7 @@
             <PasswordField GridPane.rowIndex="5" />
          </children>
       </GridPane>
-      <JFXButton fx:id="buttonGuardar" layoutX="299.0" layoutY="560.0" minHeight="30.0" minWidth="120.0" style="-fx-background-color: #e7a46c;">
+      <JFXButton fx:id="buttonGuardar" layoutX="299.0" layoutY="560.0" minHeight="30.0" minWidth="120.0" style="-fx-background-color: #e7a46c;" text="buttonGuardar">
          <font>
             <Font name="Century Gothic" size="16.0" />
          </font>

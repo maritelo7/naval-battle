@@ -50,7 +50,6 @@
             <JFXButton fx:id="button04" prefHeight="52.0" prefWidth="50.0" GridPane.columnIndex="4" />
             <JFXButton fx:id="button06" prefHeight="48.0" prefWidth="50.0" GridPane.columnIndex="5" />
             <JFXButton fx:id="button07" prefHeight="48.0" prefWidth="50.0" GridPane.columnIndex="6" />
-            <JFXButton fx:id="button07" prefHeight="49.0" prefWidth="50.0" GridPane.columnIndex="7" />
             <JFXButton fx:id="button08" prefHeight="48.0" prefWidth="50.0" GridPane.columnIndex="8" />
             <JFXButton fx:id="button09" prefHeight="50.0" prefWidth="50.0" GridPane.columnIndex="9" />
             <JFXButton fx:id="button10" prefHeight="50.0" prefWidth="50.0" GridPane.rowIndex="1" />
@@ -69,7 +68,6 @@
             <JFXButton fx:id="button23" prefHeight="48.0" prefWidth="50.0" GridPane.columnIndex="3" GridPane.rowIndex="2" />
             <JFXButton fx:id="button24" prefHeight="48.0" prefWidth="50.0" GridPane.columnIndex="4" GridPane.rowIndex="2" />
             <JFXButton fx:id="button25" prefHeight="47.0" prefWidth="50.0" GridPane.columnIndex="5" GridPane.rowIndex="2" />
-            <JFXButton fx:id="button25" prefHeight="47.0" prefWidth="50.0" GridPane.columnIndex="6" GridPane.rowIndex="2" />
             <JFXButton fx:id="button27" prefHeight="49.0" prefWidth="50.0" GridPane.columnIndex="7" GridPane.rowIndex="2" />
             <JFXButton fx:id="button28" prefHeight="48.0" prefWidth="50.0" GridPane.columnIndex="8" GridPane.rowIndex="2" />
             <JFXButton fx:id="button29" prefHeight="46.0" prefWidth="50.0" GridPane.columnIndex="9" GridPane.rowIndex="2" />

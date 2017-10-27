@@ -10,7 +10,6 @@ import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
 import java.io.File;
 import java.io.IOException;
-
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -68,7 +67,7 @@ public class GUI_IniciarSesionController implements Initializable {
     */
    @Override
    public void initialize(URL url, ResourceBundle rb) {
-      
+
       cargarIdioma();
       cargarSonido();
 
@@ -81,12 +80,12 @@ public class GUI_IniciarSesionController implements Initializable {
                Locale localeEng = new Locale("en", "US");
                Locale.setDefault(localeEng);
                cargarIdioma();
-            break;
+               break;
             case "Français":
                Locale localeFran = new Locale("fr", "FR");
                Locale.setDefault(localeFran);
                cargarIdioma();
-            break;
+               break;
             default:
                Locale locale = Locale.ROOT;
                Locale.setDefault(locale);
@@ -152,6 +151,7 @@ public class GUI_IniciarSesionController implements Initializable {
          }
       });
    }
+
 
    public void cargarIdioma(){
       Locale locale = Locale.getDefault();
