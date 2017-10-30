@@ -13,13 +13,13 @@ import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import navalBattle.datos.Cuenta;
 import navalBattle.exceptions.NonexistentEntityException;
 import navalBattle.exceptions.PreexistingEntityException;
 
 /**
- *
- * @author Mari
+ * Clase para gestionar la clase cuenta
+ * @author Maribel Tello Rodriguez
+ * @author José Alí Valdivia Ruiz
  */
 public class CuentaJpaController implements Serializable {
 
