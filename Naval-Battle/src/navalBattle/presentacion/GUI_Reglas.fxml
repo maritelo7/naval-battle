@@ -7,11 +7,11 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefHeight="685.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="navalBattle.gui.GUI_ReglasController">
+<AnchorPane id="AnchorPane" prefHeight="685.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="navalBattle.presentacion.GUI_ReglasController">
    <children>
       <ImageView pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@../recursos/FondoRegreso.jpg" />
+            <Image url="@../recursos/imagenes/FondoRegreso.jpg" />
          </image>
       </ImageView>
       <JFXButton fx:id="buttonRegreso" layoutX="31.0" />
@@ -47,22 +47,22 @@
       </Label>
       <ImageView fitHeight="126.0" fitWidth="158.0" layoutX="373.0" layoutY="221.0" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@../recursos/reglaUnoCheck.png" />
+            <Image url="@../recursos/imagenes/reglaUnoCheck.png" />
          </image>
       </ImageView>
       <ImageView fitHeight="127.0" fitWidth="158.0" layoutX="162.0" layoutY="220.0" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@../recursos/reglaUnoWrong.png" />
+            <Image url="@../recursos/imagenes/reglaUnoWrong.png" />
          </image>
       </ImageView>
       <ImageView fitHeight="126.0" fitWidth="158.0" layoutX="256.0" layoutY="474.0" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@../recursos/reglaDosRight.png" />
+            <Image url="@../recursos/imagenes/reglaDosRight.png" />
          </image>
       </ImageView>
       <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="841.0" layoutY="189.0" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@../recursos/reglaTresWrong.png" />
+            <Image url="@../recursos/imagenes/reglaTresWrong.png" />
          </image>
       </ImageView>
    </children>

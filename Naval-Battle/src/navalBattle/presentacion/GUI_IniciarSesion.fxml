@@ -13,7 +13,7 @@
    <children>
       <ImageView pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@../recursos/imagenes/IniciarSesion.jpg" />
+            <Image url="@../recursos/imagenes/IniciarSesion2.jpg" />
          </image>
       </ImageView>
       <JFXButton fx:id="buttonIdioma" layoutX="96.0" layoutY="211.0" prefHeight="78.0" prefWidth="220.0" text="buttonIdioma">
@@ -51,5 +51,10 @@
       </JFXPasswordField>
       <JFXButton fx:id="buttonIniciar" layoutX="893.0" layoutY="582.0" minHeight="30.0" minWidth="120.0" style="-fx-background-color: #e7a46c;" text="buttonIngresar" />
       <JFXButton fx:id="buttonRegistrar" layoutX="1089.0" layoutY="613.0" minHeight="30.0" minWidth="120.0" style="-fx-background-color: #e7a46c;" text="buttonRegistrar" />
+      <JFXButton fx:id="buttonAcerca" layoutX="584.0" layoutY="657.0" text="Acerca de Naval Battle" textFill="WHITE">
+         <font>
+            <Font name="Century Gothic" size="13.0" />
+         </font>
+      </JFXButton>
    </children>
 </AnchorPane>

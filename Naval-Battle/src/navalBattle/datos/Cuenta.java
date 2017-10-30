@@ -16,8 +16,10 @@ import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- *
- * @author Mari
+ * Clase creada desde el mapeo de la base de datos. Correspondiente a la tabla cuenta
+ * 
+ * @author Maribel Tello Rodriguez
+ * @author José Alí Valdivia Ruiz
  */
 @Entity
 @Table(name = "cuenta")

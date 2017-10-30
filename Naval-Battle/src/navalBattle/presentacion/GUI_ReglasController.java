@@ -12,48 +12,53 @@ import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
-import javafx.scene.image.ImageView;
 
 /**
  * FXML Controller class
  *
- * @author javr
+ * @author Maribel Tello Rodriguez
+ * @author José Alí Valdivia Ruiz
  */
 public class GUI_ReglasController implements Initializable {
-   @FXML 
-   private JFXButton buttonRegreso;
-  @FXML
-  private Label labelReglaUno;
-  @FXML
-  private Label labelReglasDelJuego;
-  @FXML
-  private Label labelReglaDos;
-  
-  @FXML
-  private Label labelReglaCuatro;
-  @FXML
-  private Label labelReglaTres;
-  @FXML
-  private Label labelReglaCinco;
 
- 
+   @FXML
+   private JFXButton buttonRegreso;
+   @FXML
+   private Label labelReglaUno;
+   @FXML
+   private Label labelReglasDelJuego;
+   @FXML
+   private Label labelReglaDos;
+   @FXML
+   private Label labelReglaCuatro;
+   @FXML
+   private Label labelReglaTres;
+   @FXML
+   private Label labelReglaCinco;
+
    /**
     * Initializes the controller class.
     */
    @Override
    public void initialize(URL url, ResourceBundle rb) {
-        cargarIdioma();      
-   }   
-   
-   public void cargarIdioma(){
+      cargarIdioma();
+      buttonRegreso.setOnAction( event -> {
+         
+      });
+   }
+
+   /**
+    * Método para cargar el idioma seleccionado como default en botones y etiquetas
+    */
+   public void cargarIdioma() {
       Locale locale = Locale.getDefault();
-      ResourceBundle resources = ResourceBundle.getBundle("navalBattle.recursos.Idioma", locale);
+      ResourceBundle resources = ResourceBundle.getBundle("navalBattle.recursos.idiomas.Idioma", locale);
       labelReglaUno.setText(resources.getString("labelReglaUno"));
       labelReglaDos.setText(resources.getString("labelReglaDos"));
       labelReglaTres.setText(resources.getString("labelReglaTres"));
       labelReglaCuatro.setText(resources.getString("labelReglaCuatro"));
       labelReglaCinco.setText(resources.getString("labelReglaCinco"));
-      labelReglasDelJuego.setText(resources.getString("labelReglasDelJuego"));     
-   }  
-   
+      labelReglasDelJuego.setText(resources.getString("labelReglasDelJuego"));
+   }
+
 }

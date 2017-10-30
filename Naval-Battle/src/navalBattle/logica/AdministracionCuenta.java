@@ -15,11 +15,12 @@ import navalBattle.datos.Cuenta;
 import navalBattle.datos.CuentaJpaController;
 
 /**
- *
- * @author Mari
+ * Clase para implementar las gestiones de la entidad cuenta
+ * @author Maribel Tello Rodriguez
+ * @author José Alí Valdivia Ruiz
  */
 public class AdministracionCuenta {
-   EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("NavalBattlePU", null);
+   EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("Naval-BattlePU", null);
    CuentaJpaController controller = new CuentaJpaController(entityManagerFactory);
    
    public void registrarCuenta(CuentaUsuario cuentaUsuario) throws NoSuchAlgorithmException{
@@ -30,6 +31,19 @@ public class AdministracionCuenta {
          Logger.getLogger(AdministracionCuenta.class.getName()).log(Level.SEVERE, null, ex);
       }
    }
+   
+    public CuentaUsuario consultarCuenta(String idCuentaUsuario) throws NoSuchAlgorithmException {
+      CuentaUsuario cuenta = null;
+      try {
+         Cuenta c = controller.findCuenta(idCuentaUsuario);
+         cuenta = new CuentaUsuario(c.getNombreUsuario(), c.getClave(), c.getLenguaje());         
+      } catch (Exception ex) {
+         Logger.getLogger(AdministracionCuenta.class.getName()).log(Level.SEVERE, null, ex);
+      }
+      return cuenta;
+   }
+   
+   
    
    private String getHash(String string) throws NoSuchAlgorithmException {
       MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
