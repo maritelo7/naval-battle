@@ -30,8 +30,9 @@ import navalBattle.recursos.animaciones.SpriteAnimation;
 
 /**
  * FXML Controller class
- *
- * @author javr
+ * 
+ * @author Maribel Tello Rodriguez
+ * @author José Alí Valdivia Ruiz
  */
 public class GUI_MenuPartidaController implements Initializable {
    @FXML
@@ -136,7 +137,11 @@ public class GUI_MenuPartidaController implements Initializable {
       });      
     
     }    
-    public void cargarIdioma(){
+
+   /**
+    * Método para cargar el idioma seleccionado por default en etiquetas y botones 
+    */
+   public void cargarIdioma(){
       Locale locale = Locale.getDefault();
       ResourceBundle resources = ResourceBundle.getBundle("navalBattle.recursos.idiomas.Idioma", locale);
       buttonReglas.setText(resources.getString("buttonReglas"));
@@ -147,7 +152,11 @@ public class GUI_MenuPartidaController implements Initializable {
       labelConfigurar.setText(resources.getString("labelConfigurar"));
       labelIniciando.setText(resources.getString("labelIniciando"));
    }
-    public void cargarAnimacion() {
+
+   /**
+    * Método para cargar animación de barco 
+    */
+   public void cargarAnimacion() {
       final Image IMAGE = new Image(Barco.class.getResourceAsStream("/navalBattle/recursos/imagenes/boatMove.png"));
       final int WIDTH = 464;
       final int HEIGHT = 237;

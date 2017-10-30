@@ -6,8 +6,9 @@
 package navalBattle.recursos.animaciones;
 
 /**
- *
- * @author javr
+ * Clase secundaria utilizada para la animación del barco
+ * @author Maribel Tello Rodriguez
+ * @author José Alí Valdivia Ruiz
  */
 import javafx.animation.Interpolator;
 import javafx.animation.Transition;

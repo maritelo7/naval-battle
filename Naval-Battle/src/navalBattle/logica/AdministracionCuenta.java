@@ -15,8 +15,9 @@ import navalBattle.datos.Cuenta;
 import navalBattle.datos.CuentaJpaController;
 
 /**
- *
- * @author Mari
+ * Clase para implementar las gestiones de la entidad cuenta
+ * @author Maribel Tello Rodriguez
+ * @author José Alí Valdivia Ruiz
  */
 public class AdministracionCuenta {
    EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("NavalBattlePU", null);

@@ -16,7 +16,8 @@ import javafx.scene.control.Label;
 /**
  * FXML Controller class
  *
- * @author javr
+ * @author Maribel Tello Rodriguez
+ * @author José Alí Valdivia Ruiz
  */
 public class GUI_PuntuacionesController implements Initializable {
    @FXML 
@@ -34,6 +35,10 @@ public class GUI_PuntuacionesController implements Initializable {
       });
       
    }      
+
+   /**
+    * Método para carga el idioma seleccionado por default en botones y etiquetas 
+    */
    public void cargarIdioma(){
       Locale locale = Locale.getDefault();
       ResourceBundle resources = ResourceBundle.getBundle("navalBattle.recursos.idiomas.Idioma", locale);

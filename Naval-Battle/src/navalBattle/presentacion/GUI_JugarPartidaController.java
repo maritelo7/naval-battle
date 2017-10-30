@@ -15,8 +15,8 @@ import javafx.scene.control.Label;
 import javafx.scene.text.Font;
 /**
  * FXML Controller class
- *
- * @author Mari
+ * @author Maribel Tello Rodriguez
+ * @author José Alí Valdivia Ruiz
  */
 public class GUI_JugarPartidaController implements Initializable {
 
@@ -243,7 +243,10 @@ public class GUI_JugarPartidaController implements Initializable {
       });
   }  
   
-  public void cargarIdioma( ){
+   /**
+    * Método para cargar el idioma en etiquetas y botones seleccionado por default
+    */
+   public void cargarIdioma( ){
       Locale locale = Locale.getDefault();
       ResourceBundle resources = ResourceBundle.getBundle("NavalBattle.recursos.idiomas.Idioma",locale);
       labelCronometro.setText(resources.getString("labelCronometro"));

@@ -6,15 +6,16 @@
 package navalBattle.recursos.animaciones;
 
 import javafx.animation.Animation;
-import javafx.application.Application;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.Group;
-import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.stage.Stage;
 import javafx.util.Duration;
 
+/**
+ * Clase para crear la animación del barco
+ * @author Maribel Tello Rodriguez
+ * @author José Alí Valdivia Ruiz
+ */
 public class Barco  {
 
    private static final Image IMAGE = new Image(Barco.class.getResourceAsStream("/navalBattle/recursos/imagenes/boatMove.png"));

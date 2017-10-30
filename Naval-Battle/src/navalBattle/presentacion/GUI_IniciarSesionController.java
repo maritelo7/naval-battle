@@ -26,8 +26,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.Label;
@@ -37,8 +35,9 @@ import javafx.stage.Stage;
 
 /**
  * FXML Controller class
- *
- * @author javr
+ * 
+ * @author Maribel Tello Rodriguez
+ * @author José Alí Valdivia Ruiz
  */
 public class GUI_IniciarSesionController implements Initializable {
 
@@ -60,6 +59,8 @@ public class GUI_IniciarSesionController implements Initializable {
    private Label labelNick;
    @FXML
    private Label labelClave;
+   @FXML
+   private JFXButton buttonAcerca;
    public String idioma;
 
    /**
@@ -150,9 +151,14 @@ public class GUI_IniciarSesionController implements Initializable {
             Logger.getLogger(GUI_IniciarSesionController.class.getName()).log(Level.SEVERE, null, ex);
          }
       });
+      buttonAcerca.setOnAction( event-> {
+         
+      });
    }
 
-
+   /**
+    * Método para cargar el idioma en etiquetas y botones establecido como default
+    */
    public void cargarIdioma(){
       Locale locale = Locale.getDefault();
       ResourceBundle resources = ResourceBundle.getBundle("navalBattle.recursos.idiomas.Idioma", locale);
@@ -165,16 +171,10 @@ public class GUI_IniciarSesionController implements Initializable {
       labelNick.setText(resources.getString("labelNick"));
    }
 
-   public void cargarAviso(String title, String mensaje) {
-      Alert confirmacion = new Alert(Alert.AlertType.INFORMATION);
-      confirmacion.setTitle(title);
-      confirmacion.setHeaderText(null);
-      confirmacion.setContentText(mensaje);
-      ButtonType btAceptar = new ButtonType("Aceptar", ButtonBar.ButtonData.CANCEL_CLOSE);
-      confirmacion.getButtonTypes().setAll(btAceptar);
-      Optional<ButtonType> eleccion = confirmacion.showAndWait();
-   }
-
+   /**
+    * Método para cargar el aviso de seleccionar un idioma. Muestra las opciones en un combobox
+    * @return regresa el idioma seleccionado
+    */
    public String cargarAvisoIdioma() {
       Locale locale = Locale.getDefault();
       ResourceBundle resources = ResourceBundle.getBundle("navalBattle.recursos.idiomas.Idioma", locale);
@@ -191,6 +191,9 @@ public class GUI_IniciarSesionController implements Initializable {
       return " ";
    }
 
+   /**
+    * Método para cargar el sonido de la ventana
+    */
    public void cargarSonido() {
       final String resourceSonido = this.getClass().getResource("/navalBattle/recursos/sonidos/Main Theme on Marimba.mp3").toExternalForm();
       Media sound = new Media(new File(resourceSonido).toString());

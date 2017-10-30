@@ -25,7 +25,8 @@ import javafx.stage.Stage;
 /**
  * FXML Controller class
  *
- * @author javr
+ * @author Maribel Tello Rodriguez
+ * @author José Alí Valdivia Ruiz
  */
 public class GUI_RegistrarController implements Initializable {
    @FXML
@@ -91,9 +92,17 @@ public class GUI_RegistrarController implements Initializable {
          }
       });
    }
+
+   /**
+    * Método para cargar los datos del jugador en los cuadros
+    */
    public void cargarDatos(){
       //Aquí debería cargar los datos del objeto Jugador y cambiar la bandera para poder hacer el regreso efectivoivo
    }   
+
+   /**
+    * Método para cargar el idioma seleccionado por default en botones y etiquetas
+    */
    public void cargarIdioma(){
       Locale locale = Locale.getDefault();
       ResourceBundle resources = ResourceBundle.getBundle("navalBattle.recursos.idiomas.Idioma", locale);

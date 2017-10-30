@@ -25,7 +25,8 @@ import javafx.stage.Stage;
 /**
  * FXML Controller class
  *
- * @author Mari
+ * @author Maribel Tello Rodriguez
+ * @author José Alí Valdivia Ruiz
  */
 public class GUI_PrepararPartidaController implements Initializable {
 
@@ -81,7 +82,10 @@ public class GUI_PrepararPartidaController implements Initializable {
    
   }  
    
-  public void cargarIdioma(){
+   /**
+    * Método para cargar el idioma seleccionado por default en etiquetas y botones
+    */
+   public void cargarIdioma(){
       Locale locale = Locale.getDefault();
       ResourceBundle resources = ResourceBundle.getBundle("navalBattle.recursos.idioma.Idioma", locale);
       labelColocaNaves.setText(resources.getString("labelColocaNaves"));

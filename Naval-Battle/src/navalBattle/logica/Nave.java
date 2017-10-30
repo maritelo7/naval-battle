@@ -7,7 +7,8 @@ package navalBattle.logica;
 
 /**
  *
- * @author Mari
+ * @author Maribel Tello Rodriguez
+ * @author José Alí Valdivia Ruiz
  */
 public class Nave {
    private int idNave;

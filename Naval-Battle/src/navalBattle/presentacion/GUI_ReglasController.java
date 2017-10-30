@@ -12,12 +12,12 @@ import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
-import javafx.scene.image.ImageView;
 
 /**
  * FXML Controller class
  *
- * @author javr
+ * @author Maribel Tello Rodriguez
+ * @author José Alí Valdivia Ruiz
  */
 public class GUI_ReglasController implements Initializable {
 
@@ -47,6 +47,9 @@ public class GUI_ReglasController implements Initializable {
       });
    }
 
+   /**
+    * Método para cargar el idioma seleccionado como default en botones y etiquetas
+    */
    public void cargarIdioma() {
       Locale locale = Locale.getDefault();
       ResourceBundle resources = ResourceBundle.getBundle("navalBattle.recursos.idiomas.Idioma", locale);
