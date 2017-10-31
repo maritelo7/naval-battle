@@ -6,6 +6,8 @@
 package navalBattle.presentacion;
 
 import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXDialog;
+import com.jfoenix.controls.JFXDialogLayout;
 import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
 import java.io.File;
@@ -29,13 +31,15 @@ import javafx.scene.Scene;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.Label;
+import javafx.scene.layout.StackPane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 /**
  * FXML Controller class
- * 
+ *
  * @author Maribel Tello Rodriguez
  * @author José Alí Valdivia Ruiz
  */
@@ -61,6 +65,8 @@ public class GUI_IniciarSesionController implements Initializable {
    private Label labelClave;
    @FXML
    private JFXButton buttonAcerca;
+   @FXML
+   private StackPane stackMensaje;
    public String idioma;
 
    /**
@@ -75,8 +81,8 @@ public class GUI_IniciarSesionController implements Initializable {
       buttonIdioma.setOnAction((ActionEvent event) -> {
          Locale localeSelect = Locale.getDefault();
          idioma = cargarAvisoIdioma();
-         System.out.println("Idioma"+ idioma);
-         switch (idioma){
+         System.out.println("Idioma" + idioma);
+         switch (idioma) {
             case "English":
                Locale localeEng = new Locale("en", "US");
                Locale.setDefault(localeEng);
@@ -151,15 +157,12 @@ public class GUI_IniciarSesionController implements Initializable {
             Logger.getLogger(GUI_IniciarSesionController.class.getName()).log(Level.SEVERE, null, ex);
          }
       });
-      buttonAcerca.setOnAction( event-> {
-         
-      });
    }
 
    /**
     * Método para cargar el idioma en etiquetas y botones establecido como default
     */
-   public void cargarIdioma(){
+   public void cargarIdioma() {
       Locale locale = Locale.getDefault();
       ResourceBundle resources = ResourceBundle.getBundle("navalBattle.recursos.idiomas.Idioma", locale);
       buttonIdioma.setText(resources.getString("buttonIdioma"));
@@ -173,6 +176,7 @@ public class GUI_IniciarSesionController implements Initializable {
 
    /**
     * Método para cargar el aviso de seleccionar un idioma. Muestra las opciones en un combobox
+    *
     * @return regresa el idioma seleccionado
     */
    public String cargarAvisoIdioma() {
@@ -201,5 +205,32 @@ public class GUI_IniciarSesionController implements Initializable {
       mediaP.setVolume(1);
       mediaP.play();
 
+   }
+
+   /**
+    *Acción del botón buttonAcerca. Crea un mensaje de dialogo
+    */
+   public void mensajeAcerca() {
+
+      JFXDialogLayout dialogLayout = new JFXDialogLayout();
+      dialogLayout.setBody(new Text(bodyMensaje()));
+      JFXDialog dialog = new JFXDialog(stackMensaje, dialogLayout, JFXDialog.DialogTransition.CENTER);
+      JFXButton buttonOk = new JFXButton("OK");
+      buttonOk.setOnAction(event -> {
+         dialog.close();
+      });
+      dialogLayout.setActions(buttonOk);
+      dialog.show();
+   }
+
+   /**
+    * Método auxiliar para la internacionalización del texto del mensaje de dialogo
+    * @return String del mensaje internacionalizado
+    */
+   public String bodyMensaje() {
+      Locale locale = Locale.getDefault();
+      ResourceBundle resources = ResourceBundle.getBundle("navalBattle.recursos.idiomas.Idioma", locale);//Modificar paquete idioma
+      String mensaje = "Naval Battle\n" + resources.getString("mensajeDesa") + resources.getString("mensajeTradu");
+      return mensaje;
    }
 }

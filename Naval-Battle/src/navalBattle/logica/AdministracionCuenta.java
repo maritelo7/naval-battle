@@ -11,8 +11,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
-import navalBattle.datos.Cuenta;
-import navalBattle.datos.CuentaJpaController;
+
 
 /**
  * Clase para implementar las gestiones de la entidad cuenta
@@ -20,17 +19,17 @@ import navalBattle.datos.CuentaJpaController;
  * @author José Alí Valdivia Ruiz
  */
 public class AdministracionCuenta {
-   EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("NavalBattlePU", null);
-   CuentaJpaController controller = new CuentaJpaController(entityManagerFactory);
-   
-   public void registrarCuenta(CuentaUsuario cuentaUsuario) throws NoSuchAlgorithmException{
-      Cuenta cuenta = new Cuenta(cuentaUsuario.getNombreUsuario(), getHash(cuentaUsuario.getClave()), cuentaUsuario.getLenguaje());
-      try {
-         controller.create(cuenta);
-      } catch (Exception ex) {
-         Logger.getLogger(AdministracionCuenta.class.getName()).log(Level.SEVERE, null, ex);
-      }
-   }
+//   EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("NavalBattlePU", null);
+//   CuentaJpaController controller = new CuentaJpaController(entityManagerFactory);
+//   
+//   public void registrarCuenta(CuentaUsuario cuentaUsuario) throws NoSuchAlgorithmException{
+//      Cuenta cuenta = new Cuenta(cuentaUsuario.getNombreUsuario(), getHash(cuentaUsuario.getClave()), cuentaUsuario.getLenguaje());
+//      try {
+//         controller.create(cuenta);
+//      } catch (Exception ex) {
+//         Logger.getLogger(AdministracionCuenta.class.getName()).log(Level.SEVERE, null, ex);
+//      }
+//   }
    
    private String getHash(String string) throws NoSuchAlgorithmException {
       MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");

@@ -15,7 +15,8 @@ public class CuentaUsuario {
    private String clave;
    private String lenguaje;
    private int puntaje;
-
+   
+   
    public CuentaUsuario(String nombreUsuario, String clave, String lenguaje) {
       this.nombreUsuario = nombreUsuario;
       this.clave = clave;

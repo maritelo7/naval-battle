@@ -20,7 +20,6 @@ import javafx.scene.control.Label;
  * @author José Alí Valdivia Ruiz
  */
 public class GUI_ReglasController implements Initializable {
-
    @FXML
    private JFXButton buttonRegreso;
    @FXML

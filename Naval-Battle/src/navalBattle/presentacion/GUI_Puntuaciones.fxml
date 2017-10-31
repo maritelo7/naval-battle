@@ -16,7 +16,7 @@
             <Image url="@../recursos/imagenes/FondoRegreso.jpg" />
          </image>
       </ImageView>
-      <JFXButton fx:id="buttonRegresar" layoutX="29.0" layoutY="8.0" text="ButtonRegresar" />
+      <JFXButton fx:id="buttonRegresar" layoutX="29.0" layoutY="8.0" />
       <TableView layoutX="673.0" layoutY="201.0" prefHeight="401.0" prefWidth="358.0">
         <columns>
           <TableColumn prefWidth="213.20709228515625" text="C1" />
@@ -25,7 +25,7 @@
       </TableView>
       <Label fx:id="labelPuntuaciones" layoutX="590.0" layoutY="126.0" text="labelPuntuaciones" textFill="WHITE">
          <font>
-            <Font name="Century Gothic" size="16.0" />
+            <Font name="Century Gothic" size="24.0" />
          </font>
       </Label>
       <ImageView fitHeight="477.0" fitWidth="521.0" layoutX="48.0" layoutY="46.0" pickOnBounds="true" preserveRatio="true">
