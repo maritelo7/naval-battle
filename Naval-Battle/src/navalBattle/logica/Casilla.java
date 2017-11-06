@@ -5,49 +5,31 @@
  */
 package navalBattle.logica;
 
+import javafx.scene.paint.Color;
+import static javafx.scene.paint.Color.color;
+import javafx.scene.shape.Rectangle;
+
 /**
  *
  * @author Maribel Tello Rodriguez
  * @author José Alí Valdivia Ruiz
  */
-public class Casilla {
-   private int idCasilla;
+public class Casilla extends Rectangle {
    private int x;
    private int y;
-   private boolean ocupado;
+   private Nave nave;
    private boolean atacado;
+   private Tablero tablero;
 
-   public int getIdCasilla() {
-      return idCasilla;
-   }
-
-   public void setIdCasilla(int idCasilla) {
-      this.idCasilla = idCasilla;
-   }
-
-   public int getX() {
-      return x;
-   }
-
-   public void setX(int x) {
+   public Casilla(int x, int y, Tablero tablero) {
+      super(50, 50);
+      this.tablero = tablero;
       this.x = x;
-   }
-
-   public int getY() {
-      return y;
-   }
-
-   public void setY(int y) {
       this.y = y;
+      setFill(Color.LIGHTGRAY);
+      setStroke(Color.BLACK);
    }
 
-   public boolean isOcupado() {
-      return ocupado;
-   }
-
-   public void setOcupado(boolean ocupado) {
-      this.ocupado = ocupado;
-   }
 
    public boolean isAtacado() {
       return atacado;
@@ -56,5 +38,21 @@ public class Casilla {
    public void setAtacado(boolean atacado) {
       this.atacado = atacado;
    }
+
+
+   public Nave getNave() {
+      return nave;
+   }
+
+   public Tablero getTablero() {
+      return tablero;
+   }
+
+   public void setNave(Nave nave) {
+      this.nave = nave;
+   }
+
+   
+   
    
 }

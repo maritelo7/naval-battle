@@ -15,7 +15,8 @@ public class Nave {
    private String descripcion;
    private String nombre;
    private int tamanio;
-   private Casilla casillas[];
+   private boolean horizontal = true;
+
 
    public int getIdNave() {
       return idNave;
@@ -49,14 +50,15 @@ public class Nave {
       this.tamanio = tamanio;
    }
 
-   public Casilla[] getCasillas() {
-      return casillas;
+   public boolean isHorizontal() {
+      return horizontal;
    }
 
-   public void setCasillas(Casilla[] casillas) {
-      this.casillas = casillas;
+   public void setHorizontal(boolean horizontal) {
+      this.horizontal = horizontal;
    }
    
+
    
 
 }
