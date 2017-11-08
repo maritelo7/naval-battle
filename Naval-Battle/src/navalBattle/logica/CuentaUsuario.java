@@ -30,6 +30,11 @@ public class CuentaUsuario {
       this.puntaje = puntaje;
    }
 
+   public CuentaUsuario(String nombreUsuario, String clave) {
+      this.nombreUsuario = nombreUsuario;
+      this.clave = clave;
+   }
+
    public String getLenguaje() {
       return lenguaje;
    }

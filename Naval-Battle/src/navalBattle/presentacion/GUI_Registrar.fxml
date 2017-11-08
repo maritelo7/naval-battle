@@ -44,7 +44,7 @@
                   <Font name="Century Gothic" size="16.0" />
                </font>
             </Label>
-            <TextField GridPane.rowIndex="1" />
+            <TextField fx:id="tFieldNick" GridPane.rowIndex="1" />
             <Label fx:id="labelClave" text="labelClave" textFill="WHITE" GridPane.rowIndex="2">
                <font>
                   <Font name="Century Gothic" size="16.0" />
@@ -55,8 +55,8 @@
                   <Font name="Century Gothic" size="16.0" />
                </font>
             </Label>
-            <PasswordField GridPane.rowIndex="3" />
-            <PasswordField GridPane.rowIndex="5" />
+            <PasswordField fx:id="pFieldClave" GridPane.rowIndex="3" />
+            <PasswordField fx:id="pFieldcConfirmacionClave" GridPane.rowIndex="5" />
          </children>
       </GridPane>
       <JFXButton fx:id="buttonGuardar" layoutX="299.0" layoutY="560.0" minHeight="30.0" minWidth="120.0" style="-fx-background-color: #e7a46c;" text="buttonGuardar">

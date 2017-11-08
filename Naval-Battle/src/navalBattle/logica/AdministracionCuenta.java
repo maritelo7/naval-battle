@@ -21,7 +21,7 @@ import navalBattle.datos.CuentaJpaController;
  * @author Maribel Tello Rodriguez
  * @author José Alí Valdivia Ruiz
  */
-public class AdministracionCuenta {
+public class AdministracionCuenta implements I_AdministracionCuenta {
    EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("Naval-BattlePU", null);
    EntityManager entity = entityManagerFactory.createEntityManager();
    CuentaJpaController controller = new CuentaJpaController(entityManagerFactory);
@@ -38,11 +38,12 @@ public class AdministracionCuenta {
       return registroExitoso;
    }
    
-    public CuentaUsuario consultarCuenta(String nombreUsuario) throws NoSuchAlgorithmException {
+    public CuentaUsuario consultarCuenta(String nombreUsuario, String clave) throws NoSuchAlgorithmException {
      CuentaUsuario cuentaUsuario = null;
      Cuenta cuentaRecuperada;
+     String claveHasheada = getHash(clave);
      try{
-     cuentaRecuperada = (Cuenta) entity.createNamedQuery("Cuenta.findByNombreUsuario").setParameter("nombreUsuario", nombreUsuario).getSingleResult();
+     cuentaRecuperada = (Cuenta) entity.createNamedQuery("Cuenta.iniciarSesion").setParameter("nombreUsuario", nombreUsuario).setParameter("clave", claveHasheada).getSingleResult();
      cuentaUsuario = new CuentaUsuario(cuentaRecuperada.getNombreUsuario(), cuentaRecuperada.getClave(), cuentaRecuperada.getLenguaje(), cuentaRecuperada.getPuntaje());
      } catch (Exception ex){
         Logger.getLogger(AdministracionCuenta.class.getName()).log(Level.SEVERE, null, ex);
@@ -86,8 +87,8 @@ public class AdministracionCuenta {
       }
       }
       return puntajeRegistrado;
-   }        
-   
+   }      
+      
    
    public String getHash(String string) throws NoSuchAlgorithmException {
       MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");

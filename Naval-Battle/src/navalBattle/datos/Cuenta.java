@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlRootElement;
    @NamedQuery(name = "Cuenta.findByNombreUsuario", query = "SELECT c FROM Cuenta c WHERE c.nombreUsuario = :nombreUsuario"),
    @NamedQuery(name = "Cuenta.findByClave", query = "SELECT c FROM Cuenta c WHERE c.clave = :clave"),
    @NamedQuery(name = "Cuenta.findByLenguaje", query = "SELECT c FROM Cuenta c WHERE c.lenguaje = :lenguaje"),
+   @NamedQuery(name = "Cuenta.iniciarSesion", query = "SELECT c FROM Cuenta c WHERE c.nombreUsuario = :nombreUsuario AND c.clave =:clave"),
    @NamedQuery(name = "Cuenta.findByPuntaje", query = "SELECT c FROM Cuenta c WHERE c.puntaje = :puntaje")})
 public class Cuenta implements Serializable {
 

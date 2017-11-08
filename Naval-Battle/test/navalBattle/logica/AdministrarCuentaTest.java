@@ -38,7 +38,7 @@ public class AdministrarCuentaTest {
    public void AtestRegistrarCuenta() throws NoSuchAlgorithmException{
       CuentaUsuario cuenta = new CuentaUsuario("Maribel270", "1240", "English");
       administracionCuenta.registrarCuenta(cuenta);
-      CuentaUsuario cuentaRegistrada = administracionCuenta.consultarCuenta("Maribel270");
+      CuentaUsuario cuentaRegistrada = administracionCuenta.consultarCuenta("Maribel270", "1240");
       assertEquals(cuentaRegistrada.getNombreUsuario(), "Maribel270");
       assertEquals(cuentaRegistrada.getClave(), administracionCuenta.getHash("1240"));
       assertEquals(cuentaRegistrada.getLenguaje(), "English");
@@ -48,7 +48,7 @@ public class AdministrarCuentaTest {
    
    @Test
    public void testConsultarCuenta() throws NoSuchAlgorithmException{
-      CuentaUsuario cuentaConsultada = administracionCuenta.consultarCuenta("Maribel267");
+      CuentaUsuario cuentaConsultada = administracionCuenta.consultarCuenta("Maribel267", "1234");
       assertEquals(cuentaConsultada.getNombreUsuario(), "Maribel267");
       assertEquals(cuentaConsultada.getClave(), administracionCuenta.getHash("1234"));
       assertEquals(cuentaConsultada.getLenguaje(), "Español");
@@ -57,17 +57,17 @@ public class AdministrarCuentaTest {
    
    @Test
    public void testModificarCuenta() throws NoSuchAlgorithmException{
-      CuentaUsuario cuenta = administracionCuenta.consultarCuenta("Maribel267");
+      CuentaUsuario cuenta = administracionCuenta.consultarCuenta("Maribel267", "1234");
       cuenta.setPuntaje(1000);
       administracionCuenta.modificarCuenta(cuenta);
-      CuentaUsuario cuentaModificada = administracionCuenta.consultarCuenta("Maribel267");
+      CuentaUsuario cuentaModificada = administracionCuenta.consultarCuenta("Maribel267", "1234");
       assertEquals(cuentaModificada.getPuntaje(), 1000);
    }
    
    @Test
    public void testEliminarCuenta() throws NoSuchAlgorithmException{
       administracionCuenta.desactivarCuenta("Maribel269");
-      CuentaUsuario cuentaNoExistente = administracionCuenta.consultarCuenta("Maribel269");
+      CuentaUsuario cuentaNoExistente = administracionCuenta.consultarCuenta("Maribel269", "1340");
       assertEquals(cuentaNoExistente, null);
    }
    

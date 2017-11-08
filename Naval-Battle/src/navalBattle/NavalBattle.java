@@ -23,7 +23,7 @@ public class NavalBattle extends Application {
 
    @Override
    public void start(Stage primaryStage) throws Exception {
-      Parent root = FXMLLoader.load(getClass().getResource("presentacion/GUI_PrepararPartida.fxml"));
+      Parent root = FXMLLoader.load(getClass().getResource("presentacion/GUI_IniciarSesion.fxml"));
       FadeTransition ft = new FadeTransition(Duration.millis(5000), root);
       ft.setFromValue(0.0);
       ft.setToValue(1.0);

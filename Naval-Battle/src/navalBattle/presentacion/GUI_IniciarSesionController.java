@@ -13,6 +13,7 @@ import com.jfoenix.controls.JFXTextField;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -22,6 +23,7 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -31,11 +33,14 @@ import javafx.scene.Scene;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.Label;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import navalBattle.logica.AdministracionCuenta;
+import navalBattle.logica.CuentaUsuario;
 
 /**
  * FXML Controller class
@@ -74,9 +79,8 @@ public class GUI_IniciarSesionController implements Initializable {
     */
    @Override
    public void initialize(URL url, ResourceBundle rb) {
-
       cargarIdioma();
-      cargarSonido();
+      //cargarSonido();
 
       buttonIdioma.setOnAction((ActionEvent event) -> {
          Locale localeSelect = Locale.getDefault();
@@ -99,64 +103,84 @@ public class GUI_IniciarSesionController implements Initializable {
                cargarIdioma();
          }
       });
+      buttonRegistrar.setOnAction(event -> {
+         cargarVentana(event, "GUI_Registrar.fxml");
+      });
+      buttonReglas.setOnAction(event -> {
+         cargarVentana(event, "GUI_Reglas.fxml");
+      });
+      buttonPuntuacion.setOnAction(event -> {
+         cargarVentana(event, "GUI_Puntuaciones.fxml");
+      });
       buttonIniciar.setOnAction(event -> {
+         CuentaUsuario cuenta = ingresar();
+         if (cuenta != null) {
+            cargarVentana(event, "GUI_MenuPartida.fxml");
+            //pasar objeto
+         } else {
+            //Enviar key de internacionalización de titulo y cuerpo de no coindicencia de usuario
+            //cargarAviso();
+         }
+      });
+   }
+
+   @FXML
+   public void limitarCaracteresNick(KeyEvent e) {
+      String s = e.getCharacter();
+      char c = s.charAt(0);
+      if ((c > 'z' || c < 'A') && (c > '9' || c < '0')) {
+         e.consume();
+      }
+      if (tFieldNick.getText().length() > 12) {
+         e.consume();
+      }
+   }
+
+   @FXML
+   public void limitarCaracteresClave(KeyEvent e) {
+      String s = e.getCharacter();
+      char c = s.charAt(0);
+      if (pFieldClave.getText().length() > 12) {
+         e.consume();
+      }
+   }
+
+   public CuentaUsuario ingresar() {
+      CuentaUsuario cuentaRecuperada = null;
+      if (obtenerYValidarCamposCuenta()) {
+         AdministracionCuenta adminCuenta = null;
+         String nickname = tFieldNick.getText();
+         String clave = pFieldClave.getText();
          try {
-            Node node = (Node) event.getSource();
-            Stage stage = (Stage) node.getScene().getWindow();
-            Parent root;
-            //PASAR OBJETO USUARIO
-            root = FXMLLoader.load(getClass().getResource("GUI_MenuPartida.fxml"));
-            Scene scene = new Scene(root);
-            stage.setScene(scene);
-            stage.setResizable(false);
-            stage.show();
-         } catch (IOException ex) {
+            cuentaRecuperada = adminCuenta.consultarCuenta(nickname, clave);
+         } catch (NoSuchAlgorithmException ex) {
             Logger.getLogger(GUI_IniciarSesionController.class.getName()).log(Level.SEVERE, null, ex);
          }
+      }
+      return cuentaRecuperada;
+   }
 
-      });
-      buttonRegistrar.setOnAction(event -> {
+   public boolean obtenerYValidarCamposCuenta() {
+      boolean valido = false;
+      if (tFieldNick.getText() != null && pFieldClave.getText() != null) {
+         valido = true;
+      }
+      return valido;
+   }
+
+   public void cargarVentana(Event event, String url) {
          Node node = (Node) event.getSource();
          Stage stage = (Stage) node.getScene().getWindow();
          Parent root;
          try {
-            root = FXMLLoader.load(getClass().getResource("GUI_Registrar.fxml"));
+            root = FXMLLoader.load(getClass().getResource(url));
             Scene scene = new Scene(root);
             stage.setScene(scene);
-            stage.setResizable(false);
+            stage.setResizable(false);   
             stage.show();
          } catch (IOException ex) {
-            Logger.getLogger(GUI_IniciarSesionController.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(GUI_MenuPartidaController.class.getName()).log(Level.SEVERE, null, ex);
          }
-      });
-      buttonReglas.setOnAction(event -> {
-         try {
-            Node node = (Node) event.getSource();
-            Stage stage = (Stage) node.getScene().getWindow();
-            Parent root;
-            root = FXMLLoader.load(getClass().getResource("GUI_Reglas.fxml"));
-            Scene scene = new Scene(root);
-            stage.setScene(scene);
-            stage.setResizable(false);
-            stage.show();
-         } catch (IOException ex) {
-            Logger.getLogger(GUI_IniciarSesionController.class.getName()).log(Level.SEVERE, null, ex);
-         }
-      });
-      buttonPuntuacion.setOnAction(event -> {
-         try {
-            Node node = (Node) event.getSource();
-            Stage stage = (Stage) node.getScene().getWindow();
-            Parent root;
-            root = FXMLLoader.load(getClass().getResource("GUI_Puntuaciones.fxml"));
-            Scene scene = new Scene(root);
-            stage.setScene(scene);
-            stage.setResizable(false);
-            stage.show();
-         } catch (IOException ex) {
-            Logger.getLogger(GUI_IniciarSesionController.class.getName()).log(Level.SEVERE, null, ex);
-         }
-      });
    }
 
    /**
@@ -199,7 +223,11 @@ public class GUI_IniciarSesionController implements Initializable {
     * Método para cargar el sonido de la ventana
     */
    public void cargarSonido() {
-      final String resourceSonido = this.getClass().getResource("/navalBattle/recursos/sonidos/Main Theme on Marimba.mp3").toExternalForm();
+      System.out.println("No me quiebro");
+      String separator = System.getProperty("file.separator");
+      System.out.println("Separator "+separator);
+      System.out.println(separator +"navalBattle" + separator + "recursos" + separator + "sonidos" + separator +"MainThemeonMarimba.mp3");
+      final String resourceSonido = this.getClass().getResource(separator +"navalBattle" + separator + "recursos" + separator + "sonidos" + separator + "MainThemeonMarimba.mp3").toExternalForm();
       Media sound = new Media(new File(resourceSonido).toString());
       MediaPlayer mediaP = new MediaPlayer(sound);
       mediaP.setVolume(1);
@@ -208,10 +236,10 @@ public class GUI_IniciarSesionController implements Initializable {
    }
 
    /**
-    *Acción del botón buttonAcerca. Crea un mensaje de dialogo
+    * Acción del botón buttonAcerca. Crea un mensaje de dialogo
     */
+   @FXML
    public void mensajeAcerca() {
-
       JFXDialogLayout dialogLayout = new JFXDialogLayout();
       dialogLayout.setBody(new Text(bodyMensaje()));
       JFXDialog dialog = new JFXDialog(stackMensaje, dialogLayout, JFXDialog.DialogTransition.CENTER);
@@ -225,6 +253,7 @@ public class GUI_IniciarSesionController implements Initializable {
 
    /**
     * Método auxiliar para la internacionalización del texto del mensaje de dialogo
+    *
     * @return String del mensaje internacionalizado
     */
    public String bodyMensaje() {
@@ -233,4 +262,5 @@ public class GUI_IniciarSesionController implements Initializable {
       String mensaje = "Naval Battle\n" + resources.getString("mensajeDesa") + resources.getString("mensajeTradu");
       return mensaje;
    }
+
 }

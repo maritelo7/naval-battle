@@ -40,12 +40,12 @@
             <Font name="Century Gothic" size="16.0" />
          </font>
       </Label>
-      <JFXTextField fx:id="tFieldNick" layoutX="816.0" layoutY="403.0" style="-fx-background-color: #abbbda;" unFocusColor="WHITE">
+      <JFXTextField fx:id="tFieldNick" layoutX="816.0" layoutY="403.0" onKeyTyped="#limitarCaracteresNick" style="-fx-background-color: #abbbda;" unFocusColor="WHITE">
          <font>
             <Font size="16.0" />
          </font>
       </JFXTextField>
-      <JFXPasswordField fx:id="pFieldClave" layoutX="816.0" layoutY="504.0" style="-fx-background-color: abbbda;" unFocusColor="WHITE">
+      <JFXPasswordField fx:id="pFieldClave" layoutX="816.0" layoutY="504.0" onKeyTyped="#limitarCaracteresClave" style="-fx-background-color: abbbda;" unFocusColor="WHITE">
          <font>
             <Font size="16.0" />
          </font>

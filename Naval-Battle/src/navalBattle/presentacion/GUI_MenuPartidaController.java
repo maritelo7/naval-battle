@@ -25,6 +25,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import navalBattle.logica.CuentaUsuario;
 import navalBattle.recursos.animaciones.Barco;
 import navalBattle.recursos.animaciones.SpriteAnimation;
 
@@ -35,6 +36,8 @@ import navalBattle.recursos.animaciones.SpriteAnimation;
  * @author José Alí Valdivia Ruiz
  */
 public class GUI_MenuPartidaController implements Initializable {
+   CuentaUsuario cuentaLogueada;
+   
    @FXML
    private JFXButton buttonReglas;
    @FXML
@@ -60,7 +63,7 @@ public class GUI_MenuPartidaController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-
+     
       cargarIdioma();
       cargarAnimacion();
       labelIniciando.setVisible(false);
@@ -82,6 +85,7 @@ public class GUI_MenuPartidaController implements Initializable {
          try {
             //Pasar objeto Usuario
             root = FXMLLoader.load(getClass().getResource("GUI_Registrar.fxml"));
+            new GUI_RegistrarController().setCuentaUsuario(cuentaLogueada);
             Scene scene = new Scene(root);
             stage.setScene(scene);
             stage.setResizable(false);   
