@@ -22,6 +22,13 @@ public class CuentaUsuario {
       this.clave = clave;
       this.lenguaje = lenguaje;
    }
+   
+   public CuentaUsuario(String nombreUsuario, String clave, String lenguaje, int puntaje) {
+      this.nombreUsuario = nombreUsuario;
+      this.clave = clave;
+      this.lenguaje = lenguaje;
+      this.puntaje = puntaje;
+   }
 
    public String getLenguaje() {
       return lenguaje;

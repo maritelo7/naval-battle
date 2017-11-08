@@ -5,7 +5,8 @@
  */
 package navalBattle;
 
-import java.io.IOException;
+
+import java.security.NoSuchAlgorithmException;
 import javafx.animation.FadeTransition;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -36,8 +37,8 @@ public class NavalBattle extends Application {
    /**
     * @param args the command line arguments
     */
-   public static void main(String[] args) {
+   public static void main(String[] args) throws NoSuchAlgorithmException {
       launch(args);
    }
-
+   
 }
