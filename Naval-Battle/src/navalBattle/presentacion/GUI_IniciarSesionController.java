@@ -179,7 +179,7 @@ public class GUI_IniciarSesionController implements Initializable {
             stage.setResizable(false);   
             stage.show();
          } catch (IOException ex) {
-            Logger.getLogger(GUI_MenuPartidaController.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(GUI_IniciarSesionController.class.getName()).log(Level.SEVERE, null, ex);
          }
    }
 

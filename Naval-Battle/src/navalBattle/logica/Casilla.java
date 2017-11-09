@@ -6,7 +6,6 @@
 package navalBattle.logica;
 
 import javafx.scene.paint.Color;
-import static javafx.scene.paint.Color.color;
 import javafx.scene.shape.Rectangle;
 
 /**
@@ -19,11 +18,10 @@ public class Casilla extends Rectangle {
    private int y;
    private Nave nave;
    private boolean atacado;
-   private Tablero tablero;
 
-   public Casilla(int x, int y, Tablero tablero) {
+
+   public Casilla(int x, int y) {
       super(50, 50);
-      this.tablero = tablero;
       this.x = x;
       this.y = y;
       setFill(Color.LIGHTGRAY);
@@ -43,11 +41,6 @@ public class Casilla extends Rectangle {
    public Nave getNave() {
       return nave;
    }
-
-   public Tablero getTablero() {
-      return tablero;
-   }
-
    public void setNave(Nave nave) {
       this.nave = nave;
    }

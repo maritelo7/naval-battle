@@ -5,9 +5,8 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
 <AnchorPane id="AnchorPane" prefHeight="685.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="navalBattle.presentacion.GUI_JugarPartidaController">
@@ -17,170 +16,21 @@
         <Image url="@../recursos/imagenes/FondoBlanco.jpg" />
       </image>
     </ImageView>
-    <GridPane id="tableroAdversario" gridLinesVisible="true" layoutX="678.0" layoutY="107.0" prefHeight="500.0" prefWidth="500.0">
-      <columnConstraints>
-        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-      </columnConstraints>
-      <rowConstraints>
-        <RowConstraints maxHeight="50.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-        <RowConstraints maxHeight="50.0" minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
-        <RowConstraints maxHeight="50.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-        <RowConstraints maxHeight="50.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-        <RowConstraints maxHeight="50.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-        <RowConstraints maxHeight="50.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-        <RowConstraints maxHeight="50.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-        <RowConstraints maxHeight="50.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-        <RowConstraints maxHeight="50.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-        <RowConstraints maxHeight="50.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-      </rowConstraints>
-         <children>
-            <JFXButton fx:id="button00" prefHeight="48.0" prefWidth="50.0" />
-            <JFXButton fx:id="button01" prefHeight="47.0" prefWidth="50.0" text="Button" GridPane.columnIndex="1" />
-            <JFXButton fx:id="button03" prefHeight="47.0" prefWidth="50.0" text="Button" GridPane.columnIndex="3" />
-            <JFXButton fx:id="button02" prefHeight="48.0" prefWidth="50.0" text="Button" GridPane.columnIndex="2" />
-            <JFXButton fx:id="button04" prefHeight="52.0" prefWidth="50.0" GridPane.columnIndex="4" />
-            <JFXButton fx:id="button06" prefHeight="48.0" prefWidth="50.0" GridPane.columnIndex="5" />
-            <JFXButton fx:id="button07" prefHeight="48.0" prefWidth="50.0" GridPane.columnIndex="6" />
-            <JFXButton fx:id="button08" prefHeight="48.0" prefWidth="50.0" GridPane.columnIndex="8" />
-            <JFXButton fx:id="button09" prefHeight="50.0" prefWidth="50.0" GridPane.columnIndex="9" />
-            <JFXButton fx:id="button10" prefHeight="50.0" prefWidth="50.0" GridPane.rowIndex="1" />
-            <JFXButton fx:id="button11" prefHeight="48.0" prefWidth="50.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <JFXButton fx:id="button12" prefHeight="51.0" prefWidth="50.0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-            <JFXButton fx:id="button13" prefHeight="51.0" prefWidth="50.0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-            <JFXButton fx:id="button14" prefHeight="48.0" prefWidth="50.0" GridPane.columnIndex="4" GridPane.rowIndex="1" />
-            <JFXButton fx:id="button15" prefHeight="51.0" prefWidth="50.0" GridPane.columnIndex="5" GridPane.rowIndex="1" />
-            <JFXButton fx:id="button16" prefHeight="47.0" prefWidth="50.0" GridPane.columnIndex="6" GridPane.rowIndex="1" />
-            <JFXButton fx:id="button17" prefHeight="50.0" prefWidth="50.0" GridPane.columnIndex="7" GridPane.rowIndex="1" />
-            <JFXButton fx:id="button18" GridPane.columnIndex="8" GridPane.rowIndex="1" />
-            <JFXButton fx:id="button19" GridPane.columnIndex="9" GridPane.rowIndex="1" />
-            <JFXButton fx:id="button20" prefHeight="49.0" prefWidth="50.0" GridPane.rowIndex="2" />
-            <JFXButton fx:id="button21" prefHeight="48.0" prefWidth="50.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <JFXButton fx:id="button22" prefHeight="50.0" prefWidth="50.0" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-            <JFXButton fx:id="button23" prefHeight="48.0" prefWidth="50.0" GridPane.columnIndex="3" GridPane.rowIndex="2" />
-            <JFXButton fx:id="button24" prefHeight="48.0" prefWidth="50.0" GridPane.columnIndex="4" GridPane.rowIndex="2" />
-            <JFXButton fx:id="button25" prefHeight="47.0" prefWidth="50.0" GridPane.columnIndex="5" GridPane.rowIndex="2" />
-            <JFXButton fx:id="button27" prefHeight="49.0" prefWidth="50.0" GridPane.columnIndex="7" GridPane.rowIndex="2" />
-            <JFXButton fx:id="button28" prefHeight="48.0" prefWidth="50.0" GridPane.columnIndex="8" GridPane.rowIndex="2" />
-            <JFXButton fx:id="button29" prefHeight="46.0" prefWidth="50.0" GridPane.columnIndex="9" GridPane.rowIndex="2" />
-            <JFXButton fx:id="button30" prefHeight="47.0" prefWidth="50.0" GridPane.rowIndex="3" />
-            <JFXButton fx:id="button31" prefHeight="48.0" prefWidth="50.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-            <JFXButton fx:id="button32" prefHeight="50.0" prefWidth="50.0" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-            <JFXButton fx:id="button33" prefHeight="50.0" prefWidth="50.0" GridPane.columnIndex="3" GridPane.rowIndex="3" />
-            <JFXButton fx:id="button34" prefHeight="48.0" prefWidth="50.0" GridPane.columnIndex="4" GridPane.rowIndex="3" />
-            <JFXButton fx:id="button35" prefHeight="49.0" prefWidth="50.0" GridPane.columnIndex="5" GridPane.rowIndex="3" />
-            <JFXButton fx:id="button36" prefHeight="51.0" prefWidth="50.0" GridPane.columnIndex="6" GridPane.rowIndex="3" />
-            <JFXButton fx:id="button37" prefHeight="47.0" prefWidth="50.0" GridPane.columnIndex="7" GridPane.rowIndex="3" />
-            <JFXButton fx:id="button38" prefHeight="49.0" prefWidth="50.0" GridPane.columnIndex="8" GridPane.rowIndex="3" />
-            <JFXButton fx:id="button39" prefHeight="50.0" prefWidth="50.0" GridPane.columnIndex="9" GridPane.rowIndex="3" />
-            <JFXButton fx:id="button40" prefHeight="49.0" prefWidth="50.0" GridPane.rowIndex="4" />
-            <JFXButton fx:id="button41" prefHeight="46.0" prefWidth="50.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-            <JFXButton fx:id="button42" prefHeight="46.0" prefWidth="50.0" GridPane.columnIndex="2" GridPane.rowIndex="4" />
-            <JFXButton fx:id="button43" prefHeight="50.0" prefWidth="50.0" GridPane.columnIndex="3" GridPane.rowIndex="4" />
-            <JFXButton fx:id="button44" prefHeight="46.0" prefWidth="50.0" GridPane.columnIndex="4" GridPane.rowIndex="4" />
-            <JFXButton fx:id="button45" prefHeight="48.0" prefWidth="50.0" GridPane.columnIndex="5" GridPane.rowIndex="4" />
-            <JFXButton fx:id="button46" prefHeight="51.0" prefWidth="50.0" GridPane.columnIndex="6" GridPane.rowIndex="4" />
-            <JFXButton fx:id="button47" prefHeight="48.0" prefWidth="50.0" GridPane.columnIndex="7" GridPane.rowIndex="4" />
-            <JFXButton fx:id="button48" prefHeight="48.0" prefWidth="50.0" GridPane.columnIndex="8" GridPane.rowIndex="4" />
-            <JFXButton fx:id="button49" prefHeight="47.0" prefWidth="50.0" GridPane.columnIndex="9" GridPane.rowIndex="4" />
-            <JFXButton fx:id="button50" prefHeight="48.0" prefWidth="50.0" GridPane.rowIndex="5" />
-            <JFXButton fx:id="button51" prefHeight="48.0" prefWidth="50.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-            <JFXButton fx:id="button52" prefHeight="52.0" prefWidth="50.0" GridPane.columnIndex="2" GridPane.rowIndex="5" />
-            <JFXButton fx:id="button53" prefHeight="47.0" prefWidth="50.0" GridPane.columnIndex="3" GridPane.rowIndex="5" />
-            <JFXButton fx:id="button54" prefHeight="49.0" prefWidth="50.0" GridPane.columnIndex="4" GridPane.rowIndex="5" />
-            <JFXButton fx:id="button55" prefHeight="47.0" prefWidth="50.0" GridPane.columnIndex="5" GridPane.rowIndex="5" />
-            <JFXButton fx:id="button56" prefHeight="50.0" prefWidth="50.0" GridPane.columnIndex="6" GridPane.rowIndex="5" />
-            <JFXButton fx:id="button57" prefHeight="49.0" prefWidth="50.0" GridPane.columnIndex="7" GridPane.rowIndex="5" />
-            <JFXButton fx:id="button58" prefHeight="50.0" prefWidth="50.0" GridPane.columnIndex="8" GridPane.rowIndex="5" />
-            <JFXButton fx:id="button59" prefHeight="47.0" prefWidth="50.0" GridPane.columnIndex="9" GridPane.rowIndex="5" />
-            <JFXButton fx:id="button60" prefHeight="49.0" prefWidth="50.0" GridPane.rowIndex="6" />
-            <JFXButton fx:id="button61" prefHeight="52.0" prefWidth="50.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-            <JFXButton fx:id="button62" prefHeight="50.0" prefWidth="50.0" GridPane.columnIndex="2" GridPane.rowIndex="6" />
-            <JFXButton fx:id="button63" prefHeight="48.0" prefWidth="50.0" GridPane.columnIndex="3" GridPane.rowIndex="6" />
-            <JFXButton fx:id="button64" prefHeight="58.0" prefWidth="50.0" GridPane.columnIndex="4" GridPane.rowIndex="6" />
-            <JFXButton fx:id="button65" prefHeight="52.0" prefWidth="50.0" GridPane.columnIndex="5" GridPane.rowIndex="6" />
-            <JFXButton fx:id="button66" prefHeight="49.0" prefWidth="50.0" GridPane.columnIndex="6" GridPane.rowIndex="6" />
-            <JFXButton fx:id="button67" prefHeight="49.0" prefWidth="50.0" GridPane.columnIndex="7" GridPane.rowIndex="6" />
-            <JFXButton fx:id="button68" prefHeight="53.0" prefWidth="50.0" GridPane.columnIndex="8" GridPane.rowIndex="6" />
-            <JFXButton fx:id="button69" prefHeight="49.0" prefWidth="50.0" GridPane.columnIndex="9" GridPane.rowIndex="6" />
-            <JFXButton fx:id="button70" prefHeight="46.0" prefWidth="50.0" GridPane.rowIndex="7" />
-            <JFXButton fx:id="button71" prefHeight="46.0" prefWidth="50.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-            <JFXButton fx:id="button72" prefHeight="49.0" prefWidth="50.0" GridPane.columnIndex="2" GridPane.rowIndex="7" />
-            <JFXButton fx:id="button73" prefHeight="50.0" prefWidth="50.0" GridPane.columnIndex="3" GridPane.rowIndex="7" />
-            <JFXButton fx:id="button80" prefHeight="47.0" prefWidth="50.0" GridPane.rowIndex="8" />
-            <JFXButton fx:id="button90" prefHeight="48.0" prefWidth="50.0" GridPane.rowIndex="9" />
-            <JFXButton fx:id="button91" prefHeight="45.0" prefWidth="50.0" GridPane.columnIndex="1" GridPane.rowIndex="9" />
-            <JFXButton fx:id="button99" prefHeight="49.0" prefWidth="50.0" GridPane.columnIndex="9" GridPane.rowIndex="9" />
-            <JFXButton fx:id="button98" prefHeight="49.0" prefWidth="50.0" GridPane.columnIndex="8" GridPane.rowIndex="9" />
-            <JFXButton fx:id="button97" prefHeight="47.0" prefWidth="50.0" GridPane.columnIndex="7" GridPane.rowIndex="9" />
-            <JFXButton fx:id="button96" prefHeight="49.0" prefWidth="50.0" GridPane.columnIndex="6" GridPane.rowIndex="9" />
-            <JFXButton fx:id="button95" prefHeight="46.0" prefWidth="50.0" GridPane.columnIndex="5" GridPane.rowIndex="9" />
-            <JFXButton fx:id="button92" prefHeight="48.0" prefWidth="50.0" GridPane.columnIndex="2" GridPane.rowIndex="9" />
-            <JFXButton fx:id="button93" prefHeight="45.0" prefWidth="50.0" GridPane.columnIndex="3" GridPane.rowIndex="9" />
-            <JFXButton fx:id="button94" prefHeight="48.0" prefWidth="50.0" GridPane.columnIndex="4" GridPane.rowIndex="9" />
-            <JFXButton fx:id="button81" prefHeight="51.0" prefWidth="50.0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
-            <JFXButton fx:id="button82" prefHeight="51.0" prefWidth="50.0" GridPane.columnIndex="2" GridPane.rowIndex="8" />
-            <JFXButton fx:id="button83" prefHeight="46.0" prefWidth="50.0" GridPane.columnIndex="3" GridPane.rowIndex="8" />
-            <JFXButton fx:id="button84" prefHeight="46.0" prefWidth="50.0" GridPane.columnIndex="4" GridPane.rowIndex="8" />
-            <JFXButton fx:id="button85" prefHeight="47.0" prefWidth="50.0" GridPane.columnIndex="5" GridPane.rowIndex="8" />
-            <JFXButton fx:id="button79" prefHeight="45.0" prefWidth="50.0" GridPane.columnIndex="9" GridPane.rowIndex="7" />
-            <JFXButton fx:id="button78" prefHeight="48.0" prefWidth="50.0" GridPane.columnIndex="8" GridPane.rowIndex="7" />
-            <JFXButton fx:id="button77" prefHeight="47.0" prefWidth="50.0" GridPane.columnIndex="7" GridPane.rowIndex="7" />
-            <JFXButton fx:id="button76" prefHeight="51.0" prefWidth="50.0" GridPane.columnIndex="6" GridPane.rowIndex="7" />
-            <JFXButton fx:id="button75" prefHeight="47.0" prefWidth="50.0" GridPane.columnIndex="5" GridPane.rowIndex="7" />
-            <JFXButton fx:id="button74" prefHeight="52.0" prefWidth="50.0" GridPane.columnIndex="4" GridPane.rowIndex="7" />
-            <JFXButton fx:id="button86" prefHeight="46.0" prefWidth="50.0" GridPane.columnIndex="6" GridPane.rowIndex="8" />
-            <JFXButton fx:id="button87" prefHeight="52.0" prefWidth="50.0" GridPane.columnIndex="7" GridPane.rowIndex="8" />
-            <JFXButton fx:id="button88" prefHeight="51.0" prefWidth="50.0" GridPane.columnIndex="8" GridPane.rowIndex="8" />
-            <JFXButton fx:id="button89" prefHeight="48.0" prefWidth="50.0" GridPane.columnIndex="9" GridPane.rowIndex="8" />
-         </children>
-    </GridPane>
-    <GridPane id="tableroHost" gridLinesVisible="true" layoutX="141.0" layoutY="108.0" prefHeight="350.0" prefWidth="350.0">
-      <columnConstraints>
-        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-      </columnConstraints>
-      <rowConstraints>
-        <RowConstraints maxHeight="50.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-        <RowConstraints maxHeight="50.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-        <RowConstraints maxHeight="50.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-        <RowConstraints maxHeight="50.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-        <RowConstraints maxHeight="50.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-        <RowConstraints maxHeight="50.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-        <RowConstraints maxHeight="50.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-        <RowConstraints maxHeight="50.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-        <RowConstraints maxHeight="50.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-        <RowConstraints maxHeight="50.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-      </rowConstraints>
-    </GridPane>
-    <Label id="labelPuntuacionHost" fx:id="labelPuntuacionHost" layoutX="410.0" layoutY="487.0" text="labelPuntuacionHost">
+    <Label id="labelPuntuacionHost" fx:id="labelPuntuacionHost" layoutX="805.0" layoutY="53.0" text="labelPuntuacionHost">
       <font>
         <Font name="Century Gothic" size="16.0" fx:id="x1" />
       </font>
     </Label>
-    <Label id="labelPuntuacionAdversario" fx:id="labelPuntuacionAdversario" font="$x1" layoutX="392.0" layoutY="569.0" text="labelPuntuacionAdversario" />
-    <Label id="labelCronometro" fx:id="labelCronometro" font="$x1" layoutX="90.0" layoutY="518.0" text="labelCronometro" />
-    <Label id="labelTiempoRestante" fx:id="labelTiempoRestante" font="$x1" layoutX="80.0" layoutY="565.0" prefWidth="179.0" text="labelTiempoRestante" />
+    <Label id="labelPuntuacionAdversario" fx:id="labelPuntuacionAdversario" font="$x1" layoutX="124.0" layoutY="52.0" text="labelPuntuacionAdversario" />
+    <Label id="labelCronometro" fx:id="labelCronometro" font="$x1" layoutX="558.0" layoutY="433.0" text="labelCronometro" />
+    <Label id="labelTiempoRestante" fx:id="labelTiempoRestante" font="$x1" layoutX="553.0" layoutY="539.0" prefWidth="179.0" text="labelTiempoRestante" />
       <JFXButton fx:id="buttonRendirse" layoutX="1113.0" layoutY="61.0" minHeight="30.0" minWidth="120.0" style="-fx-background-color: e7a46c;" text="buttonRendirse">
          <font>
             <Font name="Century Gothic" size="16.0" />
          </font>
       </JFXButton>
+      <Pane fx:id="paneTableroEnemigo" layoutX="751.0" layoutY="117.0" prefHeight="500.0" prefWidth="500.0" />
+      <Pane fx:id="paneTableroJugador" layoutX="17.0" layoutY="77.0" prefHeight="500.0" prefWidth="500.0" />
+      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="343.0" layoutX="625.0" layoutY="85.0" stroke="BLACK" strokeType="INSIDE" width="13.0" />
   </children>
 </AnchorPane>

@@ -7,7 +7,6 @@ package navalBattle.presentacion;
 
 import com.jfoenix.controls.JFXButton;
 import java.io.IOException;
-import javafx.scene.text.Font;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,8 +15,6 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.event.EventHandler;
-import javafx.scene.input.MouseEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -29,7 +26,9 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -53,8 +52,6 @@ public class GUI_PrepararPartidaController implements Initializable {
    private Label labelRotar;
    @FXML
    private JFXButton buttonContinuar;
-   @FXML
-   private Font x1; //No tengo idea qué hace :l
    @FXML
    private JFXButton buttonRegresar;
    @FXML
@@ -87,14 +84,10 @@ public class GUI_PrepararPartidaController implements Initializable {
    private Label labelHorizontal;
    @FXML
    private Label labelVertical;
-   int naves5 = 1;
-   int naves4 = 1;
-   int naves3 = 2;
-   int naves2 = 2;
-   int naves1 = 3;
    private boolean horizontal = true;
    VBox columna = new VBox();
    Nave nave = new Nave();
+   int[] numeroNaves = {3, 2, 2, 1, 1};
 
    /**
     * Initializes the controller class.
@@ -108,9 +101,11 @@ public class GUI_PrepararPartidaController implements Initializable {
          try {
             Node node = (Node) event.getSource();
             Stage stage = (Stage) node.getScene().getWindow();
-            Parent root;
-            root = FXMLLoader.load(getClass().getResource("GUI_JugarPartida.fxml"));
-            Scene scene = new Scene(root);
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_JugarPartida.fxml"));
+            Scene scene = new Scene(loader.load());
+            GUI_JugarPartidaController controller = loader.getController();
+            controller.setPaneTableroJugador(paneTablero);
+            controller.setTableroJugador(recuperarTablero());
             stage.setScene(scene);
             stage.setResizable(false);
             stage.show();
@@ -134,40 +129,37 @@ public class GUI_PrepararPartidaController implements Initializable {
          }
       });
       buttonNave5.setOnAction(event -> {
-         if (naves5 > 0) {
+         if (numeroNaves[4] > 0) {
             nave.setTamanio(5);
          }
       });
       buttonNave4.setOnAction(event -> {
-         if (naves4 > 0) {
+         if (numeroNaves[3] > 0) {
             nave.setTamanio(4);
          }
 
       });
       buttonNave3.setOnAction(event -> {
-         if (naves3 > 0) {
+         if (numeroNaves[2] > 0) {
             nave.setTamanio(3);
          }
 
       });
       buttonNave2.setOnAction(event -> {
-         if (naves2 > 0) {
+         if (numeroNaves[1] > 0) {
             nave.setTamanio(2);
          }
 
       });
       buttonNave1.setOnAction(event -> {
-         if (naves1 > 0) {
+         if (numeroNaves[0] > 0) {
             nave.setTamanio(1);
          }
 
       });
       paneTablero.setOnMouseClicked(event -> {
          Casilla casilla = (Casilla) event.getTarget();
-//         casilla.setFill(Color.DARKCYAN);
-//         System.out.println("X "+casilla.getX());
-//         System.out.println("Y "+casilla.getY());
-         if (nave != null) {
+         if (nave.getTamanio() != 0) {
             if (!colocarNave(casilla)) {
                //Aviso de posición incorrecta
                cargarAviso("tittlePosicion", "mensajePosicion");
@@ -178,14 +170,7 @@ public class GUI_PrepararPartidaController implements Initializable {
 
       });
       buttonRotar.setOnAction(event -> {
-         nave.setHorizontal(!horizontal);
-         if (nave.isHorizontal()) {
-            labelHorizontal.setVisible(true);
-            labelVertical.setVisible(false);
-         } else {
-            labelVertical.setVisible(true);
-            labelHorizontal.setVisible(false);
-         }
+         intercambiarLabelOrientacion();
       });
       buttonLimpiar.setOnAction(event -> {
          limpiarTablero();
@@ -208,26 +193,22 @@ public class GUI_PrepararPartidaController implements Initializable {
    }
 
    public void cargarTablero() {
-
-      Tablero tablero = new Tablero(paneTablero, false);
-      //EventHandler<? super MouseEvent> handler = null;
       for (int i = 0; i < 10; i++) {
          HBox fila = new HBox();
          for (int j = 0; j < 10; j++) {
-            Casilla casilla = new Casilla(j, i, tablero);
+            Casilla casilla = new Casilla(j, i);
             casilla.setX(j);
-            casilla.setY(i);
-            //casilla.setOnMouseClicked(handler);
+            casilla.setY(i); 
             fila.getChildren().add(casilla);
          }
          columna.getChildren().add(fila);
       }
       paneTablero.getChildren().add(columna);
-      labelNumNave5.setText(String.valueOf(naves5));
-      labelNumNave4.setText(String.valueOf(naves4));
-      labelNumNave3.setText(String.valueOf(naves3));
-      labelNumNave2.setText(String.valueOf(naves2));
-      labelNumNave1.setText(String.valueOf(naves1));
+      labelNumNave5.setText(String.valueOf(numeroNaves[4]));
+      labelNumNave4.setText(String.valueOf(numeroNaves[3]));
+      labelNumNave3.setText(String.valueOf(numeroNaves[2]));
+      labelNumNave2.setText(String.valueOf(numeroNaves[1]));
+      labelNumNave1.setText(String.valueOf(numeroNaves[0]));
       buttonContinuar.setDisable(true);
    }
 
@@ -308,8 +289,12 @@ public class GUI_PrepararPartidaController implements Initializable {
       Point2D[] points = new Point2D[]{
          new Point2D(x - 1, y),
          new Point2D(x + 1, y),
+         new Point2D(x + 1, y + 1),
+         new Point2D(x - 1, y + 1),
          new Point2D(x, y - 1),
-         new Point2D(x, y + 1)
+         new Point2D(x, y + 1),
+         new Point2D(x + 1, y - 1),
+         new Point2D(x - 1, y - 1),
       };
       List<Casilla> colindantes = new ArrayList<Casilla>();
       for (Point2D p : points) {
@@ -346,61 +331,57 @@ public class GUI_PrepararPartidaController implements Initializable {
 
    public void actualizarNaves() {
       int restante = 0;
-      switch (nave.getTamanio()) {
-         case 1:
-            naves1--;
-            labelNumNave1.setText(String.valueOf(naves1));
-            restante = naves1;
-            break;
-         case 2:
-            naves2--;
-            labelNumNave2.setText(String.valueOf(naves2));
-            restante = naves2;
-            break;
-         case 3:
-            naves3--;
-            labelNumNave3.setText(String.valueOf(naves3));
-            restante = naves3;
-            break;
-         case 4:
-            naves4--;
-            labelNumNave4.setText(String.valueOf(naves4));
-            restante = naves4;
-            break;
-         case 5:
-            naves5--;
-            labelNumNave5.setText(String.valueOf(naves5));
-            restante = naves5;
-            break;
+      int sumaRestantes = 0;
+      for (int i = 1; i < 6; i++) {
+         if (nave.getTamanio() == i) {
+            numeroNaves[i - 1]--;
+            restante = numeroNaves[i - 1];
+         }
+         sumaRestantes = sumaRestantes + numeroNaves[i - 1];
       }
-      System.out.println("Resta " + restante);
+      refrescarNumNaves();
       if (restante <= 0) {
+         String separator = System.getProperty("file.separator");
+         Image image = new Image(getClass().getResourceAsStream(separator+"navalBattle"+separator+
+             "recursos"+separator+"imagenes"+separator+"lineaRoja.png"));
          switch (nave.getTamanio()) {
             case 1:
-               nave = null;
+               nave.setTamanio(0);
+               buttonNave1.setGraphic(new ImageView(image));
                buttonNave1.setDisable(true);
                break;
             case 2:
-               nave = null;
+               nave.setTamanio(0);
+               buttonNave2.setGraphic(new ImageView(image));
                buttonNave2.setDisable(true);
                break;
             case 3:
-               nave = null;
+               nave.setTamanio(0);
+               buttonNave3.setGraphic(new ImageView(image));
                buttonNave3.setDisable(true);
                break;
             case 4:
-               nave = null;
+               nave.setTamanio(0);
+               buttonNave4.setGraphic(new ImageView(image));
                buttonNave4.setDisable(true);
                break;
             case 5:
-               nave = null;
+               nave.setTamanio(0);
+               buttonNave5.setGraphic(new ImageView(image));
                buttonNave5.setDisable(true);
                break;
          }
       }
-      if ((naves5 + naves4 + naves3 + naves2 + naves1) == 0) {
+      if (sumaRestantes == 0) {
          buttonContinuar.setDisable(false);
       }
+   }
+   public void refrescarNumNaves(){
+      labelNumNave1.setText(String.valueOf(numeroNaves[0]));
+      labelNumNave2.setText(String.valueOf(numeroNaves[1]));
+      labelNumNave3.setText(String.valueOf(numeroNaves[2]));
+      labelNumNave4.setText(String.valueOf(numeroNaves[3]));
+      labelNumNave5.setText(String.valueOf(numeroNaves[4]));
    }
 
    public void limpiarTablero() {
@@ -411,5 +392,50 @@ public class GUI_PrepararPartidaController implements Initializable {
             casilla.setNave(null);
          }
       }
+      numeroNaves[4] = 1;
+      numeroNaves[3] = 1;
+      numeroNaves[2] = 2;
+      numeroNaves[1] = 2;
+      numeroNaves[0] = 3;
+      buttonContinuar.setDisable(true);
+      refrescarNumNaves();
+      activarBotonesNaves();
+   }
+   public void activarBotonesNaves(){
+      buttonNave5.setGraphic(null);
+      buttonNave4.setGraphic(null);
+      buttonNave3.setGraphic(null);
+      buttonNave2.setGraphic(null);
+      buttonNave1.setGraphic(null);
+      buttonNave5.setDisable(false);
+      buttonNave4.setDisable(false);
+      buttonNave3.setDisable(false);
+      buttonNave2.setDisable(false);
+      buttonNave1.setDisable(false);
+   }
+   
+   public void intercambiarLabelOrientacion() {
+      if (nave.isHorizontal()) {
+         labelHorizontal.setVisible(false);
+         labelVertical.setVisible(true);
+         nave.setHorizontal(false);
+      } else {
+         labelVertical.setVisible(false);
+         labelHorizontal.setVisible(true);
+         nave.setHorizontal(true);
+      }
+   }
+   public Tablero recuperarTablero(){
+      int z = 0;
+      Tablero tableroJugador = new Tablero(paneTablero, false);
+      ArrayList<Casilla> casillas = new ArrayList<>();
+      for (int i = 0; i < 10; i++) {
+         for (int j = 0; j < 10; j++) {
+            casillas.add(getCasilla(i, j));
+            
+         }
+      }
+      tableroJugador.setCasillas(casillas);
+      return tableroJugador;
    }
 }
