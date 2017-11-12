@@ -223,9 +223,7 @@ public class GUI_IniciarSesionController implements Initializable {
     * Método para cargar el sonido de la ventana
     */
    public void cargarSonido() {
-      System.out.println("No me quiebro");
       String separator = System.getProperty("file.separator");
-      System.out.println("Separator "+separator);
       System.out.println(separator +"navalBattle" + separator + "recursos" + separator + "sonidos" + separator +"MainThemeonMarimba.mp3");
       final String resourceSonido = this.getClass().getResource(separator +"navalBattle" + separator + "recursos" + separator + "sonidos" + separator + "MainThemeonMarimba.mp3").toExternalForm();
       Media sound = new Media(new File(resourceSonido).toString());

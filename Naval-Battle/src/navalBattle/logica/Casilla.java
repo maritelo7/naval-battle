@@ -45,6 +45,11 @@ public class Casilla extends Rectangle {
       this.nave = nave;
    }
 
+   @Override
+   public String toString() {
+      return "Casilla{" + "x=" + x + ", y=" + y + ", nave tamaño=" + nave.getTamanio() + ", atacado=" + atacado + '}';
+   }
+
    
    
    

@@ -11,12 +11,21 @@ package navalBattle.logica;
  * @author José Alí Valdivia Ruiz
  */
 public class Nave {
-   private int idNave;
+   private int idNave;//Necesario?
    private String descripcion;
    private String nombre;
    private int tamanio;
-   private boolean horizontal = true;
+   private boolean horizontal;
 
+   public Nave(boolean horizontal) {
+      this.horizontal = horizontal;
+   }
+
+   public Nave(int tamanio, boolean horizontal) {
+      this.tamanio = tamanio;
+      this.horizontal = horizontal;
+   }
+   
 
    public int getIdNave() {
       return idNave;
