@@ -112,16 +112,34 @@ public class GUI_IniciarSesionController implements Initializable {
       buttonPuntuacion.setOnAction(event -> {
          cargarVentana(event, "GUI_Puntuaciones.fxml");
       });
-      buttonIniciar.setOnAction(event -> {
+      
+      buttonIniciar.setOnAction((ActionEvent event) -> {
          CuentaUsuario cuenta = ingresar();
          if (cuenta != null) {
-            cargarVentana(event, "GUI_MenuPartida.fxml");
-            //pasar objeto
+            //cargarVentana(event, "GUI_MenuPartida.fxml");
+            Node node = (Node) event.getSource();
+            Stage stage = (Stage) node.getScene().getWindow();
+            Parent root;   
+            System.out.println(cuenta.getNombreUsuario());
+            try {
+               FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_MenuPartida.fxml")); 
+               GUI_MenuPartidaController controller = new GUI_MenuPartidaController(cuenta);
+               loader.setController(controller);
+               root = loader.load();
+               Scene scene = new Scene(root);
+               stage.setScene(scene);
+               stage.setResizable(false);
+               stage.show();
+            } catch (IOException ex) {
+               Logger.getLogger(GUI_IniciarSesionController.class.getName()).log(Level.SEVERE, null, ex);
+            }           
          } else {
+            System.out.println("No se puede iniciar sesión");
             //Enviar key de internacionalización de titulo y cuerpo de no coindicencia de usuario
             //cargarAviso();
          }
       });
+      
    }
 
    @FXML
@@ -148,13 +166,14 @@ public class GUI_IniciarSesionController implements Initializable {
    public CuentaUsuario ingresar() {
       CuentaUsuario cuentaRecuperada = null;
       if (obtenerYValidarCamposCuenta()) {
-         AdministracionCuenta adminCuenta = null;
+         AdministracionCuenta adminCuenta = new AdministracionCuenta();
          String nickname = tFieldNick.getText();
          String clave = pFieldClave.getText();
          try {
             cuentaRecuperada = adminCuenta.consultarCuenta(nickname, clave);
-         } catch (NoSuchAlgorithmException ex) {
-            Logger.getLogger(GUI_IniciarSesionController.class.getName()).log(Level.SEVERE, null, ex);
+         } catch (Exception ex) {
+           Logger.getLogger(GUI_IniciarSesionController.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println(ex.getMessage());
          }
       }
       return cuentaRecuperada;

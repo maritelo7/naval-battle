@@ -87,7 +87,7 @@ public class GUI_MenuPartidaController implements Initializable {
          }
       });
       
-      buttonConfigurar.setOnAction( event ->  {            
+      buttonConfigurar.setOnAction( event ->  {   
          Node node = (Node) event.getSource();
          Stage stage = (Stage) node.getScene().getWindow();
          Parent root;
@@ -115,9 +115,18 @@ public class GUI_MenuPartidaController implements Initializable {
       buttonPuntuacion.setOnAction( event -> {
          cargarVentana(event, "GUI_Puntuaciones.fxml");         
       });      
-    
+      
+       System.out.println(cuentaLogueada.getNombreUsuario());
     }    
 
+    public GUI_MenuPartidaController(CuentaUsuario cuenta){
+     cuentaLogueada = cuenta;
+    }
+    
+    public void setCuentaUsuario(CuentaUsuario cuenta){
+      cuentaLogueada = cuenta;
+   }
+    
    /**
     * Método para cargar el idioma seleccionado por default en etiquetas y botones 
     */

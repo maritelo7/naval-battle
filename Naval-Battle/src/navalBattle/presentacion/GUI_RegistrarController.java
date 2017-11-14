@@ -37,7 +37,7 @@ import navalBattle.logica.CuentaUsuario;
  */
 public class GUI_RegistrarController implements Initializable {
 CuentaUsuario cuentaLogueada = null;
-boolean registrarCuenta = true;
+boolean tieneCuenta = false;
    
    @FXML
    private Label labelNick;
@@ -73,7 +73,7 @@ boolean registrarCuenta = true;
    
    public void setCuentaUsuario(CuentaUsuario cuenta){
       cuentaLogueada = cuenta;
-      registrarCuenta = false;
+      tieneCuenta = true;
    }
 
    public void accionButtonRegistrar() {
@@ -84,7 +84,7 @@ boolean registrarCuenta = true;
             String confirmacionClave = pFieldcConfirmacionClave.getText();
             if(clave.equals(confirmacionClave)){
             AdministracionCuenta adminCuenta = null;
-            if (registrarCuenta) {              
+            if (tieneCuenta) {              
                try {
                   System.out.println("HI");
                   CuentaUsuario nuevaCuenta = new CuentaUsuario(nickname, clave);
