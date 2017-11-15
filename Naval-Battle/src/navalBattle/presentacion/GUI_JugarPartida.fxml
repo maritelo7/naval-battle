@@ -2,6 +2,7 @@
 
 <?import com.jfoenix.controls.JFXButton?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -11,7 +12,7 @@
 
 <AnchorPane id="AnchorPane" prefHeight="685.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="navalBattle.presentacion.GUI_JugarPartidaController">
   <children>
-    <ImageView id="FondoBlanco.jpg" layoutX="0.0" layoutY="1.0">
+    <ImageView id="FondoBlanco.jpg" layoutY="1.0">
       <image>
         <Image url="@../recursos/imagenes/FondoBlanco.jpg" />
       </image>
@@ -22,8 +23,11 @@
       </font>
     </Label>
     <Label id="labelPuntuacionAdversario" fx:id="labelPuntuacionAdversario" font="$x1" layoutX="124.0" layoutY="52.0" text="labelPuntuacionAdversario" />
-    <Label id="labelCronometro" fx:id="labelCronometro" font="$x1" layoutX="558.0" layoutY="433.0" text="labelCronometro" />
-    <Label id="labelTiempoRestante" fx:id="labelTiempoRestante" font="$x1" layoutX="553.0" layoutY="539.0" prefWidth="179.0" text="labelTiempoRestante" />
+    <Label id="labelCronometro" fx:id="labelConteo" layoutX="592.0" layoutY="435.0" text="30" textFill="#cd1f1f">
+         <font>
+            <Font name="Century Gothic" size="72.0" />
+         </font></Label>
+    <Label id="labelTiempoRestante" fx:id="labelTiempoRestante" font="$x1" layoutX="569.0" layoutY="539.0" prefWidth="179.0" text="labelTiempoRestante" />
       <JFXButton fx:id="buttonRendirse" layoutX="1113.0" layoutY="61.0" minHeight="30.0" minWidth="120.0" style="-fx-background-color: e7a46c;" text="buttonRendirse">
          <font>
             <Font name="Century Gothic" size="16.0" />
@@ -32,5 +36,6 @@
       <Pane fx:id="paneTableroEnemigo" layoutX="751.0" layoutY="117.0" prefHeight="500.0" prefWidth="500.0" />
       <Pane fx:id="paneTableroJugador" layoutX="17.0" layoutY="77.0" prefHeight="500.0" prefWidth="500.0" />
       <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="343.0" layoutX="625.0" layoutY="85.0" stroke="BLACK" strokeType="INSIDE" width="13.0" />
+      <ProgressBar fx:id="pbConteo" layoutX="543.0" layoutY="586.0" prefWidth="200.0" progress="1.0" />
   </children>
 </AnchorPane>
