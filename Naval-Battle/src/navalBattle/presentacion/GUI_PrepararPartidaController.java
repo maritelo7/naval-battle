@@ -34,6 +34,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import navalBattle.logica.Casilla;
+import navalBattle.logica.CuentaUsuario;
 import navalBattle.logica.Nave;
 import navalBattle.logica.Tablero;
 
@@ -87,46 +88,45 @@ public class GUI_PrepararPartidaController implements Initializable {
    VBox columna = new VBox();
    int tamanioNave = 0;
    int[] numeroNaves = {3, 2, 2, 1, 1};
+   CuentaUsuario cuentaLogueada = null;
 
    /**
     * Initializes the controller class.
     */
    @Override
    public void initialize(URL url, ResourceBundle rb) {
-
       cargarIdioma();
       cargarTablero();
       buttonContinuar.setOnAction(event -> {
-         try {
-            Node node = (Node) event.getSource();
+         Node node = (Node) event.getSource();
             Stage stage = (Stage) node.getScene().getWindow();
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_JugarPartida.fxml"));
-            Scene scene = new Scene(loader.load());
-            GUI_JugarPartidaController controller = loader.getController();
-            controller.setTableroJugador(recuperarTablero());
-            //Recibir el Tablero enemigo y enviarlo
-            controller.setTableroEnemigo(recuperarTablero());
-            stage.setScene(scene);
-            stage.setResizable(false);
-            stage.show();
-         } catch (IOException ex) {
-            Logger.getLogger(GUI_PrepararPartidaController.class.getName()).log(Level.SEVERE, null, ex);
-         }
+            try {
+               FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_JugarPartida.fxml")); 
+               GUI_MenuPartidaController controller = new GUI_MenuPartidaController(cuentaLogueada);
+               loader.setController(controller);
+               Scene scene = new Scene(loader.load());
+               stage.setScene(scene);
+               stage.setResizable(false);
+               stage.show();
+            } catch (IOException ex) {
+               Logger.getLogger(GUI_IniciarSesionController.class.getName()).log(Level.SEVERE, null, ex);
+            } 
       });
       buttonRegresar.setOnAction(event -> {
          //Aquí se debe cerrar la conexión y avisar al otro jugador
-         try {
-            Node node = (Node) event.getSource();
+         Node node = (Node) event.getSource();
             Stage stage = (Stage) node.getScene().getWindow();
-            Parent root;
-            root = FXMLLoader.load(getClass().getResource("GUI_MenuPartida.fxml"));
-            Scene scene = new Scene(root);
-            stage.setScene(scene);
-            stage.setResizable(false);
-            stage.show();
-         } catch (IOException ex) {
-            Logger.getLogger(GUI_PrepararPartidaController.class.getName()).log(Level.SEVERE, null, ex);
-         }
+            try {
+               FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_MenuPartida.fxml")); 
+               GUI_MenuPartidaController controller = new GUI_MenuPartidaController(cuentaLogueada);
+               loader.setController(controller);
+               Scene scene = new Scene(loader.load());
+               stage.setScene(scene);
+               stage.setResizable(false);
+               stage.show();
+            } catch (IOException ex) {
+               Logger.getLogger(GUI_IniciarSesionController.class.getName()).log(Level.SEVERE, null, ex);
+            } 
       });
       buttonNave5.setOnAction(event -> {
             tamanioNave = 5;
@@ -164,6 +164,10 @@ public class GUI_PrepararPartidaController implements Initializable {
       });
 
    }
+   
+   public GUI_PrepararPartidaController(CuentaUsuario cuenta){
+     cuentaLogueada = cuenta;
+    }
 
    /**
     * Método para cargar el idioma seleccionado por default en etiquetas y botones

@@ -7,10 +7,13 @@ package navalBattle.presentacion;
 
 import com.jfoenix.controls.JFXButton;
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
 import javafx.animation.KeyFrame;
@@ -19,7 +22,10 @@ import javafx.animation.Timeline;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.effect.Blend;
@@ -33,8 +39,10 @@ import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 import navalBattle.logica.Casilla;
+import navalBattle.logica.CuentaUsuario;
 import navalBattle.logica.Misil;
 import navalBattle.logica.Tablero;
 
@@ -66,7 +74,7 @@ public class GUI_JugarPartidaController implements Initializable {
    VBox columnasEnemigo = new VBox();
    Tablero tableroJugador;
    Tablero tableroEnemigo;
-
+   CuentaUsuario cuentaLogueada = null;
    /**
     * Initializes the controller class.
     */
@@ -76,9 +84,23 @@ public class GUI_JugarPartidaController implements Initializable {
 
       buttonRendirse.setOnAction(event -> {
          ajustarMiTurno(true);
+         //mostrar ventana de DERROTA, al cerrar esta ventana, se regresa al Menu
+         Node node = (Node) event.getSource();
+            Stage stage = (Stage) node.getScene().getWindow();
+            try {
+               FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_MenuPartida.fxml")); 
+               GUI_MenuPartidaController controller = new GUI_MenuPartidaController(cuentaLogueada);
+               loader.setController(controller);
+               Scene scene = new Scene(loader.load());
+               stage.setScene(scene);
+               stage.setResizable(false);
+               stage.show();
+            } catch (IOException ex) {
+               Logger.getLogger(GUI_IniciarSesionController.class.getName()).log(Level.SEVERE, null, ex);
+            } 
       });
+      
       paneTableroEnemigo.setOnMouseClicked(event -> {
-
          Casilla casilla = (Casilla) event.getTarget();
          //Enviar objeto misil para actualizar el tablero del otro jugador
          Misil misil = new Misil((int) casilla.getX(), (int) casilla.getY());
@@ -95,6 +117,10 @@ public class GUI_JugarPartidaController implements Initializable {
          }
       });
    }
+   
+   public GUI_JugarPartidaController(CuentaUsuario cuenta){
+     cuentaLogueada = cuenta;
+    }
 
    /**
     * Método para cargar el idioma en etiquetas y botones seleccionado por default
@@ -109,22 +135,21 @@ public class GUI_JugarPartidaController implements Initializable {
    }
 
    public void cargarTableroJugador() {
-      int z = 0;
-
+      int contador = 0;
       ArrayList<Casilla> casillas = new ArrayList<>();
       casillas = tableroJugador.getCasillas();
       for (int i = 0; i < 10; i++) {
          HBox filas = new HBox();
          for (int j = 0; j < 10; j++) {
             Casilla casilla = new Casilla(j, i);
-            casilla.setNave(casillas.get(z).getNave());
+            casilla.setNave(casillas.get(contador).getNave());
             casilla.setX(j);
             casilla.setY(i);
             filas.getChildren().add(casilla);
             if (casilla.getNave() != null) {
                casilla.setFill(Color.ORANGE);
             }
-            z++;
+            contador++;
          }
          columnasJugador.getChildren().add(filas);
       }
@@ -132,18 +157,18 @@ public class GUI_JugarPartidaController implements Initializable {
    }
 
    public void cargarTableroEnemigo() {
-      int z = 0;
+      int  contador = 0;
       ArrayList<Casilla> casillas = new ArrayList<>();
       casillas = tableroEnemigo.getCasillas();
       for (int i = 0; i < 10; i++) {
          HBox filas = new HBox();
          for (int j = 0; j < 10; j++) {
             Casilla casilla = new Casilla(j, i);
-            casilla.setNave(casillas.get(z).getNave());
+            casilla.setNave(casillas.get(contador).getNave());
             casilla.setX(j);
             casilla.setY(i);
             filas.getChildren().add(casilla);
-            z++;
+            contador++;
          }
          columnasEnemigo.getChildren().add(filas);
       }

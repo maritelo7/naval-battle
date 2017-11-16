@@ -36,8 +36,6 @@ import navalBattle.logica.CuentaUsuario;
  * @author José Alí Valdivia Ruiz
  */
 public class GUI_RegistrarController implements Initializable {
-CuentaUsuario cuentaLogueada = null;
-boolean tieneCuenta = false;
    
    @FXML
    private Label labelNick;
@@ -63,18 +61,25 @@ boolean tieneCuenta = false;
    @FXML
    private ComboBox<?> comboIdioma;
 
+   CuentaUsuario cuentaLogueada = null;
+   boolean sesionIniciada = false;
+   
    /**
     * Initializes the controller class.
     */
    @Override
    public void initialize(URL url, ResourceBundle rb) {
       cargarIdioma();
+      System.out.println("CUENTA DESDE REGISTRAR " + cuentaLogueada.getNombreUsuario()); 
    }
    
-   public void setCuentaUsuario(CuentaUsuario cuenta){
-      cuentaLogueada = cuenta;
-      tieneCuenta = true;
-   }
+   public GUI_RegistrarController(CuentaUsuario cuenta){
+     cuentaLogueada = cuenta;
+     sesionIniciada = true;
+    }
+   
+   public GUI_RegistrarController(){
+    }
 
    public void accionButtonRegistrar() {
       buttonGuardar.setOnAction(event -> {
@@ -84,7 +89,7 @@ boolean tieneCuenta = false;
             String confirmacionClave = pFieldcConfirmacionClave.getText();
             if(clave.equals(confirmacionClave)){
             AdministracionCuenta adminCuenta = null;
-            if (tieneCuenta) {              
+            if (sesionIniciada) {              
                try {
                   System.out.println("HI");
                   CuentaUsuario nuevaCuenta = new CuentaUsuario(nickname, clave);

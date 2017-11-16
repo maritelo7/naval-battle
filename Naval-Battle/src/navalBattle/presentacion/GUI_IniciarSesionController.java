@@ -13,7 +13,6 @@ import com.jfoenix.controls.JFXTextField;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -116,17 +115,13 @@ public class GUI_IniciarSesionController implements Initializable {
       buttonIniciar.setOnAction((ActionEvent event) -> {
          CuentaUsuario cuenta = ingresar();
          if (cuenta != null) {
-            //cargarVentana(event, "GUI_MenuPartida.fxml");
             Node node = (Node) event.getSource();
             Stage stage = (Stage) node.getScene().getWindow();
-            Parent root;   
-            System.out.println(cuenta.getNombreUsuario());
             try {
                FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_MenuPartida.fxml")); 
                GUI_MenuPartidaController controller = new GUI_MenuPartidaController(cuenta);
                loader.setController(controller);
-               root = loader.load();
-               Scene scene = new Scene(root);
+               Scene scene = new Scene(loader.load());
                stage.setScene(scene);
                stage.setResizable(false);
                stage.show();
@@ -147,18 +142,6 @@ public class GUI_IniciarSesionController implements Initializable {
       String s = e.getCharacter();
       char c = s.charAt(0);
       if ((c > 'z' || c < 'A') && (c > '9' || c < '0')) {
-         e.consume();
-      }
-      if (tFieldNick.getText().length() > 12) {
-         e.consume();
-      }
-   }
-
-   @FXML
-   public void limitarCaracteresClave(KeyEvent e) {
-      String s = e.getCharacter();
-      char c = s.charAt(0);
-      if (pFieldClave.getText().length() > 12) {
          e.consume();
       }
    }

@@ -74,7 +74,7 @@ public class GUI_MenuPartidaController implements Initializable {
          //ESTABLECER CONEXIÓN Y SER SERVER
          boolean conexion = true;
          if (conexion) {
-            cargarVentana(event, "GUI_PrepararPartida.fxml");
+           irPrepararPartida(event);
          }
       });
       
@@ -83,25 +83,24 @@ public class GUI_MenuPartidaController implements Initializable {
          //ESTABLECER CONEXIÓN Y SER CLIENTE
          boolean conexion = true;
          if (conexion) {
-            cargarVentana(event, "GUI_PrepararPartida.fxml");
+           irPrepararPartida(event);
          }
       });
       
       buttonConfigurar.setOnAction( event ->  {   
          Node node = (Node) event.getSource();
-         Stage stage = (Stage) node.getScene().getWindow();
-         Parent root;
-         try {
-            //Pasar objeto Usuario
-            root = FXMLLoader.load(getClass().getResource("GUI_Registrar.fxml"));
-            new GUI_RegistrarController().setCuentaUsuario(cuentaLogueada);
-            Scene scene = new Scene(root);
-            stage.setScene(scene);
-            stage.setResizable(false);   
-            stage.show();
-         } catch (IOException ex) {
-            Logger.getLogger(GUI_MenuPartidaController.class.getName()).log(Level.SEVERE, null, ex);
-         }
+            Stage stage = (Stage) node.getScene().getWindow();
+            try {
+               FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_Registrar.fxml")); 
+               GUI_RegistrarController controller = new GUI_RegistrarController(cuentaLogueada);
+               loader.setController(controller);
+               Scene scene = new Scene(loader.load());
+               stage.setScene(scene);
+               stage.setResizable(false);
+               stage.show();
+            } catch (IOException ex) {
+               Logger.getLogger(GUI_IniciarSesionController.class.getName()).log(Level.SEVERE, null, ex);
+            } 
       });
       
       buttonSalir.setOnAction( event -> {
@@ -109,24 +108,46 @@ public class GUI_MenuPartidaController implements Initializable {
       });
       
       buttonReglas.setOnAction( event -> {
-        cargarVentana(event, "Gui_Reglas.fxml");       
+        //cargarVentana(event, "Gui_Reglas.fxml"); 
+            Node node = (Node) event.getSource();
+            Stage stage = (Stage) node.getScene().getWindow();
+            try {
+               FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_Reglas.fxml")); 
+               GUI_ReglasController controller = new GUI_ReglasController(cuentaLogueada);
+               loader.setController(controller);
+               Scene scene = new Scene(loader.load());
+               stage.setScene(scene);
+               stage.setResizable(false);
+               stage.show();
+            } catch (IOException ex) {
+               Logger.getLogger(GUI_IniciarSesionController.class.getName()).log(Level.SEVERE, null, ex);
+            } 
       });
       
       buttonPuntuacion.setOnAction( event -> {
          cargarVentana(event, "GUI_Puntuaciones.fxml");         
       });      
-      
-       System.out.println(cuentaLogueada.getNombreUsuario());
     }    
 
     public GUI_MenuPartidaController(CuentaUsuario cuenta){
      cuentaLogueada = cuenta;
     }
     
-    public void setCuentaUsuario(CuentaUsuario cuenta){
-      cuentaLogueada = cuenta;
-   }
-    
+    public void irPrepararPartida(Event event){
+       Node node = (Node) event.getSource();
+            Stage stage = (Stage) node.getScene().getWindow();
+            try {
+               FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_PrepararPartida.fxml")); 
+               GUI_PrepararPartidaController controller = new GUI_PrepararPartidaController(cuentaLogueada);
+               loader.setController(controller);
+               Scene scene = new Scene(loader.load());
+               stage.setScene(scene);
+               stage.setResizable(false);
+               stage.show();
+            } catch (IOException ex) {
+               Logger.getLogger(GUI_IniciarSesionController.class.getName()).log(Level.SEVERE, null, ex);
+            } 
+    }
    /**
     * Método para cargar el idioma seleccionado por default en etiquetas y botones 
     */
