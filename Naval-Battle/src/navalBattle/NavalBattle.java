@@ -6,14 +6,21 @@
 package navalBattle;
 
 
+import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.animation.FadeTransition;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import navalBattle.logica.CuentaUsuario;
+import navalBattle.presentacion.GUI_IniciarSesionController;
+import navalBattle.presentacion.GUI_PrepararPartidaController;
 
 /**
  *
@@ -23,7 +30,7 @@ public class NavalBattle extends Application {
 
    @Override
    public void start(Stage primaryStage) throws Exception {
-      Parent root = FXMLLoader.load(getClass().getResource("presentacion/GUI_IniciarSesion.fxml"));
+      Parent root = FXMLLoader.load(getClass().getResource("presentacion/GUI_PrepararPartida.fxml"));
       FadeTransition ft = new FadeTransition(Duration.millis(5000), root);
       ft.setFromValue(0.0);
       ft.setToValue(1.0);
@@ -32,6 +39,7 @@ public class NavalBattle extends Application {
       primaryStage.setScene(scene);
       primaryStage.setResizable(false);
       primaryStage.show();
+
    }
 
    /**

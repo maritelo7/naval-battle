@@ -27,17 +27,25 @@ public class Casilla extends Rectangle {
       setFill(Color.LIGHTGRAY);
       setStroke(Color.BLACK);
    }
-
+   public void liberar(){
+      setFill(Color.BLACK);
+   }
 
    public boolean isAtacado() {
       return atacado;
    }
 
-   public void setAtacado(boolean atacado) {
-      this.atacado = atacado;
+   public boolean atacadaANave() {
+      this.atacado = true;
+      if (this.nave != null) {
+         nave.atacada();
+         setFill(Color.RED);
+         return true;
+      } else {
+         setFill(Color.BLACK);
+      }
+      return false;
    }
-
-
    public Nave getNave() {
       return nave;
    }

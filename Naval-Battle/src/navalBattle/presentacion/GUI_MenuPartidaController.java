@@ -32,13 +32,14 @@ import navalBattle.recursos.animaciones.SpriteAnimation;
 
 /**
  * FXML Controller class
- * 
+ *
  * @author Maribel Tello Rodriguez
  * @author José Alí Valdivia Ruiz
  */
 public class GUI_MenuPartidaController implements Initializable {
+
    CuentaUsuario cuentaLogueada;
-   
+
    @FXML
    private JFXButton buttonReglas;
    @FXML
@@ -59,99 +60,100 @@ public class GUI_MenuPartidaController implements Initializable {
    private Label labelIniciando;
    @FXML
    private ImageView imageVBoat;
-    /**
-     * Initializes the controller class.
-     */
-    @Override
-    public void initialize(URL url, ResourceBundle rb) {
-     
+
+   /**
+    * Initializes the controller class.
+    */
+   @Override
+   public void initialize(URL url, ResourceBundle rb) {
+
       cargarIdioma();
       cargarAnimacion();
       labelIniciando.setVisible(false);
-      
-      buttonCrearPartida.setOnAction( event -> {
+
+      buttonCrearPartida.setOnAction(event -> {
          labelIniciando.setVisible(true);
          //ESTABLECER CONEXIÓN Y SER SERVER
          boolean conexion = true;
          if (conexion) {
-           irPrepararPartida(event);
+            irPrepararPartida(event);
          }
       });
-      
-      buttonUnirmePartida.setOnAction( event -> {
+
+      buttonUnirmePartida.setOnAction(event -> {
          labelIniciando.setVisible(true);
          //ESTABLECER CONEXIÓN Y SER CLIENTE
          boolean conexion = true;
          if (conexion) {
-           irPrepararPartida(event);
+            irPrepararPartida(event);
          }
       });
-      
-      buttonConfigurar.setOnAction( event ->  {   
+
+      buttonConfigurar.setOnAction(event -> {
          Node node = (Node) event.getSource();
-            Stage stage = (Stage) node.getScene().getWindow();
-            try {
-               FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_Registrar.fxml")); 
-               GUI_RegistrarController controller = new GUI_RegistrarController(cuentaLogueada);
-               loader.setController(controller);
-               Scene scene = new Scene(loader.load());
-               stage.setScene(scene);
-               stage.setResizable(false);
-               stage.show();
-            } catch (IOException ex) {
-               Logger.getLogger(GUI_IniciarSesionController.class.getName()).log(Level.SEVERE, null, ex);
-            } 
+         Stage stage = (Stage) node.getScene().getWindow();
+         try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_Registrar.fxml"));
+            GUI_RegistrarController controller = new GUI_RegistrarController(cuentaLogueada);
+            loader.setController(controller);
+            Scene scene = new Scene(loader.load());
+            stage.setScene(scene);
+            stage.setResizable(false);
+            stage.show();
+         } catch (IOException ex) {
+            Logger.getLogger(GUI_IniciarSesionController.class.getName()).log(Level.SEVERE, null, ex);
+         }
       });
-      
-      buttonSalir.setOnAction( event -> {
+
+      buttonSalir.setOnAction(event -> {
          cargarVentana(event, "Gui_IniciarSeion");
       });
-      
-      buttonReglas.setOnAction( event -> {
-        //cargarVentana(event, "Gui_Reglas.fxml"); 
-            Node node = (Node) event.getSource();
-            Stage stage = (Stage) node.getScene().getWindow();
-            try {
-               FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_Reglas.fxml")); 
-               GUI_ReglasController controller = new GUI_ReglasController(cuentaLogueada);
-               loader.setController(controller);
-               Scene scene = new Scene(loader.load());
-               stage.setScene(scene);
-               stage.setResizable(false);
-               stage.show();
-            } catch (IOException ex) {
-               Logger.getLogger(GUI_IniciarSesionController.class.getName()).log(Level.SEVERE, null, ex);
-            } 
-      });
-      
-      buttonPuntuacion.setOnAction( event -> {
-         cargarVentana(event, "GUI_Puntuaciones.fxml");         
-      });      
-    }    
 
-    public GUI_MenuPartidaController(CuentaUsuario cuenta){
-     cuentaLogueada = cuenta;
-    }
-    
-    public void irPrepararPartida(Event event){
-       Node node = (Node) event.getSource();
-            Stage stage = (Stage) node.getScene().getWindow();
-            try {
-               FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_PrepararPartida.fxml")); 
-               GUI_PrepararPartidaController controller = new GUI_PrepararPartidaController(cuentaLogueada);
-               loader.setController(controller);
-               Scene scene = new Scene(loader.load());
-               stage.setScene(scene);
-               stage.setResizable(false);
-               stage.show();
-            } catch (IOException ex) {
-               Logger.getLogger(GUI_IniciarSesionController.class.getName()).log(Level.SEVERE, null, ex);
-            } 
-    }
+      buttonReglas.setOnAction(event -> {
+         Node node = (Node) event.getSource();
+         Stage stage = (Stage) node.getScene().getWindow();
+         try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_Reglas.fxml"));
+            GUI_ReglasController controller = new GUI_ReglasController(cuentaLogueada);
+            loader.setController(controller);
+            Scene scene = new Scene(loader.load());
+            stage.setScene(scene);
+            stage.setResizable(false);
+            stage.show();
+         } catch (IOException ex) {
+            Logger.getLogger(GUI_IniciarSesionController.class.getName()).log(Level.SEVERE, null, ex);
+         }
+      });
+
+      buttonPuntuacion.setOnAction(event -> {
+         cargarVentana(event, "GUI_Puntuaciones.fxml");
+      });
+   }
+
+   public GUI_MenuPartidaController(CuentaUsuario cuenta) {
+      this.cuentaLogueada = cuenta;
+   }
+
+   public void irPrepararPartida(Event event) {
+      Node node = (Node) event.getSource();
+      Stage stage = (Stage) node.getScene().getWindow();
+      try {
+         FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_PrepararPartida.fxml"));
+         GUI_PrepararPartidaController controller = new GUI_PrepararPartidaController(cuentaLogueada);
+         loader.setController(controller);
+         Scene scene = new Scene(loader.load());
+         stage.setScene(scene);
+         stage.setResizable(false);
+         stage.show();
+      } catch (IOException ex) {
+         Logger.getLogger(GUI_IniciarSesionController.class.getName()).log(Level.SEVERE, null, ex);
+      }
+   }
+
    /**
-    * Método para cargar el idioma seleccionado por default en etiquetas y botones 
+    * Método para cargar el idioma seleccionado por default en etiquetas y botones
     */
-   public void cargarIdioma(){
+   public void cargarIdioma() {
       Locale locale = Locale.getDefault();
       ResourceBundle resources = ResourceBundle.getBundle("navalBattle.recursos.idiomas.Idioma", locale);
       buttonReglas.setText(resources.getString("buttonReglas"));
@@ -162,23 +164,24 @@ public class GUI_MenuPartidaController implements Initializable {
       labelConfigurar.setText(resources.getString("labelConfigurar"));
       labelIniciando.setText(resources.getString("labelIniciando"));
    }
-   
+
    public void cargarVentana(Event event, String url) {
-         Node node = (Node) event.getSource();
-         Stage stage = (Stage) node.getScene().getWindow();
-         Parent root;
-         try {
-            root = FXMLLoader.load(getClass().getResource(url));
-            Scene scene = new Scene(root);
-            stage.setScene(scene);
-            stage.setResizable(false);   
-            stage.show();
-         } catch (IOException ex) {
-            Logger.getLogger(GUI_MenuPartidaController.class.getName()).log(Level.SEVERE, null, ex);
-         }
+      Node node = (Node) event.getSource();
+      Stage stage = (Stage) node.getScene().getWindow();
+      Parent root;
+      try {
+         root = FXMLLoader.load(getClass().getResource(url));
+         Scene scene = new Scene(root);
+         stage.setScene(scene);
+         stage.setResizable(false);
+         stage.show();
+      } catch (IOException ex) {
+         Logger.getLogger(GUI_MenuPartidaController.class.getName()).log(Level.SEVERE, null, ex);
+      }
    }
+
    /**
-    * Método para cargar animación de barco 
+    * Método para cargar animación de barco
     */
    public void cargarAnimacion() {
       final Image IMAGE = new Image(Barco.class.getResourceAsStream("/navalBattle/recursos/imagenes/boatMove.png"));

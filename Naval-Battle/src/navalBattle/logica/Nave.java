@@ -16,6 +16,7 @@ public class Nave {
    private String nombre;
    private int tamanio;
    private boolean horizontal;
+   private int salud;
 
    public Nave(boolean horizontal) {
       this.horizontal = horizontal;
@@ -24,6 +25,7 @@ public class Nave {
    public Nave(int tamanio, boolean horizontal) {
       this.tamanio = tamanio;
       this.horizontal = horizontal;
+      this.salud = tamanio;
    }
    
 
@@ -66,8 +68,15 @@ public class Nave {
    public void setHorizontal(boolean horizontal) {
       this.horizontal = horizontal;
    }
-   
 
+   public boolean isViva() {
+      return salud > 0;
+   }
+   public void atacada(){
+      salud--;
+      
+   }
+   
    
 
 }
