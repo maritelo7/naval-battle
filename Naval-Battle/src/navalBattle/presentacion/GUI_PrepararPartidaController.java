@@ -43,7 +43,7 @@ import navalBattle.logica.Tablero;
  * @author José Alí Valdivia Ruiz
  */
 public class GUI_PrepararPartidaController implements Initializable {
-   
+
    @FXML
    private Label labelColocaNaves;
    @FXML
@@ -82,6 +82,7 @@ public class GUI_PrepararPartidaController implements Initializable {
    private Label labelHorizontal;
    @FXML
    private Label labelVertical;
+   
    private boolean esHorizontal = true;
    VBox columna = new VBox();
    int tamanioNave = 0;
@@ -93,22 +94,23 @@ public class GUI_PrepararPartidaController implements Initializable {
     */
    @Override
    public void initialize(URL url, ResourceBundle rb) {
-      System.out.println("Inicializa");
+      
       cargarIdioma();
       cargarTablero();
       buttonContinuar.setOnAction(event -> {
          Tablero tableroEnemigo = recibirTablero();
-         if (tableroEnemigo != null) {   
+         if (tableroEnemigo != null) {
             Node node = (Node) event.getSource();
             Stage stage = (Stage) node.getScene().getWindow();
             Tablero tablero = recuperarTablero();
             try {
-               FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_JugarPartida.fxml"));               
-               GUI_JugarPartidaController controller = new GUI_JugarPartidaController(cuentaLogueada);
-               loader.setController(controller);
+               FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_JugarPartida.fxml"));
+               Scene scene = new Scene(loader.load());
+               GUI_JugarPartidaController controller = loader.getController();
+               controller.cargarCuenta(cuentaLogueada);
                controller.setTableroJugador(tablero);
                controller.setTableroEnemigo(tableroEnemigo);
-               Scene scene = new Scene(loader.load());
+               loader.setController(controller);
                stage.setScene(scene);
                stage.setResizable(false);
                stage.show();
@@ -122,16 +124,17 @@ public class GUI_PrepararPartidaController implements Initializable {
          Node node = (Node) event.getSource();
          Stage stage = (Stage) node.getScene().getWindow();
          try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_MenuPartida.fxml"));            
-            GUI_MenuPartidaController controller = new GUI_MenuPartidaController(cuentaLogueada);
-            loader.setController(controller);
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_MenuPartida.fxml"));
             Scene scene = new Scene(loader.load());
+            GUI_MenuPartidaController controller = loader.getController();
+            controller.cargarCuenta(cuentaLogueada);
+            loader.setController(controller);
             stage.setScene(scene);
             stage.setResizable(false);
             stage.show();
          } catch (IOException ex) {
-            Logger.getLogger(GUI_IniciarSesionController.class.getName()).log(Level.SEVERE, null, ex);
-         }         
+            Logger.getLogger(GUI_PrepararPartidaController.class.getName()).log(Level.SEVERE, null, ex);
+         }
       });
       buttonNave5.setOnAction(event -> {
          tamanioNave = 5;
@@ -159,7 +162,7 @@ public class GUI_PrepararPartidaController implements Initializable {
                actualizarNaves();
             }
          }
-         
+
       });
       buttonRotar.setOnAction(event -> {
          intercambiarLabelOrientacion();
@@ -167,14 +170,15 @@ public class GUI_PrepararPartidaController implements Initializable {
       buttonLimpiar.setOnAction(event -> {
          limpiarTablero();
       });
-      
+
    }
-   
+
    /**
     * Método para utilizar valores del objeto cuenta en el controller
+    *
     * @param cuenta CuentaUsuario
     */
-   public GUI_PrepararPartidaController(CuentaUsuario cuenta) {
+   public void cargarCuenta(CuentaUsuario cuenta) {
       this.cuentaLogueada = cuenta;
    }
 
@@ -182,7 +186,7 @@ public class GUI_PrepararPartidaController implements Initializable {
     * Método para cargar el idioma seleccionado por default en etiquetas y botones
     */
    public void cargarIdioma() {
-      System.out.println("Idioma cargado");
+      
       Locale locale = Locale.getDefault();
       ResourceBundle resources = ResourceBundle.getBundle("navalBattle.recursos.idiomas.Idioma", locale);
       labelColocaNaves.setText(resources.getString("labelColocaNaves"));
@@ -192,7 +196,7 @@ public class GUI_PrepararPartidaController implements Initializable {
       labelVertical.setText(resources.getString("labelVertical"));
       labelVertical.setVisible(false);
    }
-   
+
    /**
     * Método para cargar el tablero con casillas y las etiquetas de las naves
     */
@@ -202,7 +206,7 @@ public class GUI_PrepararPartidaController implements Initializable {
          for (int j = 0; j < 10; j++) {
             Casilla casilla = new Casilla(j, i);
             casilla.setX(j);
-            casilla.setY(i);            
+            casilla.setY(i);
             fila.getChildren().add(casilla);
          }
          columna.getChildren().add(fila);
@@ -215,9 +219,10 @@ public class GUI_PrepararPartidaController implements Initializable {
       labelNumNave1.setText(String.valueOf(numeroNaves[0]));
       buttonContinuar.setDisable(true);
    }
-   
+
    /**
     * Método reutilizable para cargar un ventana emergente
+    *
     * @param nombreTitulo nombre del key del título
     * @param nombreMensaje nombre del key del mensaje
     */
@@ -235,10 +240,11 @@ public class GUI_PrepararPartidaController implements Initializable {
       confirmacion.showAndWait();
       //Duda de show and wait
    }
-   
+
    /**
     * Método para verificar que la posición del tablero es válida para colocar una nave con tales
     * dimensiones
+    *
     * @param nave Nave seleccionada
     * @param x int Posición x de la casilla seleccionada
     * @param y int Posición y de la casilla selecionada
@@ -265,7 +271,7 @@ public class GUI_PrepararPartidaController implements Initializable {
                }
             }
          }
-         
+
       } else {
          for (int i = y; i < y + tamanio; i++) {
             if (!posicionValida(x, i)) {
@@ -287,38 +293,42 @@ public class GUI_PrepararPartidaController implements Initializable {
       }
       return true;
    }
-   
+
    /**
     * Método para verificar si la posición seleccionada es válida
+    *
     * @param x int Posición de x de la casilla
     * @param y int Posición de y de la casilla
-    * @return  Si es posible
+    * @return Si es posible
     */
    public boolean posicionValida(double x, double y) {
       return x >= 0 && x < 10 && y >= 0 && y < 10;
    }
-   
+
    /**
     * Método para verificar si los puntos que se dan son posiciones válidas
+    *
     * @param point Punto con valores X y Y en tablero
     * @return regresa si es posible
     */
    public boolean posicionValida(Point2D point) {
       return posicionValida(point.getX(), point.getY());
    }
-   
+
    /**
     * Método para obtener una casilla del tablero
+    *
     * @param x posición x de la casilla
     * @param y posición y de la casilla
-    * @return  Casilla con tales posiciones
+    * @return Casilla con tales posiciones
     */
    public Casilla getCasilla(int x, int y) {
       return (Casilla) ((HBox) columna.getChildren().get(y)).getChildren().get(x);
    }
-   
+
    /**
     * Método para obtener las casillas colidantes de un punto
+    *
     * @param x posición de x de la casilla
     * @param y posición de y de la casilla
     * @return Arreglo de casillas colindantes
@@ -341,9 +351,10 @@ public class GUI_PrepararPartidaController implements Initializable {
       }
       return colindantes.toArray(new Casilla[0]);
    }
-   
+
    /**
     * Método para colocar la nave en el tablero
+    *
     * @param casillaInicio Casilla en donde inicia la nave
     * @param nave nave a colocar
     * @return Si ha logrado colocarla
@@ -371,7 +382,7 @@ public class GUI_PrepararPartidaController implements Initializable {
       }
       return false;
    }
-   
+
    /**
     * Método para actualizar los números de naves disposibles y en caso de colocar todas habilitar
     * la continuación
@@ -435,7 +446,7 @@ public class GUI_PrepararPartidaController implements Initializable {
       labelNumNave4.setText(String.valueOf(numeroNaves[3]));
       labelNumNave5.setText(String.valueOf(numeroNaves[4]));
    }
-   
+
    /**
     * Método para limpiar el tablero, permite volver a colocar todas las naves
     */
@@ -472,7 +483,7 @@ public class GUI_PrepararPartidaController implements Initializable {
       buttonNave2.setDisable(false);
       buttonNave1.setDisable(false);
    }
-   
+
    /**
     * Método para describir la orientación actual de la nave
     */
@@ -490,6 +501,7 @@ public class GUI_PrepararPartidaController implements Initializable {
 
    /**
     * Método para recuperar todas las naves colocadas en un tablero
+    *
     * @return tablero con naves
     */
    public Tablero recuperarTablero() {
@@ -499,7 +511,7 @@ public class GUI_PrepararPartidaController implements Initializable {
       for (int i = 0; i < 10; i++) {
          for (int j = 0; j < 10; j++) {
             casillas.add(getCasilla(j, i));
-            z++;            
+            z++;
          }
       }
       tableroJugador.setCasillas(casillas);
@@ -508,6 +520,7 @@ public class GUI_PrepararPartidaController implements Initializable {
 
    /**
     * Método para recibir el tablero del contrincante
+    *
     * @return tablero del contrincante con naves colocadas
     */
    public Tablero recibirTablero() {

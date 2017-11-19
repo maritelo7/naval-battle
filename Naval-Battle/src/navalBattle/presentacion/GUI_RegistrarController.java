@@ -13,13 +13,14 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
@@ -36,7 +37,7 @@ import navalBattle.logica.CuentaUsuario;
  * @author José Alí Valdivia Ruiz
  */
 public class GUI_RegistrarController implements Initializable {
-   
+
    @FXML
    private Label labelNick;
    @FXML
@@ -51,47 +52,57 @@ public class GUI_RegistrarController implements Initializable {
    private JFXButton buttonBaja;
    @FXML
    private JFXButton buttonRegreso;
-   private boolean flag;
    @FXML
    private TextField tFieldNick;
    @FXML
    private PasswordField pFieldClave;
    @FXML
-   private PasswordField pFieldcConfirmacionClave;
+   private PasswordField pFieldConfirmacionClave;
    @FXML
-   private ComboBox<?> comboIdioma;
+   private ComboBox comboIdioma;
 
-   CuentaUsuario cuentaLogueada = null;
-   boolean sesionIniciada = false;
-   
+   CuentaUsuario cuentaLogueada;
+
    /**
     * Initializes the controller class.
     */
    @Override
    public void initialize(URL url, ResourceBundle rb) {
       cargarIdioma();
-      System.out.println("CUENTA DESDE REGISTRAR " + cuentaLogueada.getNombreUsuario()); 
-   }
-   
-   public GUI_RegistrarController(CuentaUsuario cuenta){
-     cuentaLogueada = cuenta;
-     sesionIniciada = true;
-    }
-   
-   public GUI_RegistrarController(){
-    }
-
-   public void accionButtonRegistrar() {
+      cargarComboIdioma();
+      buttonRegreso.setOnAction(event -> {
+         accionButtonRegresar(event);
+      });
       buttonGuardar.setOnAction(event -> {
-         if (obtenerYValidarCamposCuenta()) {           
-            String nickname = tFieldNick.getText();
-            String clave = pFieldClave.getText();
-            String confirmacionClave = pFieldcConfirmacionClave.getText();
-            if(clave.equals(confirmacionClave)){
+         accionButtonGuardar(event);
+      });
+      buttonBaja.setOnAction(event -> {
+         accionButtonBaja(event);
+      });
+
+   }
+
+   public void cargarCuenta(CuentaUsuario cuenta) {
+      this.cuentaLogueada = cuenta;
+      tFieldNick.setText(cuentaLogueada.getNombreUsuario());
+      pFieldClave.setText(cuentaLogueada.getClave());
+      pFieldConfirmacionClave.setText(cuentaLogueada.getClave());
+      comboIdioma.setValue(cuentaLogueada.getLenguaje());
+
+   }
+
+   public void accionButtonGuardar(Event event) {
+
+      if (obtenerYValidarCamposCuenta()) {
+         String nickname = tFieldNick.getText();
+         String clave = pFieldClave.getText();
+         String confirmacionClave = pFieldConfirmacionClave.getText();
+         if (clave.equals(confirmacionClave)) {
             AdministracionCuenta adminCuenta = null;
-            if (sesionIniciada) {              
+            if (cuentaLogueada == null) {
                try {
                   System.out.println("HI");
+                  //Y el idioma?
                   CuentaUsuario nuevaCuenta = new CuentaUsuario(nickname, clave);
                   adminCuenta.registrarCuenta(nuevaCuenta);
                   cuentaLogueada = adminCuenta.consultarCuenta(nickname, clave);
@@ -108,98 +119,88 @@ public class GUI_RegistrarController implements Initializable {
                   Logger.getLogger(GUI_RegistrarController.class.getName()).log(Level.SEVERE, null, ex);
                }
             }
-            
-         }else{
-               //MENSAJE DE QUE DE CONFIRMACIÓN DE LA CLAVE NO ES LA MISMA
-            }
-         }else{
-            //MENSAJE DE QUE NO TODOS LOS CAMPOS ESTÁN LLENOS
+
+         } else {
+            //MENSAJE DE QUE DE CONFIRMACIÓN DE LA CLAVE NO ES LA MISMA
          }
-         Alert aviso = new Alert(Alert.AlertType.INFORMATION);
-         aviso.setContentText("AVISO DE GUARDADO");
-      });
+      } else {
+         //MENSAJE DE QUE NO TODOS LOS CAMPOS ESTÁN LLENOS
+      }
+      //Enviar mensaje de guadado
+
    }
 
-   
    @FXML
-   public void limitarCaracteresNick(KeyEvent e){
+   public void limitarCaracteresNick(KeyEvent e) {
       String s = e.getCharacter();
       char c = s.charAt(0);
-      if ((c > 'z' || c < 'a') && (c > '9' || c < '0')){
+      if ((c > 'z' || c < 'a') && (c > '9' || c < '0')) {
          e.consume();
       }
-      if (tFieldNick.getText().length() > 12){
-         e.consume();
-      }
-   }
-   
-   @FXML
-   public void limitarCaracteresClave(KeyEvent e){
-      String s = e.getCharacter();
-      char c = s.charAt(0);
-      if (pFieldClave.getText().length() > 12){
+      if (tFieldNick.getText().length() > 12) {
          e.consume();
       }
    }
 
-     public boolean obtenerYValidarCamposCuenta(){
+   @FXML
+   public void limitarCaracteresClave(KeyEvent e) {
+      String s = e.getCharacter();
+      char c = s.charAt(0);
+      if (pFieldClave.getText().length() > 12) {
+         e.consume();
+      }
+   }
+
+   public boolean obtenerYValidarCamposCuenta() {
       boolean valido = false;
-      if (tFieldNick.getText() != null && pFieldClave.getText() != null && pFieldcConfirmacionClave.getText() != null){
+      if (tFieldNick.getText() != null && pFieldClave.getText() != null && pFieldConfirmacionClave.getText() != null) {
          valido = true;
       }
       return valido;
    }
-   
-     public void accionButtonBaja() {
-      buttonBaja.setOnAction(event -> {
+
+   public void accionButtonBaja(Event event) {
+
+      try {
+         AdministracionCuenta adminCuenta = null;
+         adminCuenta.desactivarCuenta(cuentaLogueada.getNombreUsuario());
+      } catch (NoSuchAlgorithmException ex) {
+         Logger.getLogger(GUI_RegistrarController.class.getName()).log(Level.SEVERE, null, ex);
+      }
+
+   }
+
+   public void accionButtonRegresar(Event event) {
+      Node node = (Node) event.getSource();
+      Stage stage = (Stage) node.getScene().getWindow();
+      Scene scene;
+      if (cuentaLogueada != null) {
          try {
-            AdministracionCuenta adminCuenta = null;
-            adminCuenta.desactivarCuenta(cuentaLogueada.getNombreUsuario());
-         } catch (NoSuchAlgorithmException ex) {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_MenuPartida.fxml"));
+            scene = new Scene(loader.load());
+            GUI_MenuPartidaController controller = loader.getController();
+            controller.cargarCuenta(cuentaLogueada);
+            loader.setController(controller);
+            stage.setScene(scene);
+            stage.setResizable(false);
+            stage.show();
+         } catch (IOException ex) {
             Logger.getLogger(GUI_RegistrarController.class.getName()).log(Level.SEVERE, null, ex);
          }
-      });
-   }
+      } else {
+         try {
 
-   public void accionButtonRegresar() {
-      buttonRegreso.setOnAction(event -> {
-         if (flag) {
-            //Regresar objeto o mantener el objeto en la ventana anterior
-            try {
-               Node node = (Node) event.getSource();
-               Stage stage = (Stage) node.getScene().getWindow();
-               Parent root;
-               root = FXMLLoader.load(getClass().getResource("GUI_MenuPartida.fxml"));
-               Scene scene = new Scene(root);
-               stage.setScene(scene);
-               stage.setResizable(false);
-               stage.show();
-            } catch (IOException ex) {
-               Logger.getLogger(GUI_RegistrarController.class.getName()).log(Level.SEVERE, null, ex);
-            }
-         } else {
-            try {
-               Node node = (Node) event.getSource();
-               Stage stage = (Stage) node.getScene().getWindow();
-               Parent root;
-               root = FXMLLoader.load(getClass().getResource("GUI_IniciarSesion.fxml"));
-               Scene scene = new Scene(root);
-               stage.setScene(scene);
-               stage.setResizable(false);
-               stage.show();
-            } catch (IOException ex) {
-               Logger.getLogger(GUI_RegistrarController.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_IniciarSesion.fxml"));
+            scene = new Scene(loader.load());
+            loader.setController(loader.getController());
+            stage.setScene(scene);
+            stage.setResizable(false);
+            stage.show();
+         } catch (IOException ex) {
+            Logger.getLogger(GUI_RegistrarController.class.getName()).log(Level.SEVERE, null, ex);
          }
-      });
-   }
+      }
 
-   /**
-    * Método para cargar los datos del jugador en los cuadros
-    */
-   public void cargarDatos() {
-      //Aquí debería cargar los datos del objeto Jugador y cambiar la bandera para poder hacer el regreso efectivo
-      
    }
 
    /**
@@ -214,5 +215,11 @@ public class GUI_RegistrarController implements Initializable {
       labelConfirClave.setText(resources.getString("labelConfirClave"));
       labelIdioma.setText(resources.getString("labelIdioma"));
       labelClave.setText(resources.getString("labelClave"));
+   }
+
+   public void cargarComboIdioma() {
+      final String[] data = {"Español", "Français", "English"};
+      ObservableList<String> listIdiomas = FXCollections.observableArrayList(data);
+      comboIdioma.setItems(listIdiomas);
    }
 }

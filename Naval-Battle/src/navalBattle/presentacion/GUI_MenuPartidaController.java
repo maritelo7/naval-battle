@@ -94,19 +94,20 @@ public class GUI_MenuPartidaController implements Initializable {
          Stage stage = (Stage) node.getScene().getWindow();
          try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_Registrar.fxml"));
-            GUI_RegistrarController controller = new GUI_RegistrarController(cuentaLogueada);
-            loader.setController(controller);
             Scene scene = new Scene(loader.load());
+            GUI_RegistrarController controller = loader.getController();
+            controller.cargarCuenta(cuentaLogueada);
+            loader.setController(controller);
             stage.setScene(scene);
             stage.setResizable(false);
             stage.show();
          } catch (IOException ex) {
-            Logger.getLogger(GUI_IniciarSesionController.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(GUI_MenuPartidaController.class.getName()).log(Level.SEVERE, null, ex);
          }
       });
 
       buttonSalir.setOnAction(event -> {
-         cargarVentana(event, "Gui_IniciarSeion");
+         cargarVentana(event, "GUI_IniciarSesion.fxml");
       });
 
       buttonReglas.setOnAction(event -> {
@@ -114,24 +115,41 @@ public class GUI_MenuPartidaController implements Initializable {
          Stage stage = (Stage) node.getScene().getWindow();
          try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_Reglas.fxml"));
-            GUI_ReglasController controller = new GUI_ReglasController(cuentaLogueada);
-            loader.setController(controller);
             Scene scene = new Scene(loader.load());
+            GUI_ReglasController controller = loader.getController();
+            controller.cargarCuenta(cuentaLogueada);
+            loader.setController(controller);
             stage.setScene(scene);
             stage.setResizable(false);
             stage.show();
          } catch (IOException ex) {
-            Logger.getLogger(GUI_IniciarSesionController.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(GUI_MenuPartidaController.class.getName()).log(Level.SEVERE, null, ex);
          }
       });
 
       buttonPuntuacion.setOnAction(event -> {
-         cargarVentana(event, "GUI_Puntuaciones.fxml");
+         Node node = (Node) event.getSource();
+         Stage stage = (Stage) node.getScene().getWindow();
+         try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_Puntuaciones.fxml"));
+            Scene scene = new Scene(loader.load());
+            GUI_PuntuacionesController controller = loader.getController();
+            controller.cargarCuenta(cuentaLogueada);
+            loader.setController(controller);
+            stage.setScene(scene);
+            stage.setResizable(false);
+            stage.show();
+         } catch (IOException ex) {
+            Logger.getLogger(GUI_MenuPartidaController.class.getName()).log(Level.SEVERE, null, ex);
+         }
       });
    }
 
-   public GUI_MenuPartidaController(CuentaUsuario cuenta) {
+   public void cargarCuenta(CuentaUsuario cuenta) {
       this.cuentaLogueada = cuenta;
+
+      //ESTO ES PARA COMPROBAR QUE FUNCIONA (ELIMINAR DESPUÉS)
+      labelConfigurar.setText(cuentaLogueada.getNombreUsuario());
    }
 
    public void irPrepararPartida(Event event) {
@@ -139,14 +157,15 @@ public class GUI_MenuPartidaController implements Initializable {
       Stage stage = (Stage) node.getScene().getWindow();
       try {
          FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_PrepararPartida.fxml"));
-         GUI_PrepararPartidaController controller = new GUI_PrepararPartidaController(cuentaLogueada);
-         loader.setController(controller);
          Scene scene = new Scene(loader.load());
+         GUI_PrepararPartidaController controller = loader.getController();
+         controller.cargarCuenta(cuentaLogueada);
+         loader.setController(controller);
          stage.setScene(scene);
          stage.setResizable(false);
          stage.show();
       } catch (IOException ex) {
-         Logger.getLogger(GUI_IniciarSesionController.class.getName()).log(Level.SEVERE, null, ex);
+         Logger.getLogger(GUI_MenuPartidaController.class.getName()).log(Level.SEVERE, null, ex);
       }
    }
 
@@ -168,9 +187,8 @@ public class GUI_MenuPartidaController implements Initializable {
    public void cargarVentana(Event event, String url) {
       Node node = (Node) event.getSource();
       Stage stage = (Stage) node.getScene().getWindow();
-      Parent root;
       try {
-         root = FXMLLoader.load(getClass().getResource(url));
+         Parent root = FXMLLoader.load(getClass().getResource(url));
          Scene scene = new Scene(root);
          stage.setScene(scene);
          stage.setResizable(false);

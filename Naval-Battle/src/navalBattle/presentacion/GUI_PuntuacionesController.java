@@ -29,29 +29,32 @@ import navalBattle.logica.CuentaUsuario;
  * @author José Alí Valdivia Ruiz
  */
 public class GUI_PuntuacionesController implements Initializable {
-   @FXML 
+
+   @FXML
    private JFXButton buttonRegresar;
    @FXML
    private Label labelPuntuaciones;
-   
-   CuentaUsuario cuentaLogueada = null;
-   boolean sesionIniciada = false;
+
+   CuentaUsuario cuentaLogueada;
+
    /**
     * Initializes the controller class.
     */
    @Override
    public void initialize(URL url, ResourceBundle rb) {
-      cargarIdioma();  
-      buttonRegresar.setOnAction( event -> {   
+      cargarIdioma();
+      buttonRegresar.setOnAction(event -> {
          Node node = (Node) event.getSource();
          Stage stage = (Stage) node.getScene().getWindow();
          try {
             Scene scene;
-            if (sesionIniciada) {
+            if (cuentaLogueada != null) {
                FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_MenuPartida.fxml"));
-               GUI_MenuPartidaController controller = new GUI_MenuPartidaController(cuentaLogueada);
-               loader.setController(controller);
                scene = new Scene(loader.load());
+               GUI_MenuPartidaController controller = loader.getController();
+               controller.cargarCuenta(cuentaLogueada);
+               loader.setController(controller);
+
             } else {
                Parent root = FXMLLoader.load(getClass().getResource("GUI_IniciarSesion.fxml"));
                scene = new Scene(root);
@@ -63,22 +66,19 @@ public class GUI_PuntuacionesController implements Initializable {
             Logger.getLogger(GUI_IniciarSesionController.class.getName()).log(Level.SEVERE, null, ex);
          }
       });
-      System.out.println("CUENTA DESDE PUNTUACIONES" + cuentaLogueada.getNombreUsuario()); 
-   }      
 
-   public GUI_PuntuacionesController(CuentaUsuario cuenta){
-     cuentaLogueada = cuenta;
-     sesionIniciada = true;
-    }
-   
-   public GUI_PuntuacionesController(){
-    }
+   }
+
+   public void cargarCuenta(CuentaUsuario cuenta) {
+      this.cuentaLogueada = cuenta;
+   }
+
    /**
-    * Método para carga el idioma seleccionado por default en botones y etiquetas 
+    * Método para carga el idioma seleccionado por default en botones y etiquetas
     */
-   public void cargarIdioma(){
+   public void cargarIdioma() {
       Locale locale = Locale.getDefault();
       ResourceBundle resources = ResourceBundle.getBundle("navalBattle.recursos.idiomas.Idioma", locale);
       labelPuntuaciones.setText(resources.getString("labelPuntuaciones"));
-   }   
+   }
 }

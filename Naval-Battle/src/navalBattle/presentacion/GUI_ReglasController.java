@@ -43,9 +43,9 @@ public class GUI_ReglasController implements Initializable {
    private Label labelReglaTres;
    @FXML
    private Label labelReglaCinco;
+  
+   CuentaUsuario cuentaLogueada;
    
-   CuentaUsuario cuentaLogueada = null;
-   boolean sesionIniciada = false;
    /**
     * Initializes the controller class.
     */
@@ -55,13 +55,15 @@ public class GUI_ReglasController implements Initializable {
       buttonRegreso.setOnAction(event -> {
          Node node = (Node) event.getSource();
          Stage stage = (Stage) node.getScene().getWindow();
+         Scene scene;
          try {
-            Scene scene;
-            if (sesionIniciada) {
+             
+            if (cuentaLogueada != null) {
                FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_MenuPartida.fxml"));
-               GUI_MenuPartidaController controller = new GUI_MenuPartidaController(cuentaLogueada);
-               loader.setController(controller);
                scene = new Scene(loader.load());
+               GUI_MenuPartidaController controller = loader.getController();
+               controller.cargarCuenta(cuentaLogueada);
+               loader.setController(controller);
             } else {
                Parent root = FXMLLoader.load(getClass().getResource("GUI_IniciarSesion.fxml"));
                scene = new Scene(root);
@@ -72,17 +74,14 @@ public class GUI_ReglasController implements Initializable {
          } catch (IOException ex) {
             Logger.getLogger(GUI_IniciarSesionController.class.getName()).log(Level.SEVERE, null, ex);
          }
-         System.out.println("CUENTA DESDE REGLAS " + cuentaLogueada.getNombreUsuario());
+         
       });
    }
 
-   public GUI_ReglasController(CuentaUsuario cuenta){
-     cuentaLogueada = cuenta;
-     sesionIniciada = true;
+   public void cargarCuenta(CuentaUsuario cuenta){
+     this.cuentaLogueada = cuenta;
     }
-   
-   public GUI_ReglasController(){
-    }
+  
    /**
     * Método para cargar el idioma seleccionado como default en botones y etiquetas
     */

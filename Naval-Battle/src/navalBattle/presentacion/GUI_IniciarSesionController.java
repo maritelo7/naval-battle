@@ -113,15 +113,17 @@ public class GUI_IniciarSesionController implements Initializable {
       });
       
       buttonIniciar.setOnAction((ActionEvent event) -> {
-         CuentaUsuario cuenta = ingresar();
-         if (cuenta != null) {
+         //CuentaUsuario cuenta = ingresar();
+         CuentaUsuario cuentaP = new CuentaUsuario("Tello", "Mipass", "English");
+         //Modificar ese IF
+         if (cuentaP != null) {
             Node node = (Node) event.getSource();
             Stage stage = (Stage) node.getScene().getWindow();
-            try {
-               FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_MenuPartida.fxml")); 
-               GUI_MenuPartidaController controller = new GUI_MenuPartidaController(cuenta);
-               loader.setController(controller);
+            try { 
+               FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_MenuPartida.fxml"));
                Scene scene = new Scene(loader.load());
+               GUI_MenuPartidaController controller = loader.getController();
+               controller.cargarCuenta(cuentaP);
                stage.setScene(scene);
                stage.setResizable(false);
                stage.show();
@@ -227,7 +229,9 @@ public class GUI_IniciarSesionController implements Initializable {
    public void cargarSonido() {
       String separator = System.getProperty("file.separator");
       System.out.println(separator +"navalBattle" + separator + "recursos" + separator + "sonidos" + separator +"MainThemeonMarimba.mp3");
-      final String resourceSonido = this.getClass().getResource(separator +"navalBattle" + separator + "recursos" + separator + "sonidos" + separator + "MainThemeonMarimba.mp3").toExternalForm();
+      final String resourceSonido = this.getClass().getResource(separator +"navalBattle" + separator 
+          + "recursos" + separator + "sonidos" + separator + "MainThemeonMarimba.mp3").toExternalForm();
+//      final String resourceSonido = this.getClass().getResource("\navalBattle\recursos\sonidos\MainThemeonMarimba.mp3").toExternalForm();
       Media sound = new Media(new File(resourceSonido).toString());
       MediaPlayer mediaP = new MediaPlayer(sound);
       mediaP.setVolume(1);

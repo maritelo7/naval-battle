@@ -71,7 +71,7 @@ public class GUI_JugarPartidaController implements Initializable {
    VBox columnasEnemigo = new VBox();
    Tablero tableroJugador;
    Tablero tableroEnemigo;
-   CuentaUsuario cuentaLogueada = null;
+   CuentaUsuario cuentaLogueada;
 
    /**
     * Initializes the controller class.
@@ -87,14 +87,15 @@ public class GUI_JugarPartidaController implements Initializable {
          Stage stage = (Stage) node.getScene().getWindow();
          try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_MenuPartida.fxml"));
-            GUI_MenuPartidaController controller = new GUI_MenuPartidaController(cuentaLogueada);
-            loader.setController(controller);
             Scene scene = new Scene(loader.load());
+            GUI_MenuPartidaController controller = loader.getController();
+            controller.cargarCuenta(cuentaLogueada);
+            loader.setController(controller);
             stage.setScene(scene);
             stage.setResizable(false);
             stage.show();
          } catch (IOException ex) {
-            Logger.getLogger(GUI_IniciarSesionController.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(GUI_JugarPartidaController.class.getName()).log(Level.SEVERE, null, ex);
          }
       });
 
@@ -104,11 +105,13 @@ public class GUI_JugarPartidaController implements Initializable {
          Misil misil = new Misil((int) casilla.getX(), (int) casilla.getY());
          if (casilla.atacadaANave()) {
             ajustarMiTurno(true);
+            cargarSonidoDestruccion();
             if (!casilla.getNave().isViva()) {
                liberarcolindantes(casilla, false);
             }
          } 
          ajustarMiTurno(false);
+         cargarSonidoAgua();
       });
    }
 
@@ -116,7 +119,7 @@ public class GUI_JugarPartidaController implements Initializable {
     * Método para cargar objeto cuenta y utilzar sus valores en este controller
     * @param cuenta CuentaUsuario
     */
-   public GUI_JugarPartidaController(CuentaUsuario cuenta) {
+   public void cargarCuenta(CuentaUsuario cuenta) {
       this.cuentaLogueada = cuenta;
    }
 
@@ -231,11 +234,9 @@ public class GUI_JugarPartidaController implements Initializable {
     */
    public void ajustarMiTurno(boolean esTurno) {
       if (esTurno) {
-         System.out.println("ABLE");
          paneTableroEnemigo.disableProperty().set(false);
          iniciarConteo();
       } else {
-         System.out.println("DISABLE");
          paneTableroEnemigo.disableProperty().set(true);
       }
    }
