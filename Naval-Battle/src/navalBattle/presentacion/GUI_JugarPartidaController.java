@@ -27,6 +27,9 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.HBox;
@@ -82,7 +85,7 @@ public class GUI_JugarPartidaController implements Initializable {
 
       buttonRendirse.setOnAction(event -> {
          ajustarMiTurno(true);
-         //mostrar ventana de DERROTA, al cerrar esta ventana, se regresa al Menu
+         cargarAviso("titleDerrota", "mensajeDerrota");
          Node node = (Node) event.getSource();
          Stage stage = (Stage) node.getScene().getWindow();
          try {
@@ -115,9 +118,9 @@ public class GUI_JugarPartidaController implements Initializable {
       });
    }
 
-   /**
+    /**
     * Método para cargar objeto cuenta y utilzar sus valores en este controller
-    * @param cuenta CuentaUsuario
+    * @param cuenta la CuentaUsuario con la que se ha iniciado sesión
     */
    public void cargarCuenta(CuentaUsuario cuenta) {
       this.cuentaLogueada = cuenta;
@@ -135,6 +138,26 @@ public class GUI_JugarPartidaController implements Initializable {
       buttonRendirse.setText(resources.getString("buttonRendirse"));
    }
 
+   /**
+    * Método reutilizable para cargar un ventana emergente
+    *
+    * @param nombreTitulo nombre del key del título
+    * @param nombreMensaje nombre del key del mensaje
+    */
+   public void cargarAviso(String nombreTitulo, String nombreMensaje) {
+      Locale locale = Locale.getDefault();
+      ResourceBundle resources = ResourceBundle.getBundle("navalBattle.recursos.idiomas.Idioma", locale);
+      String titulo = resources.getString(nombreTitulo);
+      String mensaje = resources.getString(nombreMensaje);
+      Alert confirmacion = new Alert(Alert.AlertType.INFORMATION);
+      confirmacion.setTitle(titulo);
+      confirmacion.setHeaderText(null);
+      confirmacion.setContentText(mensaje);
+      ButtonType btAceptar = new ButtonType("OK", ButtonBar.ButtonData.CANCEL_CLOSE);
+      confirmacion.getButtonTypes().setAll(btAceptar);
+      confirmacion.showAndWait();
+   }
+   
    /**
     * Método para cargar el tablero del jugador
     */

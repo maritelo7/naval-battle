@@ -120,7 +120,7 @@ public class GUI_PrepararPartidaController implements Initializable {
          }
       });
       buttonRegresar.setOnAction(event -> {
-         //Aquí se debe cerrar la conexión y avisar al otro jugador
+         cargarAviso("titleCancelarPartida", "mensajeCancelarPartida");
          Node node = (Node) event.getSource();
          Stage stage = (Stage) node.getScene().getWindow();
          try {
@@ -156,7 +156,6 @@ public class GUI_PrepararPartidaController implements Initializable {
          if (tamanioNave != 0) {
             Nave nave = new Nave(tamanioNave, esHorizontal);
             if (!colocarNave(casilla, nave)) {
-               //Aviso de posición incorrecta
                cargarAviso("tittlePosicion", "mensajePosicion");
             } else {
                actualizarNaves();
@@ -174,9 +173,8 @@ public class GUI_PrepararPartidaController implements Initializable {
    }
 
    /**
-    * Método para utilizar valores del objeto cuenta en el controller
-    *
-    * @param cuenta CuentaUsuario
+    * Método para cargar objeto cuenta y utilzar sus valores en este controller
+    * @param cuenta la CuentaUsuario con la que se ha iniciado sesión
     */
    public void cargarCuenta(CuentaUsuario cuenta) {
       this.cuentaLogueada = cuenta;
@@ -196,7 +194,7 @@ public class GUI_PrepararPartidaController implements Initializable {
       labelVertical.setText(resources.getString("labelVertical"));
       labelVertical.setVisible(false);
    }
-
+   
    /**
     * Método para cargar el tablero con casillas y las etiquetas de las naves
     */
@@ -238,7 +236,6 @@ public class GUI_PrepararPartidaController implements Initializable {
       ButtonType btAceptar = new ButtonType("OK", ButtonBar.ButtonData.CANCEL_CLOSE);
       confirmacion.getButtonTypes().setAll(btAceptar);
       confirmacion.showAndWait();
-      //Duda de show and wait
    }
 
    /**

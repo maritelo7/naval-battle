@@ -144,14 +144,20 @@ public class GUI_MenuPartidaController implements Initializable {
          }
       });
    }
-
+    /**
+    * Método para cargar objeto cuenta y utilzar sus valores en este controller
+    * @param cuenta la CuentaUsuario con la que se ha iniciado sesión
+    */
    public void cargarCuenta(CuentaUsuario cuenta) {
       this.cuentaLogueada = cuenta;
 
       //ESTO ES PARA COMPROBAR QUE FUNCIONA (ELIMINAR DESPUÉS)
       labelConfigurar.setText(cuentaLogueada.getNombreUsuario());
    }
-
+    /**
+    * Método para cambiar de la ventana actual a otra
+    * @param event evento que desencadena un cambio de ventana
+    */
    public void irPrepararPartida(Event event) {
       Node node = (Node) event.getSource();
       Stage stage = (Stage) node.getScene().getWindow();
@@ -183,7 +189,11 @@ public class GUI_MenuPartidaController implements Initializable {
       labelConfigurar.setText(resources.getString("labelConfigurar"));
       labelIniciando.setText(resources.getString("labelIniciando"));
    }
-
+   /**
+    * Método para cambiar de la ventana actual a otra
+    * @param event evento que desencadena un cambio de ventana
+    * @param url nombre del archivo .fxml de la ventana a cargar
+    */
    public void cargarVentana(Event event, String url) {
       Node node = (Node) event.getSource();
       Stage stage = (Stage) node.getScene().getWindow();

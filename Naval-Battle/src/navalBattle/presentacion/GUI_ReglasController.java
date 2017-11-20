@@ -77,7 +77,10 @@ public class GUI_ReglasController implements Initializable {
          
       });
    }
-
+   /**
+    * Método para cargar objeto cuenta y utilzar sus valores en este controller
+    * @param cuenta la CuentaUsuario con la que se ha iniciado sesión
+    */
    public void cargarCuenta(CuentaUsuario cuenta){
      this.cuentaLogueada = cuenta;
     }

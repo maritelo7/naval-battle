@@ -29,6 +29,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.Label;
@@ -113,17 +115,15 @@ public class GUI_IniciarSesionController implements Initializable {
       });
       
       buttonIniciar.setOnAction((ActionEvent event) -> {
-         //CuentaUsuario cuenta = ingresar();
-         CuentaUsuario cuentaP = new CuentaUsuario("Tello", "Mipass", "English");
-         //Modificar ese IF
-         if (cuentaP != null) {
+         CuentaUsuario cuenta = ingresar();
+         if (cuenta != null) {
             Node node = (Node) event.getSource();
             Stage stage = (Stage) node.getScene().getWindow();
             try { 
                FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_MenuPartida.fxml"));
                Scene scene = new Scene(loader.load());
                GUI_MenuPartidaController controller = loader.getController();
-               controller.cargarCuenta(cuentaP);
+               controller.cargarCuenta(cuenta);
                stage.setScene(scene);
                stage.setResizable(false);
                stage.show();
@@ -131,14 +131,17 @@ public class GUI_IniciarSesionController implements Initializable {
                Logger.getLogger(GUI_IniciarSesionController.class.getName()).log(Level.SEVERE, null, ex);
             }           
          } else {
-            System.out.println("No se puede iniciar sesión");
-            //Enviar key de internacionalización de titulo y cuerpo de no coindicencia de usuario
-            //cargarAviso();
+            cargarAviso("titleAlerta", "mensajeImposibleIniciarSesion");
          }
       });
-      
    }
 
+   /**
+    * Método auxiliar para limitar los caracteres introducidos en el field de nickname a solo letras
+    * mayúsculas, minúsculas y números
+    *
+    * @param e evento de teclado
+    */
    @FXML
    public void limitarCaracteresNick(KeyEvent e) {
       String s = e.getCharacter();
@@ -148,9 +151,16 @@ public class GUI_IniciarSesionController implements Initializable {
       }
    }
 
+   /**
+    * Método para el inicio de sesión, donde se recupera el nickname y la clave y se intenta loguear
+    * en una cuenta
+    *
+    * @return La cuenta a la cual corresponde el nickname y la clave
+    */
    public CuentaUsuario ingresar() {
       CuentaUsuario cuentaRecuperada = null;
       if (obtenerYValidarCamposCuenta()) {
+         System.out.println("ESTO NO DEBERIA PASAR");
          AdministracionCuenta adminCuenta = new AdministracionCuenta();
          String nickname = tFieldNick.getText();
          String clave = pFieldClave.getText();
@@ -158,20 +168,29 @@ public class GUI_IniciarSesionController implements Initializable {
             cuentaRecuperada = adminCuenta.consultarCuenta(nickname, clave);
          } catch (Exception ex) {
            Logger.getLogger(GUI_IniciarSesionController.class.getName()).log(Level.SEVERE, null, ex);
-            System.out.println(ex.getMessage());
          }
       }
       return cuentaRecuperada;
    }
-
+   /**
+    * Método auxiliar para comprobar que los campos obligatorios del Nickname y la Clave no están 
+    * nulos cuando se inicie la sesión
+    *
+    * @return regresa que es válido si ambos campos no están nulos
+    */
+   
    public boolean obtenerYValidarCamposCuenta() {
       boolean valido = false;
-      if (tFieldNick.getText() != null && pFieldClave.getText() != null) {
+      if (tFieldNick.getText() != null || pFieldClave.getText() != null) {
          valido = true;
       }
       return valido;
    }
-
+    /**
+    * Método para cambiar de la ventana actual a otra
+    * @param event evento que desencadena un cambio de ventana
+    * @param url nombre del archivo .fxml de la ventana a cargar
+    */
    public void cargarVentana(Event event, String url) {
          Node node = (Node) event.getSource();
          Stage stage = (Stage) node.getScene().getWindow();
@@ -186,7 +205,25 @@ public class GUI_IniciarSesionController implements Initializable {
             Logger.getLogger(GUI_IniciarSesionController.class.getName()).log(Level.SEVERE, null, ex);
          }
    }
-
+/**
+    * Método reutilizable para cargar un ventana emergente
+    *
+    * @param nombreTitulo nombre del key del título
+    * @param nombreMensaje nombre del key del mensaje
+    */
+   public void cargarAviso(String nombreTitulo, String nombreMensaje) {
+      Locale locale = Locale.getDefault();
+      ResourceBundle resources = ResourceBundle.getBundle("navalBattle.recursos.idiomas.Idioma", locale);
+      String titulo = resources.getString(nombreTitulo);
+      String mensaje = resources.getString(nombreMensaje);
+      Alert confirmacion = new Alert(Alert.AlertType.INFORMATION);
+      confirmacion.setTitle(titulo);
+      confirmacion.setHeaderText(null);
+      confirmacion.setContentText(mensaje);
+      ButtonType btAceptar = new ButtonType("OK", ButtonBar.ButtonData.CANCEL_CLOSE);
+      confirmacion.getButtonTypes().setAll(btAceptar);
+      confirmacion.showAndWait();
+   }
    /**
     * Método para cargar el idioma en etiquetas y botones establecido como default
     */

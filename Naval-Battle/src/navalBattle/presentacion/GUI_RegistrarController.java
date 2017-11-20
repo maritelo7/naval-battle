@@ -21,6 +21,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
@@ -82,6 +85,10 @@ public class GUI_RegistrarController implements Initializable {
 
    }
 
+    /**
+    * Método para cargar objeto cuenta y utilzar sus valores en este controller
+    * @param cuenta la CuentaUsuario con la que se ha iniciado sesión
+    */
    public void cargarCuenta(CuentaUsuario cuenta) {
       this.cuentaLogueada = cuenta;
       tFieldNick.setText(cuentaLogueada.getNombreUsuario());
@@ -90,7 +97,10 @@ public class GUI_RegistrarController implements Initializable {
       comboIdioma.setValue(cuentaLogueada.getLenguaje());
 
    }
-
+   /**
+    * Método para guardar los cambios de la CuentaUsuario
+    * @param event evento del botón
+    */
    public void accionButtonGuardar(Event event) {
 
       if (obtenerYValidarCamposCuenta()) {
@@ -98,38 +108,31 @@ public class GUI_RegistrarController implements Initializable {
          String clave = pFieldClave.getText();
          String confirmacionClave = pFieldConfirmacionClave.getText();
          if (clave.equals(confirmacionClave)) {
-            AdministracionCuenta adminCuenta = null;
+            AdministracionCuenta adminCuenta = new AdministracionCuenta();
             if (cuentaLogueada == null) {
-               try {
-                  System.out.println("HI");
-                  //Y el idioma?
-                  CuentaUsuario nuevaCuenta = new CuentaUsuario(nickname, clave);
-                  adminCuenta.registrarCuenta(nuevaCuenta);
-                  cuentaLogueada = adminCuenta.consultarCuenta(nickname, clave);
-                  //INCOMPLETO EL ALERT
-               } catch (NoSuchAlgorithmException ex) {
-                  Logger.getLogger(GUI_RegistrarController.class.getName()).log(Level.SEVERE, null, ex);
-               }
+               CuentaUsuario nuevaCuenta = new CuentaUsuario(nickname, clave);
+               adminCuenta.registrarCuenta(nuevaCuenta);
+               cuentaLogueada = adminCuenta.consultarCuenta(nickname, clave);
             } else {
-               try {
-                  adminCuenta.modificarCuenta(cuentaLogueada);
-                  cuentaLogueada = adminCuenta.consultarCuenta(nickname, clave);
-                  //INCOMPLETO EL ALERT
-               } catch (NoSuchAlgorithmException ex) {
-                  Logger.getLogger(GUI_RegistrarController.class.getName()).log(Level.SEVERE, null, ex);
-               }
+               adminCuenta.modificarCuenta(cuentaLogueada);
+               cuentaLogueada = adminCuenta.consultarCuenta(nickname, clave);
             }
 
          } else {
-            //MENSAJE DE QUE DE CONFIRMACIÓN DE LA CLAVE NO ES LA MISMA
+            cargarAviso("titleAlerta", "mensajeClaveNoCoincide");
          }
       } else {
-         //MENSAJE DE QUE NO TODOS LOS CAMPOS ESTÁN LLENOS
+          cargarAviso("titleAlerta", "mensajeCamposLlenos");
       }
-      //Enviar mensaje de guadado
-
+      cargarAviso("titleAlerta", "mensajeGuardado");
    }
 
+   /**
+    * Método auxiliar para limitar los caracteres introducidos en el field de nickname a solo letras
+    * mayúsculas, minúsculas y números
+    *
+    * @param e evento de teclado
+    */
    @FXML
    public void limitarCaracteresNick(KeyEvent e) {
       String s = e.getCharacter();
@@ -137,20 +140,14 @@ public class GUI_RegistrarController implements Initializable {
       if ((c > 'z' || c < 'a') && (c > '9' || c < '0')) {
          e.consume();
       }
-      if (tFieldNick.getText().length() > 12) {
-         e.consume();
-      }
    }
 
-   @FXML
-   public void limitarCaracteresClave(KeyEvent e) {
-      String s = e.getCharacter();
-      char c = s.charAt(0);
-      if (pFieldClave.getText().length() > 12) {
-         e.consume();
-      }
-   }
-
+   /**
+    * Método auxiliar para comprobar que los campos obligatorios del Nickname y la Clave no están 
+    * nulos cuando se inicie la sesión
+    *
+    * @return regresa que es válido si ambos campos no están nulos
+    */
    public boolean obtenerYValidarCamposCuenta() {
       boolean valido = false;
       if (tFieldNick.getText() != null && pFieldClave.getText() != null && pFieldConfirmacionClave.getText() != null) {
@@ -158,18 +155,40 @@ public class GUI_RegistrarController implements Initializable {
       }
       return valido;
    }
-
-   public void accionButtonBaja(Event event) {
-
-      try {
-         AdministracionCuenta adminCuenta = null;
-         adminCuenta.desactivarCuenta(cuentaLogueada.getNombreUsuario());
-      } catch (NoSuchAlgorithmException ex) {
-         Logger.getLogger(GUI_RegistrarController.class.getName()).log(Level.SEVERE, null, ex);
-      }
-
+   
+    /**
+    * Método reutilizable para cargar un ventana emergente
+    *
+    * @param nombreTitulo nombre del key del título
+    * @param nombreMensaje nombre del key del mensaje
+    */
+   public void cargarAviso(String nombreTitulo, String nombreMensaje) {
+      Locale locale = Locale.getDefault();
+      ResourceBundle resources = ResourceBundle.getBundle("navalBattle.recursos.idiomas.Idioma", locale);
+      String titulo = resources.getString(nombreTitulo);
+      String mensaje = resources.getString(nombreMensaje);
+      Alert confirmacion = new Alert(Alert.AlertType.INFORMATION);
+      confirmacion.setTitle(titulo);
+      confirmacion.setHeaderText(null);
+      confirmacion.setContentText(mensaje);
+      ButtonType btAceptar = new ButtonType("OK", ButtonBar.ButtonData.CANCEL_CLOSE);
+      confirmacion.getButtonTypes().setAll(btAceptar);
+      confirmacion.showAndWait();
    }
 
+   /**
+    * Método para dar de baja la cuenta con la que se ha iniciado sesión
+    * @param event evento del botón
+    */
+   public void accionButtonBaja(Event event) {
+      AdministracionCuenta adminCuenta = new AdministracionCuenta();
+      adminCuenta.desactivarCuenta(cuentaLogueada.getNombreUsuario());
+      cargarAviso("titleAlerta", "mensajeBaja");
+   }
+   /**
+    * Método para cambiar de la ventana actual a la anterior
+    * @param event evento que desencadena el cambio de ventana
+    */
    public void accionButtonRegresar(Event event) {
       Node node = (Node) event.getSource();
       Stage stage = (Stage) node.getScene().getWindow();
@@ -217,6 +236,9 @@ public class GUI_RegistrarController implements Initializable {
       labelClave.setText(resources.getString("labelClave"));
    }
 
+    /**
+    * Método para cargar la lista de idiomas en el combo box 
+    */
    public void cargarComboIdioma() {
       final String[] data = {"Español", "Français", "English"};
       ObservableList<String> listIdiomas = FXCollections.observableArrayList(data);
