@@ -75,6 +75,7 @@ public class GUI_JugarPartidaController implements Initializable {
    Tablero tableroJugador;
    Tablero tableroEnemigo;
    CuentaUsuario cuentaLogueada;
+   final static String RECURSO_IDIOMA = "navalBattle.recursos.idiomas.Idioma";
 
    /**
     * Initializes the controller class.
@@ -131,7 +132,7 @@ public class GUI_JugarPartidaController implements Initializable {
     */
    public void cargarIdioma() {
       Locale locale = Locale.getDefault();
-      ResourceBundle resources = ResourceBundle.getBundle("navalBattle.recursos.idiomas.Idioma", locale);
+      ResourceBundle resources = ResourceBundle.getBundle(RECURSO_IDIOMA, locale);
       labelTiempoRestante.setText(resources.getString("labelTiempoRestante"));
       labelPuntuacionHost.setText(resources.getString("labelPuntuacionHost"));
       labelPuntuacionAdversario.setText(resources.getString("labelPuntuacionAdversario"));
@@ -146,7 +147,7 @@ public class GUI_JugarPartidaController implements Initializable {
     */
    public void cargarAviso(String nombreTitulo, String nombreMensaje) {
       Locale locale = Locale.getDefault();
-      ResourceBundle resources = ResourceBundle.getBundle("navalBattle.recursos.idiomas.Idioma", locale);
+      ResourceBundle resources = ResourceBundle.getBundle(RECURSO_IDIOMA, locale);
       String titulo = resources.getString(nombreTitulo);
       String mensaje = resources.getString(nombreMensaje);
       Alert confirmacion = new Alert(Alert.AlertType.INFORMATION);
@@ -228,11 +229,10 @@ public class GUI_JugarPartidaController implements Initializable {
    /**
     * Método para cargar el recurso de sonido de destrucción de una parte de la nave
     */
-   public void cargarSonidoDestruccion() {
-      String separator = System.getProperty("file.separator");
-      final String resourceSonido = this.getClass().getResource(separator + "navalBattle" + separator
-          + "recursos" + separator + "sonidos" + separator + "Tommccann_explosion.wav").toExternalForm();
-      Media sound = new Media(new File(resourceSonido).toString());
+   public void cargarSonidoDestruccion() { 
+      final URL resourceSonido = this.getClass().getResource("/navalBattle/recursos/sonidos/"
+          + "Tommccann_explosion.wav");
+      Media sound = new Media((resourceSonido).toString());
       MediaPlayer mediaP = new MediaPlayer(sound);
       mediaP.setVolume(.5);
       mediaP.play();
@@ -242,10 +242,9 @@ public class GUI_JugarPartidaController implements Initializable {
     * Método para cargar el recurso de sonido de agua, en caso no de existir nave
     */
    public void cargarSonidoAgua() {
-      String separator = System.getProperty("file.separator");
-      final String resourceSonido = this.getClass().getResource(separator + "navalBattle" + separator
-          + "recursos" + separator + "sonidos" + separator + "Bird-man_big-splash.wav").toExternalForm();
-      Media sound = new Media(new File(resourceSonido).toString());
+      final URL resourceSonido = this.getClass().getResource("/navalBattle/recursos/sonidos/"
+          + "Bird-man_big-splash.wav");
+      Media sound = new Media((resourceSonido).toString());
       MediaPlayer mediaP = new MediaPlayer(sound);
       mediaP.setVolume(1);
       mediaP.play();
@@ -320,7 +319,14 @@ public class GUI_JugarPartidaController implements Initializable {
       boolean horizontal = nave.isHorizontal();
       int tamanio = nave.getTamanio();
       if (horizontal) {
-         for (int i = x - tamanio; i < x; i++) {
+         liberarHorizontal(x, y, tamanio, jugador);
+      } else {
+         liberarVertical(x, y, tamanio, jugador);
+      }
+      
+   }
+   public void liberarHorizontal(int x, int y, int tamanio, boolean jugador) {
+               for (int i = x - tamanio; i < x; i++) {
             Casilla casilla = getCasillaJugador(i, y, jugador);
             for (Casilla colindante : getColindantes(i, y, jugador)) {
                if (!colindante.isAtacado()) {
@@ -328,9 +334,10 @@ public class GUI_JugarPartidaController implements Initializable {
                   colindante.liberar();
                }
             }
-         }
-      } else {
-         for (int i = y - tamanio; i < y; i++) {
+         } 
+   }
+   public void liberarVertical(int x, int y, int tamanio, boolean jugador){
+               for (int i = y - tamanio; i < y; i++) {
             Casilla casilla = getCasillaJugador(x, i, jugador);
             for (Casilla colindante : getColindantes(x, i, jugador)) {
                if (!colindante.isAtacado()) {
@@ -338,10 +345,7 @@ public class GUI_JugarPartidaController implements Initializable {
                }
             }
          }
-      }
-      
    }
-
    /**
     * Método para obtener las casillas colindantes
     * @param x posición de x de la casilla final 

@@ -16,12 +16,12 @@ import javafx.scene.layout.Pane;
  * @author javr
  */
 public class Tablero extends Parent {
-   private Pane paneTablero;
+   //private final Pane paneTablero;
    private boolean enemigo;
    private ArrayList<Casilla> casillas = new ArrayList<>();
 
-   public Tablero(Pane paneTablero, boolean enemigo) {
-      this.paneTablero = paneTablero;
+   public Tablero(boolean enemigo) {
+      //this.paneTablero = paneTablero;
       this.enemigo = enemigo;
    }
 

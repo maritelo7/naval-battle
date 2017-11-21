@@ -5,6 +5,7 @@
  */
 package navalBattle.logica;
 
+import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -62,6 +63,7 @@ public class AdministracionCuenta implements I_AdministracionCuenta {
          String claveHasheada = getHash(clave);
          cuentaRecuperada = (Cuenta) entity.createNamedQuery("Cuenta.iniciarSesion").setParameter("nombreUsuario", nombreUsuario).setParameter("clave", claveHasheada).getSingleResult();
          cuentaUsuario = new CuentaUsuario(cuentaRecuperada.getNombreUsuario(), cuentaRecuperada.getClave(), cuentaRecuperada.getLenguaje(), cuentaRecuperada.getPuntaje());
+         //Considerar eliminar linea 64. Considerar el constructor sin contraseña
       } catch (Exception ex) {
          Logger.getLogger(AdministracionCuenta.class.getName()).log(Level.SEVERE, null, ex);
       }
@@ -137,7 +139,7 @@ public class AdministracionCuenta implements I_AdministracionCuenta {
    @Override
    public String getHash(String string) throws NoSuchAlgorithmException {
       MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
-      byte[] hash = messageDigest.digest(string.getBytes());
+      byte[] hash = messageDigest.digest(string.getBytes(Charset.forName("UTF-8")));
       StringBuilder stringBuilder = new StringBuilder();
       for (int i = 0; i < hash.length; i++) {
          stringBuilder.append(Integer.toString((hash[i] & 0xff) + 0x100, 16).substring(1));

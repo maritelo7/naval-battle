@@ -12,7 +12,7 @@ package navalBattle.logica;
  */
 public class Nave {
    private int idNave;//Necesario?
-   private String descripcion;
+   private String descripcion;//Delete
    private String nombre;
    private int tamanio;
    private boolean horizontal;

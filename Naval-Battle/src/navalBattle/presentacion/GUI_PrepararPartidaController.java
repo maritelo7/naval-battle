@@ -82,19 +82,20 @@ public class GUI_PrepararPartidaController implements Initializable {
    private Label labelHorizontal;
    @FXML
    private Label labelVertical;
-   
+
    private boolean esHorizontal = true;
    VBox columna = new VBox();
    int tamanioNave = 0;
    int[] numeroNaves = {3, 2, 2, 1, 1};
    CuentaUsuario cuentaLogueada;
+   final static String RECURSO_IDIOMA = "navalBattle.recursos.idiomas.Idioma"; 
 
    /**
     * Initializes the controller class.
     */
    @Override
    public void initialize(URL url, ResourceBundle rb) {
-      
+
       cargarIdioma();
       cargarTablero();
       buttonContinuar.setOnAction(event -> {
@@ -174,6 +175,7 @@ public class GUI_PrepararPartidaController implements Initializable {
 
    /**
     * Método para cargar objeto cuenta y utilzar sus valores en este controller
+    *
     * @param cuenta la CuentaUsuario con la que se ha iniciado sesión
     */
    public void cargarCuenta(CuentaUsuario cuenta) {
@@ -184,9 +186,9 @@ public class GUI_PrepararPartidaController implements Initializable {
     * Método para cargar el idioma seleccionado por default en etiquetas y botones
     */
    public void cargarIdioma() {
-      
+
       Locale locale = Locale.getDefault();
-      ResourceBundle resources = ResourceBundle.getBundle("navalBattle.recursos.idiomas.Idioma", locale);
+      ResourceBundle resources = ResourceBundle.getBundle(RECURSO_IDIOMA, locale);
       labelColocaNaves.setText(resources.getString("labelColocaNaves"));
       labelRotar.setText(resources.getString("labelRotar"));
       buttonContinuar.setText(resources.getString("buttonContinuar"));
@@ -194,7 +196,7 @@ public class GUI_PrepararPartidaController implements Initializable {
       labelVertical.setText(resources.getString("labelVertical"));
       labelVertical.setVisible(false);
    }
-   
+
    /**
     * Método para cargar el tablero con casillas y las etiquetas de las naves
     */
@@ -226,7 +228,7 @@ public class GUI_PrepararPartidaController implements Initializable {
     */
    public void cargarAviso(String nombreTitulo, String nombreMensaje) {
       Locale locale = Locale.getDefault();
-      ResourceBundle resources = ResourceBundle.getBundle("navalBattle.recursos.idiomas.Idioma", locale);
+      ResourceBundle resources = ResourceBundle.getBundle(RECURSO_IDIOMA, locale);
       String titulo = resources.getString(nombreTitulo);
       String mensaje = resources.getString(nombreMensaje);
       Alert confirmacion = new Alert(Alert.AlertType.INFORMATION);
@@ -251,40 +253,47 @@ public class GUI_PrepararPartidaController implements Initializable {
       int tamanio = nave.getTamanio();
       boolean horizontal = nave.isHorizontal();
       if (horizontal) {
-         for (int i = x; i < x + tamanio; i++) {
+         return colocarHorizontal(x, y, tamanio);
+      }
+      return colocarVertical(x, y, tamanio);
+   }
+
+   public boolean colocarHorizontal(int x, int y, int tamanio) {
+      for (int i = x; i < x + tamanio; i++) {
+         if (!posicionValida(i, y)) {
+            return false;
+         }
+         Casilla casilla = getCasilla(i, y);
+         if (casilla.getNave() != null) {
+            return false;
+         }
+         for (Casilla colindante : getColindantes(i, y)) {
             if (!posicionValida(i, y)) {
                return false;
             }
-            Casilla casilla = getCasilla(i, y);
-            if (casilla.getNave() != null) {
+            if (colindante.getNave() != null) {
                return false;
             }
-            for (Casilla colindante : getColindantes(i, y)) {
-               if (!posicionValida(i, y)) {
-                  return false;
-               }
-               if (colindante.getNave() != null) {
-                  return false;
-               }
-            }
          }
+      }
+      return true;
+   }
 
-      } else {
-         for (int i = y; i < y + tamanio; i++) {
+   public boolean colocarVertical(int x, int y, int tamanio) {
+      for (int i = y; i < y + tamanio; i++) {
+         if (!posicionValida(x, i)) {
+            return false;
+         }
+         Casilla casilla = getCasilla(x, i);
+         if (casilla.getNave() != null) {
+            return false;
+         }
+         for (Casilla colindante : getColindantes(x, i)) {
             if (!posicionValida(x, i)) {
                return false;
             }
-            Casilla casilla = getCasilla(x, i);
-            if (casilla.getNave() != null) {
+            if (colindante.getNave() != null) {
                return false;
-            }
-            for (Casilla colindante : getColindantes(x, i)) {
-               if (!posicionValida(x, i)) {
-                  return false;
-               }
-               if (colindante.getNave() != null) {
-                  return false;
-               }
             }
          }
       }
@@ -503,7 +512,7 @@ public class GUI_PrepararPartidaController implements Initializable {
     */
    public Tablero recuperarTablero() {
       int z = 0;
-      Tablero tableroJugador = new Tablero(paneTablero, false);
+      Tablero tableroJugador = new Tablero(false);
       ArrayList<Casilla> casillas = new ArrayList<>();
       for (int i = 0; i < 10; i++) {
          for (int j = 0; j < 10; j++) {
