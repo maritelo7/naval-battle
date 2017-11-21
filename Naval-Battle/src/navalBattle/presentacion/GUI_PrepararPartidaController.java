@@ -88,7 +88,7 @@ public class GUI_PrepararPartidaController implements Initializable {
    int tamanioNave = 0;
    int[] numeroNaves = {3, 2, 2, 1, 1};
    CuentaUsuario cuentaLogueada;
-   final static String RECURSO_IDIOMA = "navalBattle.recursos.idiomas.Idioma"; 
+   final static String RECURSO_IDIOMA = "navalBattle.recursos.idiomas.Idioma";
 
    /**
     * Initializes the controller class.
@@ -259,6 +259,7 @@ public class GUI_PrepararPartidaController implements Initializable {
    }
 
    public boolean colocarHorizontal(int x, int y, int tamanio) {
+      boolean puedeHorizontal = false;
       for (int i = x; i < x + tamanio; i++) {
          if (!posicionValida(i, y)) {
             return false;
@@ -267,19 +268,25 @@ public class GUI_PrepararPartidaController implements Initializable {
          if (casilla.getNave() != null) {
             return false;
          }
-         for (Casilla colindante : getColindantes(i, y)) {
-            if (!posicionValida(i, y)) {
-               return false;
-            }
-            if (colindante.getNave() != null) {
-               return false;
-            }
+         puedeHorizontal = comprobarColindantesHorizontal(i, y);
+      }
+      return puedeHorizontal;
+   }
+
+   public boolean comprobarColindantesHorizontal(int i, int y) {
+      for (Casilla colindante : getColindantes(i, y)) {
+         if (!posicionValida(i, y)) {
+            return false;
+         }
+         if (colindante.getNave() != null) {
+            return false;
          }
       }
       return true;
    }
 
    public boolean colocarVertical(int x, int y, int tamanio) {
+      boolean puedeVertical = false;
       for (int i = y; i < y + tamanio; i++) {
          if (!posicionValida(x, i)) {
             return false;
@@ -288,13 +295,18 @@ public class GUI_PrepararPartidaController implements Initializable {
          if (casilla.getNave() != null) {
             return false;
          }
-         for (Casilla colindante : getColindantes(x, i)) {
-            if (!posicionValida(x, i)) {
-               return false;
-            }
-            if (colindante.getNave() != null) {
-               return false;
-            }
+         puedeVertical = comprobarColindantesVertical(i, y);
+      }
+      return true;
+   }
+
+   public boolean comprobarColindantesVertical(int x, int i) {
+      for (Casilla colindante : getColindantes(x, i)) {
+         if (!posicionValida(x, i)) {
+            return false;
+         }
+         if (colindante.getNave() != null) {
+            return false;
          }
       }
       return true;

@@ -113,14 +113,15 @@ public class GUI_JugarPartidaController implements Initializable {
             if (!casilla.getNave().isViva()) {
                liberarcolindantes(casilla, false);
             }
-         } 
+         }
          ajustarMiTurno(false);
          cargarSonidoAgua();
       });
    }
 
-    /**
+   /**
     * Método para cargar objeto cuenta y utilzar sus valores en este controller
+    *
     * @param cuenta la CuentaUsuario con la que se ha iniciado sesión
     */
    public void cargarCuenta(CuentaUsuario cuenta) {
@@ -158,7 +159,7 @@ public class GUI_JugarPartidaController implements Initializable {
       confirmacion.getButtonTypes().setAll(btAceptar);
       confirmacion.showAndWait();
    }
-   
+
    /**
     * Método para cargar el tablero del jugador
     */
@@ -208,6 +209,7 @@ public class GUI_JugarPartidaController implements Initializable {
 
    /**
     * Método para recibir el tablero del jugador
+    *
     * @param tableroJugador Tablero
     */
    public void setTableroJugador(Tablero tableroJugador) {
@@ -218,6 +220,7 @@ public class GUI_JugarPartidaController implements Initializable {
 
    /**
     * Método para recirbir el tablero del enemigo
+    *
     * @param tableroEnemigo Tablero
     */
    public void setTableroEnemigo(Tablero tableroEnemigo) {
@@ -229,7 +232,7 @@ public class GUI_JugarPartidaController implements Initializable {
    /**
     * Método para cargar el recurso de sonido de destrucción de una parte de la nave
     */
-   public void cargarSonidoDestruccion() { 
+   public void cargarSonidoDestruccion() {
       final URL resourceSonido = this.getClass().getResource("/navalBattle/recursos/sonidos/"
           + "Tommccann_explosion.wav");
       Media sound = new Media((resourceSonido).toString());
@@ -252,6 +255,7 @@ public class GUI_JugarPartidaController implements Initializable {
 
    /**
     * Método para configurar el turno del jugador
+    *
     * @param esTurno boolean
     */
    public void ajustarMiTurno(boolean esTurno) {
@@ -278,7 +282,7 @@ public class GUI_JugarPartidaController implements Initializable {
       );
       timeline.playFromStart();
       fadeConteo();
-      
+
    }
 
    /**
@@ -295,6 +299,7 @@ public class GUI_JugarPartidaController implements Initializable {
 
    /**
     * Método para obtener la casilla en tales posiciones
+    *
     * @param x posición x de la casilla
     * @param y posición y de la casilla
     * @param jugador boolean para determinar cuál casilla regresar
@@ -308,11 +313,12 @@ public class GUI_JugarPartidaController implements Initializable {
    }
 
    /**
-    * Método para liberar las casillas adyacentes cuando se ha destruido completamente una nave 
+    * Método para liberar las casillas adyacentes cuando se ha destruido completamente una nave
+    *
     * @param casillaAtacada última casilla atacada
     * @param jugador boolean para determinar el tablero
     */
-   public void liberarcolindantes(Casilla casillaAtacada, boolean jugador){
+   public void liberarcolindantes(Casilla casillaAtacada, boolean jugador) {
       int x = (int) casillaAtacada.getX();
       int y = (int) casillaAtacada.getY();
       Nave nave = casillaAtacada.getNave();
@@ -323,32 +329,35 @@ public class GUI_JugarPartidaController implements Initializable {
       } else {
          liberarVertical(x, y, tamanio, jugador);
       }
-      
+
    }
+
    public void liberarHorizontal(int x, int y, int tamanio, boolean jugador) {
-               for (int i = x - tamanio; i < x; i++) {
-            Casilla casilla = getCasillaJugador(i, y, jugador);
-            for (Casilla colindante : getColindantes(i, y, jugador)) {
-               if (!colindante.isAtacado()) {
-                  
-                  colindante.liberar();
-               }
-            }
-         } 
-   }
-   public void liberarVertical(int x, int y, int tamanio, boolean jugador){
-               for (int i = y - tamanio; i < y; i++) {
-            Casilla casilla = getCasillaJugador(x, i, jugador);
-            for (Casilla colindante : getColindantes(x, i, jugador)) {
-               if (!colindante.isAtacado()) {
-                  colindante.liberar();
-               }
+      for (int i = x - tamanio; i < x; i++) {
+         //Casilla casilla = getCasillaJugador(i, y, jugador);
+         for (Casilla colindante : getColindantes(i, y, jugador)) {
+            if (!colindante.isAtacado()) {
+               colindante.liberar();
             }
          }
+      }
    }
+
+   public void liberarVertical(int x, int y, int tamanio, boolean jugador) {
+      for (int i = y - tamanio; i < y; i++) {
+        // Casilla casilla = getCasillaJugador(x, i, jugador);
+         for (Casilla colindante : getColindantes(x, i, jugador)) {
+            if (!colindante.isAtacado()) {
+               colindante.liberar();
+            }
+         }
+      }
+   }
+
    /**
     * Método para obtener las casillas colindantes
-    * @param x posición de x de la casilla final 
+    *
+    * @param x posición de x de la casilla final
     * @param y posición de y de la casilla final
     * @param jugador boolean para determinar el tablero
     * @return arreglo de casillas
@@ -365,15 +374,16 @@ public class GUI_JugarPartidaController implements Initializable {
          new Point2D(x - 1, y - 1),};
       List<Casilla> colindantes = new ArrayList<>();
       for (Point2D p : points) {
-         
-            colindantes.add(getCasillaJugador((int) p.getX(), (int) p.getY(), jugador));
-         
+
+         colindantes.add(getCasillaJugador((int) p.getX(), (int) p.getY(), jugador));
+
       }
       return colindantes.toArray(new Casilla[0]);
    }
-   
+
    /**
     * Método para actualizar el estado del tablero del jugador
+    *
     * @param misil Misil con posicion de la casilla
     */
    public void actualizarMiTablero(Misil misil) {
@@ -382,6 +392,6 @@ public class GUI_JugarPartidaController implements Initializable {
          if (!casilla.getNave().isViva()) {
             liberarcolindantes(casilla, true);
          }
-      } 
+      }
    }
 }
