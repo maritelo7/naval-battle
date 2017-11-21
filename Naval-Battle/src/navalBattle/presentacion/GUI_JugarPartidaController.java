@@ -229,10 +229,10 @@ public class GUI_JugarPartidaController implements Initializable {
     * Método para cargar el recurso de sonido de destrucción de una parte de la nave
     */
    public void cargarSonidoDestruccion() {
-      String separator = System.getProperty("file.separator");
-      final String resourceSonido = this.getClass().getResource(separator + "navalBattle" + separator
-          + "recursos" + separator + "sonidos" + separator + "Tommccann_explosion.wav").toExternalForm();
-      Media sound = new Media(new File(resourceSonido).toString());
+      
+      final URL resourceSonido = this.getClass().getResource("/navalBattle/recursos/sonidos/"
+          + "Tommccann_explosion.wav");
+      Media sound = new Media((resourceSonido).toString());
       MediaPlayer mediaP = new MediaPlayer(sound);
       mediaP.setVolume(.5);
       mediaP.play();
@@ -242,10 +242,10 @@ public class GUI_JugarPartidaController implements Initializable {
     * Método para cargar el recurso de sonido de agua, en caso no de existir nave
     */
    public void cargarSonidoAgua() {
-      String separator = System.getProperty("file.separator");
-      final String resourceSonido = this.getClass().getResource(separator + "navalBattle" + separator
-          + "recursos" + separator + "sonidos" + separator + "Bird-man_big-splash.wav").toExternalForm();
-      Media sound = new Media(new File(resourceSonido).toString());
+      
+      final URL resourceSonido = this.getClass().getResource("/navalBattle/recursos/sonidos/"
+          + "Bird-man_big-splash.wav");
+      Media sound = new Media((resourceSonido).toString());
       MediaPlayer mediaP = new MediaPlayer(sound);
       mediaP.setVolume(1);
       mediaP.play();

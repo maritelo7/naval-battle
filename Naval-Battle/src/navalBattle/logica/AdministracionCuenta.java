@@ -62,6 +62,7 @@ public class AdministracionCuenta implements I_AdministracionCuenta {
          String claveHasheada = getHash(clave);
          cuentaRecuperada = (Cuenta) entity.createNamedQuery("Cuenta.iniciarSesion").setParameter("nombreUsuario", nombreUsuario).setParameter("clave", claveHasheada).getSingleResult();
          cuentaUsuario = new CuentaUsuario(cuentaRecuperada.getNombreUsuario(), cuentaRecuperada.getClave(), cuentaRecuperada.getLenguaje(), cuentaRecuperada.getPuntaje());
+         //Considerar eliminar linea 64. Considerar el constructor sin contraseña
       } catch (Exception ex) {
          Logger.getLogger(AdministracionCuenta.class.getName()).log(Level.SEVERE, null, ex);
       }

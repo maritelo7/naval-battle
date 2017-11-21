@@ -81,7 +81,8 @@ public class GUI_IniciarSesionController implements Initializable {
    @Override
    public void initialize(URL url, ResourceBundle rb) {
       cargarIdioma();
-      //cargarSonido();
+      cargarSonido();
+      buttonRegistrar.setDefaultButton(true);
 
       buttonIdioma.setOnAction((ActionEvent event) -> {
          Locale localeSelect = Locale.getDefault();
@@ -132,6 +133,7 @@ public class GUI_IniciarSesionController implements Initializable {
             }           
          } else {
             cargarAviso("titleAlerta", "mensajeImposibleIniciarSesion");
+            limpiar();
          }
       });
    }
@@ -159,8 +161,8 @@ public class GUI_IniciarSesionController implements Initializable {
     */
    public CuentaUsuario ingresar() {
       CuentaUsuario cuentaRecuperada = null;
-      if (obtenerYValidarCamposCuenta()) {
-         System.out.println("ESTO NO DEBERIA PASAR");
+      if (validarCamposCuenta()) {
+         System.out.println("Los campos NO están vacíos");
          AdministracionCuenta adminCuenta = new AdministracionCuenta();
          String nickname = tFieldNick.getText();
          String clave = pFieldClave.getText();
@@ -179,12 +181,10 @@ public class GUI_IniciarSesionController implements Initializable {
     * @return regresa que es válido si ambos campos no están nulos
     */
    
-   public boolean obtenerYValidarCamposCuenta() {
-      boolean valido = false;
-      if (tFieldNick.getText() != null || pFieldClave.getText() != null) {
-         valido = true;
-      }
-      return valido;
+   public boolean validarCamposCuenta() {
+      return ((tFieldNick.getText() != null && !(tFieldNick.getText().trim().isEmpty())) && 
+          (pFieldClave.getText() != null && !(pFieldClave.getText().trim().isEmpty())));
+
    }
     /**
     * Método para cambiar de la ventana actual a otra
@@ -264,12 +264,10 @@ public class GUI_IniciarSesionController implements Initializable {
     * Método para cargar el sonido de la ventana
     */
    public void cargarSonido() {
-      String separator = System.getProperty("file.separator");
-      System.out.println(separator +"navalBattle" + separator + "recursos" + separator + "sonidos" + separator +"MainThemeonMarimba.mp3");
-      final String resourceSonido = this.getClass().getResource(separator +"navalBattle" + separator 
-          + "recursos" + separator + "sonidos" + separator + "MainThemeonMarimba.mp3").toExternalForm();
-//      final String resourceSonido = this.getClass().getResource("\navalBattle\recursos\sonidos\MainThemeonMarimba.mp3").toExternalForm();
-      Media sound = new Media(new File(resourceSonido).toString());
+
+       URL resourceSonido = this.getClass().getResource("/navalBattle/recursos/sonidos/"
+           + "MainThemeonMarimba.mp3");
+      Media sound = new Media((resourceSonido).toString());
       MediaPlayer mediaP = new MediaPlayer(sound);
       mediaP.setVolume(1);
       mediaP.play();
@@ -302,6 +300,10 @@ public class GUI_IniciarSesionController implements Initializable {
       ResourceBundle resources = ResourceBundle.getBundle("navalBattle.recursos.idiomas.Idioma", locale);//Modificar paquete idioma
       String mensaje = "Naval Battle\n" + resources.getString("mensajeDesa") + resources.getString("mensajeTradu");
       return mensaje;
+   }
+   public void limpiar(){
+      tFieldNick.clear();
+      pFieldClave.clear();
    }
 
 }
