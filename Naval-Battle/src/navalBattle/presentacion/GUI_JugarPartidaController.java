@@ -233,10 +233,6 @@ public class GUI_JugarPartidaController implements Initializable {
     * Método para cargar el recurso de sonido de destrucción de una parte de la nave
     */
    public void cargarSonidoDestruccion() {
-<<<<<<< HEAD
-=======
-      
->>>>>>> origin/my-new-branch
       final URL resourceSonido = this.getClass().getResource("/navalBattle/recursos/sonidos/"
           + "Tommccann_explosion.wav");
       Media sound = new Media((resourceSonido).toString());
@@ -249,10 +245,6 @@ public class GUI_JugarPartidaController implements Initializable {
     * Método para cargar el recurso de sonido de agua, en caso no de existir nave
     */
    public void cargarSonidoAgua() {
-<<<<<<< HEAD
-=======
-      
->>>>>>> origin/my-new-branch
       final URL resourceSonido = this.getClass().getResource("/navalBattle/recursos/sonidos/"
           + "Bird-man_big-splash.wav");
       Media sound = new Media((resourceSonido).toString());

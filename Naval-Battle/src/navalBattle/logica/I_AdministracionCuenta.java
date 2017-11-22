@@ -6,6 +6,7 @@
 package navalBattle.logica;
 
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 
 /**
  *
@@ -18,4 +19,5 @@ public interface I_AdministracionCuenta {
    public boolean desactivarCuenta(String nombreUsuario) throws NoSuchAlgorithmException;
    public boolean registrarPuntajeMasAlto(CuentaUsuario cuenta, int puntajeObtenido) throws NoSuchAlgorithmException;
    public String getHash(String string) throws NoSuchAlgorithmException;
+   public List<CuentaUsuario> obtenerMejoresPuntajes();
 }

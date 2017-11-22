@@ -10,10 +10,8 @@ import com.jfoenix.controls.JFXDialog;
 import com.jfoenix.controls.JFXDialogLayout;
 import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -73,11 +71,14 @@ public class GUI_IniciarSesionController implements Initializable {
    private JFXButton buttonAcerca;
    @FXML
    private StackPane stackMensaje;
+   
    public String idioma;
    final static String RECURSO_IDIOMA = "navalBattle.recursos.idiomas.Idioma"; 
 
    /**
     * Initializes the controller class.
+    * @param url
+    * @param rb
     */
    @Override
    public void initialize(URL url, ResourceBundle rb) {
@@ -86,32 +87,32 @@ public class GUI_IniciarSesionController implements Initializable {
       buttonRegistrar.setDefaultButton(true);
 
       buttonIdioma.setOnAction((ActionEvent event) -> {
-         Locale localeSelect = Locale.getDefault();
+         //Locale localeSelect = Locale.getDefault();
          idioma = cargarAvisoIdioma();
-         System.out.println("Idioma" + idioma);
+         Locale locale;         
          switch (idioma) {
             case "English":
-               Locale localeEng = new Locale("en", "US");
-               Locale.setDefault(localeEng);
-               cargarIdioma();
+               locale = new Locale("en", "US");
                break;
             case "Français":
-               Locale localeFran = new Locale("fr", "FR");
-               Locale.setDefault(localeFran);
-               cargarIdioma();
+               locale = new Locale("fr", "FR");
                break;
             default:
-               Locale locale = Locale.ROOT;
-               Locale.setDefault(locale);
-               cargarIdioma();
+               locale = Locale.ROOT;
+               break;
          }
+         Locale.setDefault(locale);
+         cargarIdioma();
       });
+      
       buttonRegistrar.setOnAction(event -> {
          cargarVentana(event, "GUI_Registrar.fxml");
       });
+      
       buttonReglas.setOnAction(event -> {
          cargarVentana(event, "GUI_Reglas.fxml");
       });
+      
       buttonPuntuacion.setOnAction(event -> {
          cargarVentana(event, "GUI_Puntuaciones.fxml");
       });

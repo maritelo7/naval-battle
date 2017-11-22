@@ -9,6 +9,7 @@ import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.EntityManager;
@@ -61,9 +62,8 @@ public class AdministracionCuenta implements I_AdministracionCuenta {
       Cuenta cuentaRecuperada;     
       try {
          String claveHasheada = getHash(clave);
-         cuentaRecuperada = (Cuenta) entity.createNamedQuery("Cuenta.iniciarSesion").setParameter("nombreUsuario", nombreUsuario).setParameter("clave", claveHasheada).getSingleResult();
+         cuentaRecuperada = (Cuenta) entity.createNamedQuery("Cuenta.iniciarSesion").setParameter("nombreUsuario", nombreUsuario).setParameter("clave", claveHasheada).getResultList().get(0);
          cuentaUsuario = new CuentaUsuario(cuentaRecuperada.getNombreUsuario(), cuentaRecuperada.getClave(), cuentaRecuperada.getLenguaje(), cuentaRecuperada.getPuntaje());
-         //Considerar eliminar linea 64. Considerar el constructor sin contraseña
       } catch (Exception ex) {
          Logger.getLogger(AdministracionCuenta.class.getName()).log(Level.SEVERE, null, ex);
       }
@@ -107,6 +107,13 @@ public class AdministracionCuenta implements I_AdministracionCuenta {
       return cuentaDesactivada;
    }
 
+   @Override
+   public List<CuentaUsuario> obtenerMejoresPuntajes() {
+      List<CuentaUsuario> cuentasConMejorPuntaje = null;
+      cuentasConMejorPuntaje = entity.createNamedQuery("Cuenta.obtenerPuntaje").setMaxResults(10).getResultList();
+      return cuentasConMejorPuntaje;      
+   }
+
    /**
     * Método para registrar el puntaje más alto obtenido en una partida
     *
@@ -146,5 +153,7 @@ public class AdministracionCuenta implements I_AdministracionCuenta {
       }
       return stringBuilder.toString();
    }
+
+  
 
 }

@@ -91,40 +91,45 @@ public class GUI_RegistrarController implements Initializable {
     */
    public void cargarCuenta(CuentaUsuario cuenta) {
       this.cuentaLogueada = cuenta;
+      if (cuentaLogueada != null){
       tFieldNick.setText(cuentaLogueada.getNombreUsuario());
-      pFieldClave.setText(cuentaLogueada.getClave());
-      pFieldConfirmacionClave.setText(cuentaLogueada.getClave());
       comboIdioma.setValue(cuentaLogueada.getLenguaje());
-
+      tFieldNick.setEditable(false);
+      }
    }
    /**
     * Método para guardar los cambios de la CuentaUsuario
     * @param event evento del botón
     */
    public void accionButtonGuardar(Event event) {
-
-      if (obtenerYValidarCamposCuenta()) {
+      String mensaje = "";
+      if (validarCamposCuenta()) {
          String nickname = tFieldNick.getText();
          String clave = pFieldClave.getText();
+         String idioma = comboIdioma.getValue().toString();
          String confirmacionClave = pFieldConfirmacionClave.getText();
          if (clave.equals(confirmacionClave)) {
             AdministracionCuenta adminCuenta = new AdministracionCuenta();
             if (cuentaLogueada == null) {
-               CuentaUsuario nuevaCuenta = new CuentaUsuario(nickname, clave);
+               CuentaUsuario nuevaCuenta = new CuentaUsuario(nickname, clave, idioma);
                adminCuenta.registrarCuenta(nuevaCuenta);
                cuentaLogueada = adminCuenta.consultarCuenta(nickname, clave);
+               mensaje = "mensajeGuardado";
+               tFieldNick.setEditable(false);
             } else {
                adminCuenta.modificarCuenta(cuentaLogueada);
                cuentaLogueada = adminCuenta.consultarCuenta(nickname, clave);
+               mensaje = "mensajeGuardado";
             }
 
          } else {
-            cargarAviso("titleAlerta", "mensajeClaveNoCoincide");
+            mensaje = "mensajeClaveNoCoincide";
          }
       } else {
-          cargarAviso("titleAlerta", "mensajeCamposLlenos");
+         mensaje="mensajeCamposLlenos";
       }
-      cargarAviso("titleAlerta", "mensajeGuardado");
+      cargarAviso("titleAlerta", mensaje);
+  
    }
 
    /**
@@ -140,20 +145,6 @@ public class GUI_RegistrarController implements Initializable {
       if ((c > 'z' || c < 'a') && (c > '9' || c < '0')) {
          e.consume();
       }
-   }
-
-   /**
-    * Método auxiliar para comprobar que los campos obligatorios del Nickname y la Clave no están 
-    * nulos cuando se inicie la sesión
-    *
-    * @return regresa que es válido si ambos campos no están nulos
-    */
-   public boolean obtenerYValidarCamposCuenta() {
-      boolean valido = false;
-      if (tFieldNick.getText() != null && pFieldClave.getText() != null && pFieldConfirmacionClave.getText() != null) {
-         valido = true;
-      }
-      return valido;
    }
    
     /**
@@ -177,6 +168,23 @@ public class GUI_RegistrarController implements Initializable {
    }
 
    /**
+    * Método auxiliar para comprobar que los campos obligatorios del Nickname y la Clave no están
+    * nulos cuando se inicie la sesión
+    *
+    *
+    * @return regresa que es válido si ambos campos no están nulos
+    */
+   public boolean validarCamposCuenta() {
+      boolean esValido = false;
+      if ((!tFieldNick.getText().isEmpty() && !(tFieldNick.getText().trim().isEmpty()))
+          && (!pFieldClave.getText().isEmpty() && !(pFieldClave.getText().trim().isEmpty()))
+          && (!pFieldConfirmacionClave.getText().isEmpty() && !(pFieldConfirmacionClave.getText().trim().isEmpty()))) {
+         esValido = true;
+      }
+      return esValido;
+   }
+   
+   /**
     * Método para dar de baja la cuenta con la que se ha iniciado sesión
     * @param event evento del botón
     */
@@ -184,6 +192,8 @@ public class GUI_RegistrarController implements Initializable {
       AdministracionCuenta adminCuenta = new AdministracionCuenta();
       adminCuenta.desactivarCuenta(cuentaLogueada.getNombreUsuario());
       cargarAviso("titleAlerta", "mensajeBaja");
+      cuentaLogueada = null;
+      accionButtonRegresar(event);
    }
    /**
     * Método para cambiar de la ventana actual a la anterior
@@ -208,7 +218,6 @@ public class GUI_RegistrarController implements Initializable {
          }
       } else {
          try {
-
             FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_IniciarSesion.fxml"));
             scene = new Scene(loader.load());
             loader.setController(loader.getController());
@@ -243,5 +252,6 @@ public class GUI_RegistrarController implements Initializable {
       final String[] data = {"Español", "Français", "English"};
       ObservableList<String> listIdiomas = FXCollections.observableArrayList(data);
       comboIdioma.setItems(listIdiomas);
+      comboIdioma.getSelectionModel().selectFirst();
    }
 }

@@ -17,10 +17,10 @@
          </image>
       </ImageView>
       <JFXButton fx:id="buttonRegresar" layoutX="29.0" layoutY="8.0" />
-      <TableView layoutX="673.0" layoutY="201.0" prefHeight="401.0" prefWidth="358.0">
+      <TableView fx:id="tablePuntuaciones" layoutX="673.0" layoutY="201.0" prefHeight="401.0" prefWidth="358.0">
         <columns>
-          <TableColumn prefWidth="213.20709228515625" text="C1" />
-          <TableColumn prefWidth="142.79290771484375" text="C2" />
+          <TableColumn fx:id="columnNickname" prefWidth="175.0" text="Nickname" />
+          <TableColumn fx:id="columnPuntaje" prefWidth="182.0" text="Puntaje" />
         </columns>
       </TableView>
       <Label fx:id="labelPuntuaciones" layoutX="590.0" layoutY="126.0" text="labelPuntuaciones" textFill="WHITE">
