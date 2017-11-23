@@ -48,7 +48,8 @@ import navalBattle.logica.CuentaUsuario;
  * @author José Alí Valdivia Ruiz
  */
 public class GUI_IniciarSesionController implements Initializable {
-
+   @FXML
+   private JFXButton buttonRegistrar;
    @FXML
    private JFXButton buttonIdioma;
    @FXML
@@ -58,8 +59,6 @@ public class GUI_IniciarSesionController implements Initializable {
    @FXML
    private JFXButton buttonIniciar;
    @FXML
-   private JFXButton buttonRegistrar;
-   @FXML
    private JFXTextField tFieldNick;
    @FXML
    private JFXPasswordField pFieldClave;
@@ -67,12 +66,11 @@ public class GUI_IniciarSesionController implements Initializable {
    private Label labelNick;
    @FXML
    private Label labelClave;
-   @FXML
-   private JFXButton buttonAcerca;
+//   @FXML
+//   private JFXButton buttonAcerca;
    @FXML
    private StackPane stackMensaje;
-   
-   public String idioma;
+
    final static String RECURSO_IDIOMA = "navalBattle.recursos.idiomas.Idioma"; 
 
    /**
@@ -83,12 +81,9 @@ public class GUI_IniciarSesionController implements Initializable {
    @Override
    public void initialize(URL url, ResourceBundle rb) {
       cargarIdioma();
-      cargarSonido();
-      buttonRegistrar.setDefaultButton(true);
 
       buttonIdioma.setOnAction((ActionEvent event) -> {
-         //Locale localeSelect = Locale.getDefault();
-         idioma = cargarAvisoIdioma();
+         String idioma = cargarAvisoIdioma();
          Locale locale;         
          switch (idioma) {
             case "English":
@@ -118,7 +113,8 @@ public class GUI_IniciarSesionController implements Initializable {
       });
       
       buttonIniciar.setOnAction((ActionEvent event) -> {
-         CuentaUsuario cuenta = ingresar();
+         //CuentaUsuario cuenta = ingresar();
+         CuentaUsuario cuenta = new CuentaUsuario("Tello", "Patito", "English");
          if (cuenta != null) {
             Node node = (Node) event.getSource();
             Stage stage = (Stage) node.getScene().getWindow();
@@ -139,7 +135,6 @@ public class GUI_IniciarSesionController implements Initializable {
          }
       });
    }
-
    /**
     * Método auxiliar para limitar los caracteres introducidos en el field de nickname a solo letras
     * mayúsculas, minúsculas y números
@@ -195,9 +190,10 @@ public class GUI_IniciarSesionController implements Initializable {
     */
    public void cargarVentana(Event event, String url) {
          Node node = (Node) event.getSource();
-         Stage stage = (Stage) node.getScene().getWindow();
-         Parent root;
+         Stage stage;
+         stage = (Stage) node.getScene().getWindow();
          try {
+         Parent root;
             root = FXMLLoader.load(getClass().getResource(url));
             Scene scene = new Scene(root);
             stage.setScene(scene);
@@ -263,15 +259,21 @@ public class GUI_IniciarSesionController implements Initializable {
 
    /**
     * Método para cargar el sonido de la ventana
+    * @param estado
     */
-   public void cargarSonido() {
-
+   public void cargarSonido(boolean estado) {
+      
        URL resourceSonido = this.getClass().getResource("/navalBattle/recursos/sonidos/"
            + "MainThemeonMarimba.mp3");
       Media sound = new Media((resourceSonido).toString());
       MediaPlayer mediaP = new MediaPlayer(sound);
       mediaP.setVolume(1);
-      mediaP.play();
+      if (estado) {
+         mediaP.play();
+      } else{
+         mediaP.stop();
+      }
+      
 
    }
 

@@ -14,10 +14,10 @@ import javafx.scene.shape.Rectangle;
  * @author José Alí Valdivia Ruiz
  */
 public class Casilla extends Rectangle {
-   private int x;
-   private int y;
-   private Nave nave;
-   private boolean atacado;
+   private final int x;
+   private final int y;
+   private  Nave nave;
+   private  boolean atacado;
 
 
    public Casilla(int x, int y) {

@@ -20,7 +20,7 @@
             <Font name="Century Gothic" size="14.0" />
          </font>
       </Label>
-      <Label fx:id="labelReglasDelJuego" layoutX="544.0" layoutY="94.0" prefHeight="44.0" prefWidth="294.0" text="labelReglasDelJuego">
+      <Label fx:id="labelReglasDelJuego" layoutX="499.0" layoutY="100.0" prefHeight="44.0" prefWidth="485.0" text="labelReglasDelJuego">
          <font>
             <Font name="Century Gothic" size="24.0" />
          </font>

@@ -245,21 +245,28 @@ public class GUI_PrepararPartidaController implements Initializable {
     * dimensiones
     *
     * @param nave Nave seleccionada
-    * @param x int Posición x de la casilla seleccionada
-    * @param y int Posición y de la casilla selecionada
+    * @param casilla Casilla seleccionada para colocar nave
     * @return Si es posible colocar la nave
     */
-   public boolean puedeColocarNave(Nave nave, int x, int y) {
+   public boolean puedeColocarNave(Nave nave, Casilla casilla) {
       int tamanio = nave.getTamanio();
       boolean horizontal = nave.isHorizontal();
       if (horizontal) {
-         return colocarHorizontal(x, y, tamanio);
+         return colocarHorizontal(casilla, tamanio);
       }
-      return colocarVertical(x, y, tamanio);
+      return colocarVertical(casilla, tamanio);
    }
 
-   public boolean colocarHorizontal(int x, int y, int tamanio) {
+   /**
+    * Método para comprobar si es posible colocar una nave de forma horizontal
+    * @param casillaInicio casilla en donde inicia la nave
+    * @param tamanio tamaño de la nave
+    * @return boolean si se peude colocar la nave
+    */
+   public boolean colocarHorizontal(Casilla casillaInicio, int tamanio) {
       boolean puedeHorizontal = false;
+      int x = (int) casillaInicio.getX();
+      int y = (int) casillaInicio.getY();
       for (int i = x; i < x + tamanio; i++) {
          if (!posicionValida(i, y)) {
             return false;
@@ -273,6 +280,12 @@ public class GUI_PrepararPartidaController implements Initializable {
       return puedeHorizontal;
    }
 
+   /**
+    * Método para comprobar si los colindantes de la casilla son aceptables
+    * @param i valor variable de la posición de X
+    * @param y valor de y de la casilla
+    * @return regresa los colindantes son aptos para colocar la nave
+    */
    public boolean comprobarColindantesHorizontal(int i, int y) {
       for (Casilla colindante : getColindantes(i, y)) {
          if (!posicionValida(i, y)) {
@@ -285,8 +298,16 @@ public class GUI_PrepararPartidaController implements Initializable {
       return true;
    }
 
-   public boolean colocarVertical(int x, int y, int tamanio) {
+   /**
+    * Método para comprobar si se puede colocar una nave en vertical
+    * @param casillaInicio casilla en donde inicia la nave a colocar
+    * @param tamanio tamaño de la nave
+    * @return regresa se se puede colocar la nave en dicha posición
+    */
+   public boolean colocarVertical(Casilla casillaInicio, int tamanio) {
       boolean puedeVertical = false;
+      int x = (int) casillaInicio.getX();
+      int y = (int) casillaInicio.getY();
       for (int i = y; i < y + tamanio; i++) {
          if (!posicionValida(x, i)) {
             return false;
@@ -297,9 +318,15 @@ public class GUI_PrepararPartidaController implements Initializable {
          }
          puedeVertical = comprobarColindantesVertical(i, y);
       }
-      return true;
+      return puedeVertical;
    }
 
+   /**
+    * Método para comprobar los colindantes de una casilla
+    * @param x valor de X de la casilla
+    * @param i valor varibale de Y de la casilla
+    * @return si las casillas colindantes son aptas para colocar la nave
+    */
    public boolean comprobarColindantesVertical(int x, int i) {
       for (Casilla colindante : getColindantes(x, i)) {
          if (!posicionValida(x, i)) {
@@ -330,7 +357,7 @@ public class GUI_PrepararPartidaController implements Initializable {
     * @return regresa si es posible
     */
    public boolean posicionValida(Point2D point) {
-      return posicionValida(point.getX(), point.getY());
+      return point.getX() >= 0 && point.getX() < 10 && point.getY() >=0 && point.getY() < 10;
    }
 
    /**
@@ -367,7 +394,7 @@ public class GUI_PrepararPartidaController implements Initializable {
             colindantes.add(getCasilla((int) p.getX(), (int) p.getY()));
          }
       }
-      return colindantes.toArray(new Casilla[0]);
+      return colindantes.toArray(new Casilla[colindantes.size()]);
    }
 
    /**
@@ -380,7 +407,7 @@ public class GUI_PrepararPartidaController implements Initializable {
    public boolean colocarNave(Casilla casillaInicio, Nave nave) {
       int x = (int) casillaInicio.getX();
       int y = (int) casillaInicio.getY();
-      if (puedeColocarNave(nave, x, y)) {
+      if (puedeColocarNave(nave, casillaInicio)) {
          boolean horizontal = nave.isHorizontal();
          int tamanio = nave.getTamanio();
          if (horizontal) {
@@ -446,6 +473,8 @@ public class GUI_PrepararPartidaController implements Initializable {
                buttonNave5.setGraphic(new ImageView(image));
                buttonNave5.setDisable(true);
                break;
+            default:
+               tamanioNave = 0;
          }
       }
       if (sumaRestantes == 0) {

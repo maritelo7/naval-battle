@@ -6,10 +6,7 @@
 package navalBattle.logica;
 
 import java.util.ArrayList;
-import javafx.event.EventHandler;
 import javafx.scene.Parent;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Pane;
 
 /**
  *

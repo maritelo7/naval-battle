@@ -7,18 +7,13 @@ package navalBattle.logica;
  */
 
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import java.security.NoSuchAlgorithmException;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
-import static junit.framework.Assert.failNotEquals;
 import navalBattle.datos.CuentaJpaController;
-import navalBattle.logica.AdministracionCuenta;
-import navalBattle.logica.CuentaUsuario;
 
 
 /**

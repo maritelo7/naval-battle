@@ -19,10 +19,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -43,21 +41,22 @@ public class GUI_PuntuacionesController implements Initializable {
    @FXML
    private Label labelPuntuaciones;
    @FXML
-   private TableView<?> tablePuntuaciones;
-   @FXML
-   private TableColumn<?, ?> columnNickname;
-   @FXML
-   private TableColumn<?, ?> columnPuntaje;      
+   private TableView<CuentaUsuario> tablePuntuaciones;
    CuentaUsuario cuentaLogueada = null;
-   
+   final static String RECURSO_IDIOMA = "navalBattle.recursos.idiomas.Idioma";
+   String usuarioTable;
+   String puntajeTable;
 
    /**
     * Initializes the controller class.
     */
    @Override
    public void initialize(URL url, ResourceBundle rb) {
+
       cargarIdioma();
-      
+      cargarTabla();
+      cargarInformacionTabla();
+
       buttonRegresar.setOnAction(event -> {
          Node node = (Node) event.getSource();
          Stage stage = (Stage) node.getScene().getWindow();
@@ -71,8 +70,11 @@ public class GUI_PuntuacionesController implements Initializable {
                loader.setController(controller);
 
             } else {
-               Parent root = FXMLLoader.load(getClass().getResource("GUI_IniciarSesion.fxml"));
-               scene = new Scene(root);
+               FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_IniciarSesion.fxml"));
+               scene = new Scene(loader.load());
+               GUI_IniciarSesionController controller = loader.getController();
+               controller.cargarSonido(false);
+               loader.setController(controller);
             }
             stage.setScene(scene);
             stage.setResizable(false);
@@ -83,8 +85,10 @@ public class GUI_PuntuacionesController implements Initializable {
       });
 
    }
-    /**
+
+   /**
     * Método para cargar objeto cuenta y utilzar sus valores en este controller
+    *
     * @param cuenta la CuentaUsuario con la que se ha iniciado sesión
     */
    public void cargarCuenta(CuentaUsuario cuenta) {
@@ -96,17 +100,33 @@ public class GUI_PuntuacionesController implements Initializable {
     */
    public void cargarIdioma() {
       Locale locale = Locale.getDefault();
-      ResourceBundle resources = ResourceBundle.getBundle("navalBattle.recursos.idiomas.Idioma", locale);
+      ResourceBundle resources = ResourceBundle.getBundle(RECURSO_IDIOMA, locale);
       labelPuntuaciones.setText(resources.getString("labelPuntuaciones"));
+      usuarioTable = resources.getString("usuarioTable");
+      puntajeTable = resources.getString("puntajeTable");
+
    }
-   
-   public void cargarTabla(){
-   AdministracionCuenta adminCuenta = new AdministracionCuenta();
-   List<CuentaUsuario> cuentasConMejoresPuntajes = adminCuenta.obtenerMejoresPuntajes();
-   ObservableList<CuentaUsuario> listaCuentas = FXCollections.observableArrayList();
+
+   public void cargarTabla() {
+      tablePuntuaciones.setStyle("-fx-selection-bar: orange; -fx-selection-bar-non-focused: salmon");
+      TableColumn nomUsuario = new TableColumn(usuarioTable);
+      nomUsuario.setCellValueFactory(new PropertyValueFactory<>("nombreUsuario"));
+      nomUsuario.setPrefWidth(175);
+      TableColumn puntUsuario = new TableColumn(puntajeTable);
+      puntUsuario.setCellValueFactory(new PropertyValueFactory<>("puntaje"));
+      puntUsuario.setPrefWidth(175);
+      tablePuntuaciones.getColumns().addAll(nomUsuario, puntUsuario);
+
+   }
+
+   public void cargarInformacionTabla() {
+      AdministracionCuenta adminCuenta = new AdministracionCuenta();
+      List<CuentaUsuario> cuentasConMejoresPuntajes = adminCuenta.obtenerMejoresPuntajes();
+      ObservableList<CuentaUsuario> listaCuentas = FXCollections.observableArrayList();
       for (int i = 0; i < cuentasConMejoresPuntajes.size(); i++) {
          listaCuentas.add(cuentasConMejoresPuntajes.get(i));
       }
+      tablePuntuaciones.setItems(listaCuentas);
    }
-      
+
 }

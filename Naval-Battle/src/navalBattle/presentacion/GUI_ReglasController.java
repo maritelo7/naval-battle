@@ -16,7 +16,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
@@ -65,14 +64,17 @@ public class GUI_ReglasController implements Initializable {
                controller.cargarCuenta(cuentaLogueada);
                loader.setController(controller);
             } else {
-               Parent root = FXMLLoader.load(getClass().getResource("GUI_IniciarSesion.fxml"));
-               scene = new Scene(root);
+               FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_IniciarSesion.fxml"));
+               scene = new Scene(loader.load());
+               GUI_IniciarSesionController controller = loader.getController();
+               controller.cargarSonido(false);
+               loader.setController(controller);
             }
             stage.setScene(scene);
             stage.setResizable(false);
             stage.show();
          } catch (IOException ex) {
-            Logger.getLogger(GUI_IniciarSesionController.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(GUI_ReglasController.class.getName()).log(Level.SEVERE, null, ex);
          }
          
       });

@@ -8,7 +8,6 @@ package navalBattle.presentacion;
 import com.jfoenix.controls.JFXButton;
 import java.io.IOException;
 import java.net.URL;
-import java.security.NoSuchAlgorithmException;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -85,24 +84,27 @@ public class GUI_RegistrarController implements Initializable {
 
    }
 
-    /**
+   /**
     * Método para cargar objeto cuenta y utilzar sus valores en este controller
+    *
     * @param cuenta la CuentaUsuario con la que se ha iniciado sesión
     */
    public void cargarCuenta(CuentaUsuario cuenta) {
       this.cuentaLogueada = cuenta;
-      if (cuentaLogueada != null){
-      tFieldNick.setText(cuentaLogueada.getNombreUsuario());
-      comboIdioma.setValue(cuentaLogueada.getLenguaje());
-      tFieldNick.setEditable(false);
+      if (cuentaLogueada != null) {
+         tFieldNick.setText(cuentaLogueada.getNombreUsuario());
+         comboIdioma.setValue(cuentaLogueada.getLenguaje());
+         tFieldNick.setEditable(false);
       }
    }
+
    /**
     * Método para guardar los cambios de la CuentaUsuario
+    *
     * @param event evento del botón
     */
    public void accionButtonGuardar(Event event) {
-      String mensaje = "";
+      String mensaje;
       if (validarCamposCuenta()) {
          String nickname = tFieldNick.getText();
          String clave = pFieldClave.getText();
@@ -126,10 +128,10 @@ public class GUI_RegistrarController implements Initializable {
             mensaje = "mensajeClaveNoCoincide";
          }
       } else {
-         mensaje="mensajeCamposLlenos";
+         mensaje = "mensajeCamposLlenos";
       }
       cargarAviso("titleAlerta", mensaje);
-  
+
    }
 
    /**
@@ -146,8 +148,8 @@ public class GUI_RegistrarController implements Initializable {
          e.consume();
       }
    }
-   
-    /**
+
+   /**
     * Método reutilizable para cargar un ventana emergente
     *
     * @param nombreTitulo nombre del key del título
@@ -183,9 +185,10 @@ public class GUI_RegistrarController implements Initializable {
       }
       return esValido;
    }
-   
+
    /**
     * Método para dar de baja la cuenta con la que se ha iniciado sesión
+    *
     * @param event evento del botón
     */
    public void accionButtonBaja(Event event) {
@@ -195,17 +198,21 @@ public class GUI_RegistrarController implements Initializable {
       cuentaLogueada = null;
       accionButtonRegresar(event);
    }
+
    /**
     * Método para cambiar de la ventana actual a la anterior
+    *
     * @param event evento que desencadena el cambio de ventana
     */
    public void accionButtonRegresar(Event event) {
       Node node = (Node) event.getSource();
-      Stage stage = (Stage) node.getScene().getWindow();
+      Stage stage;
+      stage = (Stage) node.getScene().getWindow();
       Scene scene;
       if (cuentaLogueada != null) {
          try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_MenuPartida.fxml"));
+            FXMLLoader loader;
+            loader = new FXMLLoader(getClass().getResource("GUI_MenuPartida.fxml"));
             scene = new Scene(loader.load());
             GUI_MenuPartidaController controller = loader.getController();
             controller.cargarCuenta(cuentaLogueada);
@@ -220,7 +227,9 @@ public class GUI_RegistrarController implements Initializable {
          try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_IniciarSesion.fxml"));
             scene = new Scene(loader.load());
-            loader.setController(loader.getController());
+            GUI_IniciarSesionController controller = loader.getController();
+            controller.cargarSonido(false);
+            loader.setController(controller);
             stage.setScene(scene);
             stage.setResizable(false);
             stage.show();
@@ -245,8 +254,8 @@ public class GUI_RegistrarController implements Initializable {
       labelClave.setText(resources.getString("labelClave"));
    }
 
-    /**
-    * Método para cargar la lista de idiomas en el combo box 
+   /**
+    * Método para cargar la lista de idiomas en el combo box
     */
    public void cargarComboIdioma() {
       final String[] data = {"Español", "Français", "English"};

@@ -6,7 +6,6 @@
 package navalBattle.presentacion;
 
 import com.jfoenix.controls.JFXButton;
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -165,7 +164,7 @@ public class GUI_JugarPartidaController implements Initializable {
     */
    public void cargarTableroJugador() {
       int contador = 0;
-      ArrayList<Casilla> casillas = new ArrayList<>();
+      ArrayList<Casilla> casillas;
       casillas = tableroJugador.getCasillas();
       for (int i = 0; i < 10; i++) {
          HBox filas = new HBox();
@@ -190,7 +189,7 @@ public class GUI_JugarPartidaController implements Initializable {
     */
    public void cargarTableroEnemigo() {
       int contador = 0;
-      ArrayList<Casilla> casillas = new ArrayList<>();
+      ArrayList<Casilla> casillas;
       casillas = tableroEnemigo.getCasillas();
       for (int i = 0; i < 10; i++) {
          HBox filas = new HBox();
@@ -233,7 +232,8 @@ public class GUI_JugarPartidaController implements Initializable {
     * Método para cargar el recurso de sonido de destrucción de una parte de la nave
     */
    public void cargarSonidoDestruccion() {
-      final URL resourceSonido = this.getClass().getResource("/navalBattle/recursos/sonidos/"
+      final URL resourceSonido;
+      resourceSonido = this.getClass().getResource("/navalBattle/recursos/sonidos/"
           + "Tommccann_explosion.wav");
       Media sound = new Media((resourceSonido).toString());
       MediaPlayer mediaP = new MediaPlayer(sound);
@@ -378,7 +378,8 @@ public class GUI_JugarPartidaController implements Initializable {
          colindantes.add(getCasillaJugador((int) p.getX(), (int) p.getY(), jugador));
 
       }
-      return colindantes.toArray(new Casilla[0]);
+      //En duda colindantes.size
+      return colindantes.toArray(new Casilla[colindantes.size()]);
    }
 
    /**

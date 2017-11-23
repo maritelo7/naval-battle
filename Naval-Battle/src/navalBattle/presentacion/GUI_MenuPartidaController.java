@@ -67,7 +67,6 @@ public class GUI_MenuPartidaController implements Initializable {
    @Override
    public void initialize(URL url, ResourceBundle rb) {
 
-      cargarIdioma();
       cargarAnimacion();
       labelIniciando.setVisible(false);
 
@@ -150,19 +149,35 @@ public class GUI_MenuPartidaController implements Initializable {
     */
    public void cargarCuenta(CuentaUsuario cuenta) {
       this.cuentaLogueada = cuenta;
-
-      //ESTO ES PARA COMPROBAR QUE FUNCIONA (ELIMINAR DESPUÉS)
-      labelConfigurar.setText(cuentaLogueada.getNombreUsuario());
+      //AQUÍ DEBERÍA TOMAR EL IDIOMA DE LA CUENTA Y ESTABLECERLO
+         String idioma = cuentaLogueada.getLenguaje();
+         Locale locale;         
+         switch (idioma) {
+            case "English":
+               locale = new Locale("en", "US");
+               break;
+            case "Français":
+               locale = new Locale("fr", "FR");
+               break;
+            default:
+               locale = Locale.ROOT;
+               break;
+         }
+         Locale.setDefault(locale);
+         cargarIdioma();
    }
+   
     /**
     * Método para cambiar de la ventana actual a otra
     * @param event evento que desencadena un cambio de ventana
     */
    public void irPrepararPartida(Event event) {
       Node node = (Node) event.getSource();
-      Stage stage = (Stage) node.getScene().getWindow();
+      Stage stage;
+      stage = (Stage) node.getScene().getWindow();
       try {
-         FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_PrepararPartida.fxml"));
+         FXMLLoader loader;
+         loader = new FXMLLoader(getClass().getResource("GUI_PrepararPartida.fxml"));
          Scene scene = new Scene(loader.load());
          GUI_PrepararPartidaController controller = loader.getController();
          controller.cargarCuenta(cuentaLogueada);
@@ -196,7 +211,8 @@ public class GUI_MenuPartidaController implements Initializable {
     */
    public void cargarVentana(Event event, String url) {
       Node node = (Node) event.getSource();
-      Stage stage = (Stage) node.getScene().getWindow();
+      Stage stage;
+      stage = (Stage) node.getScene().getWindow();
       try {
          Parent root = FXMLLoader.load(getClass().getResource(url));
          Scene scene = new Scene(root);

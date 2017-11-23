@@ -110,7 +110,8 @@ public class Cuenta implements Serializable {
          return false;
       }
       Cuenta other = (Cuenta) object;
-      if ((this.nombreUsuario == null && other.nombreUsuario != null) || (this.nombreUsuario != null && !this.nombreUsuario.equals(other.nombreUsuario))) {
+      if ((this.nombreUsuario == null && other.nombreUsuario != null) || (this.nombreUsuario != null &&
+          !this.nombreUsuario.equals(other.nombreUsuario))) {
          return false;
       }
       return true;
