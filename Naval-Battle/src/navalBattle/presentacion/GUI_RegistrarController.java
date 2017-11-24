@@ -31,6 +31,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import navalBattle.logica.AdministracionCuenta;
 import navalBattle.logica.CuentaUsuario;
+import navalBattle.recursos.Utileria;
 
 /**
  * FXML Controller class
@@ -117,7 +118,8 @@ public class GUI_RegistrarController implements Initializable {
                adminCuenta.registrarCuenta(nuevaCuenta);
                cuentaLogueada = adminCuenta.consultarCuenta(nickname, clave);
                mensaje = "mensajeGuardado";
-               tFieldNick.setEditable(false);
+               accionButtonRegresar(event);
+               //tFieldNick.setEditable(false);
             } else {
                adminCuenta.modificarCuenta(cuentaLogueada);
                cuentaLogueada = adminCuenta.consultarCuenta(nickname, clave);
@@ -130,7 +132,7 @@ public class GUI_RegistrarController implements Initializable {
       } else {
          mensaje = "mensajeCamposLlenos";
       }
-      cargarAviso("titleAlerta", mensaje);
+      Utileria.cargarAviso("titleAlerta", mensaje);
 
    }
 
@@ -149,25 +151,6 @@ public class GUI_RegistrarController implements Initializable {
       }
    }
 
-   /**
-    * Método reutilizable para cargar un ventana emergente
-    *
-    * @param nombreTitulo nombre del key del título
-    * @param nombreMensaje nombre del key del mensaje
-    */
-   public void cargarAviso(String nombreTitulo, String nombreMensaje) {
-      Locale locale = Locale.getDefault();
-      ResourceBundle resources = ResourceBundle.getBundle("navalBattle.recursos.idiomas.Idioma", locale);
-      String titulo = resources.getString(nombreTitulo);
-      String mensaje = resources.getString(nombreMensaje);
-      Alert confirmacion = new Alert(Alert.AlertType.INFORMATION);
-      confirmacion.setTitle(titulo);
-      confirmacion.setHeaderText(null);
-      confirmacion.setContentText(mensaje);
-      ButtonType btAceptar = new ButtonType("OK", ButtonBar.ButtonData.CANCEL_CLOSE);
-      confirmacion.getButtonTypes().setAll(btAceptar);
-      confirmacion.showAndWait();
-   }
 
    /**
     * Método auxiliar para comprobar que los campos obligatorios del Nickname y la Clave no están
@@ -194,7 +177,7 @@ public class GUI_RegistrarController implements Initializable {
    public void accionButtonBaja(Event event) {
       AdministracionCuenta adminCuenta = new AdministracionCuenta();
       adminCuenta.desactivarCuenta(cuentaLogueada.getNombreUsuario());
-      cargarAviso("titleAlerta", "mensajeBaja");
+      Utileria.cargarAviso("titleAlerta", "mensajeBaja");
       cuentaLogueada = null;
       accionButtonRegresar(event);
    }

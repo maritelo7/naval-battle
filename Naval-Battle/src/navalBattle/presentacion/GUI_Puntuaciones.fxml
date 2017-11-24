@@ -16,7 +16,7 @@
          </image>
       </ImageView>
       <JFXButton fx:id="buttonRegresar" layoutX="29.0" layoutY="8.0" />
-      <TableView fx:id="tablePuntuaciones" layoutX="673.0" layoutY="201.0" prefHeight="401.0" prefWidth="358.0" />
+      <TableView fx:id="tablePuntuaciones" layoutX="673.0" layoutY="225.0" prefHeight="298.0" prefWidth="358.0" />
       <Label fx:id="labelPuntuaciones" layoutX="510.0" layoutY="126.0" prefHeight="31.0" prefWidth="521.0" text="labelPuntuaciones" textFill="WHITE">
          <font>
             <Font name="Century Gothic" size="24.0" />

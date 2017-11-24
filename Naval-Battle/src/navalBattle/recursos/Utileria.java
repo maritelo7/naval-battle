@@ -22,38 +22,13 @@ import javax.xml.bind.DatatypeConverter;
  */
 public class Utileria {
 
-   /**
-    * Método para crear un SHA256 hash a partir de una cadena String
-    *
-    * @param data información a crear hash
-    * @return String del hash
-    */
-   public String getSHA256Hash(String data) {
-
-      String result = null;
-
-      try {
-
-         MessageDigest digest = MessageDigest.getInstance("SHA-256");
-         byte[] hash = digest.digest(data.getBytes("UTF-8"));
-         return bytesToHex(hash); // make it printable
-      } catch (UnsupportedEncodingException | NoSuchAlgorithmException ex) {
-      }
-      return result;
-   }
-
-   private String bytesToHex(byte[] hash) {
-      return DatatypeConverter.printHexBinary(hash);
-
-   }
-
 /**
     * Método reutilizable para cargar un ventana emergente
     *
     * @param nombreTitulo nombre del key del título
     * @param nombreMensaje nombre del key del mensaje
     */
-   public void cargarAviso(String nombreTitulo, String nombreMensaje) {
+   public static void cargarAviso(String nombreTitulo, String nombreMensaje) {
       Locale locale = Locale.getDefault();
       ResourceBundle resources = ResourceBundle.getBundle("navalBattle.recursos.idiomas.Idioma", locale);
       String titulo = resources.getString(nombreTitulo);

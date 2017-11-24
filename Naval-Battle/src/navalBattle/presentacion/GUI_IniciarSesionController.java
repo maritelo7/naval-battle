@@ -27,8 +27,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.Label;
@@ -40,6 +38,8 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import navalBattle.logica.AdministracionCuenta;
 import navalBattle.logica.CuentaUsuario;
+import navalBattle.recursos.Utileria;
+
 
 /**
  * FXML Controller class
@@ -113,8 +113,8 @@ public class GUI_IniciarSesionController implements Initializable {
       });
       
       buttonIniciar.setOnAction((ActionEvent event) -> {
-         //CuentaUsuario cuenta = ingresar();
-         CuentaUsuario cuenta = new CuentaUsuario("Tello", "Patito", "English");
+         CuentaUsuario cuenta = ingresar();
+         //CuentaUsuario cuenta = new CuentaUsuario("Tello", "Patito", "English");
          if (cuenta != null) {
             Node node = (Node) event.getSource();
             Stage stage = (Stage) node.getScene().getWindow();
@@ -130,7 +130,7 @@ public class GUI_IniciarSesionController implements Initializable {
                Logger.getLogger(GUI_IniciarSesionController.class.getName()).log(Level.SEVERE, null, ex);
             }           
          } else {
-            cargarAviso("titleAlerta", "mensajeImposibleIniciarSesion");
+            Utileria.cargarAviso("titleAlerta", "mensajeImposibleIniciarSesion");
             limpiar();
          }
       });
@@ -159,13 +159,13 @@ public class GUI_IniciarSesionController implements Initializable {
    public CuentaUsuario ingresar() {
       CuentaUsuario cuentaRecuperada = null;
       if (validarCamposCuenta()) {
-         System.out.println("Los campos NO están vacíos");
          AdministracionCuenta adminCuenta = new AdministracionCuenta();
          String nickname = tFieldNick.getText();
          String clave = pFieldClave.getText();
          try {
             cuentaRecuperada = adminCuenta.consultarCuenta(nickname, clave);
          } catch (Exception ex) {
+            System.out.println("Error en ingresar");
            Logger.getLogger(GUI_IniciarSesionController.class.getName()).log(Level.SEVERE, null, ex);
          }
       }
@@ -202,25 +202,6 @@ public class GUI_IniciarSesionController implements Initializable {
          } catch (IOException ex) {
             Logger.getLogger(GUI_IniciarSesionController.class.getName()).log(Level.SEVERE, null, ex);
          }
-   }
-/**
-    * Método reutilizable para cargar un ventana emergente
-    *
-    * @param nombreTitulo nombre del key del título
-    * @param nombreMensaje nombre del key del mensaje
-    */
-   public void cargarAviso(String nombreTitulo, String nombreMensaje) {
-      Locale locale = Locale.getDefault();
-      ResourceBundle resources = ResourceBundle.getBundle(RECURSO_IDIOMA, locale);
-      String titulo = resources.getString(nombreTitulo);
-      String mensaje = resources.getString(nombreMensaje);
-      Alert confirmacion = new Alert(Alert.AlertType.INFORMATION);
-      confirmacion.setTitle(titulo);
-      confirmacion.setHeaderText(null);
-      confirmacion.setContentText(mensaje);
-      ButtonType btAceptar = new ButtonType("OK", ButtonBar.ButtonData.CANCEL_CLOSE);
-      confirmacion.getButtonTypes().setAll(btAceptar);
-      confirmacion.showAndWait();
    }
    /**
     * Método para cargar el idioma en etiquetas y botones establecido como default

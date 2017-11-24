@@ -44,6 +44,7 @@ import navalBattle.logica.CuentaUsuario;
 import navalBattle.logica.Misil;
 import navalBattle.logica.Nave;
 import navalBattle.logica.Tablero;
+import navalBattle.recursos.Utileria;
 
 /**
  * FXML Controller class
@@ -85,7 +86,7 @@ public class GUI_JugarPartidaController implements Initializable {
 
       buttonRendirse.setOnAction(event -> {
          ajustarMiTurno(true);
-         cargarAviso("titleDerrota", "mensajeDerrota");
+         Utileria.cargarAviso("titleDerrota", "mensajeDerrota");
          Node node = (Node) event.getSource();
          Stage stage = (Stage) node.getScene().getWindow();
          try {
@@ -137,26 +138,6 @@ public class GUI_JugarPartidaController implements Initializable {
       labelPuntuacionHost.setText(resources.getString("labelPuntuacionHost"));
       labelPuntuacionAdversario.setText(resources.getString("labelPuntuacionAdversario"));
       buttonRendirse.setText(resources.getString("buttonRendirse"));
-   }
-
-   /**
-    * Método reutilizable para cargar un ventana emergente
-    *
-    * @param nombreTitulo nombre del key del título
-    * @param nombreMensaje nombre del key del mensaje
-    */
-   public void cargarAviso(String nombreTitulo, String nombreMensaje) {
-      Locale locale = Locale.getDefault();
-      ResourceBundle resources = ResourceBundle.getBundle(RECURSO_IDIOMA, locale);
-      String titulo = resources.getString(nombreTitulo);
-      String mensaje = resources.getString(nombreMensaje);
-      Alert confirmacion = new Alert(Alert.AlertType.INFORMATION);
-      confirmacion.setTitle(titulo);
-      confirmacion.setHeaderText(null);
-      confirmacion.setContentText(mensaje);
-      ButtonType btAceptar = new ButtonType("OK", ButtonBar.ButtonData.CANCEL_CLOSE);
-      confirmacion.getButtonTypes().setAll(btAceptar);
-      confirmacion.showAndWait();
    }
 
    /**

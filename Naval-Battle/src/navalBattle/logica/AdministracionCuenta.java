@@ -8,7 +8,6 @@ package navalBattle.logica;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -26,23 +25,25 @@ import navalBattle.datos.CuentaJpaController;
  */
 public class AdministracionCuenta implements I_AdministracionCuenta {
 
-   EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("Naval-BattlePU", null);
-   EntityManager entity = entityManagerFactory.createEntityManager();
-   CuentaJpaController controller = new CuentaJpaController(entityManagerFactory);
 
- /**
+   /**
     * Método para registrar una Cuenta en la base de datos
     *
     * @param cuentaUsuario la cuenta a registrar
     * @return si el registro de la cuenta fue exitoso o no
     */
    @Override
-   public boolean registrarCuenta(CuentaUsuario cuentaUsuario)  {
+   public boolean registrarCuenta(CuentaUsuario cuentaUsuario) {
       boolean registroExitoso = true;
+      EntityManagerFactory entityManagerFactory;
       try {
-      Cuenta cuenta = new Cuenta(cuentaUsuario.getNombreUsuario(), getHash(cuentaUsuario.getClave()), cuentaUsuario.getLenguaje(), 0);
-      controller.create(cuenta);
+         entityManagerFactory = Persistence.createEntityManagerFactory("Naval-BattlePU", null);
+         EntityManager entity = entityManagerFactory.createEntityManager();
+          CuentaJpaController controller = new CuentaJpaController(entityManagerFactory);
+         Cuenta cuenta = new Cuenta(cuentaUsuario.getNombreUsuario(), getHash(cuentaUsuario.getClave()), cuentaUsuario.getLenguaje(), 0);
+         controller.create(cuenta);
       } catch (Exception ex) {
+         System.out.println("Catch");
          registroExitoso = false;
          Logger.getLogger(AdministracionCuenta.class.getName()).log(Level.SEVERE, null, ex);
       }
@@ -59,12 +60,16 @@ public class AdministracionCuenta implements I_AdministracionCuenta {
    @Override
    public CuentaUsuario consultarCuenta(String nombreUsuario, String clave) {
       CuentaUsuario cuentaUsuario = null;
-      Cuenta cuentaRecuperada;     
+      Cuenta cuentaRecuperada;
+      EntityManagerFactory entityManagerFactory;
       try {
+         entityManagerFactory = Persistence.createEntityManagerFactory("Naval-BattlePU", null);
+         EntityManager entity = entityManagerFactory.createEntityManager();
          String claveHasheada = getHash(clave);
          cuentaRecuperada = (Cuenta) entity.createNamedQuery("Cuenta.iniciarSesion").setParameter("nombreUsuario", nombreUsuario).setParameter("clave", claveHasheada).getResultList().get(0);
          cuentaUsuario = new CuentaUsuario(cuentaRecuperada.getNombreUsuario(), cuentaRecuperada.getClave(), cuentaRecuperada.getLenguaje(), cuentaRecuperada.getPuntaje());
       } catch (Exception ex) {
+         System.out.println("Catch");
          Logger.getLogger(AdministracionCuenta.class.getName()).log(Level.SEVERE, null, ex);
       }
       return cuentaUsuario;
@@ -78,11 +83,12 @@ public class AdministracionCuenta implements I_AdministracionCuenta {
     */
    @Override
    public boolean modificarCuenta(CuentaUsuario cuentaUsuario) {
-      boolean modificacionExitosa = true;      
+      boolean modificacionExitosa = true;
       try {
          Cuenta cuenta = new Cuenta(cuentaUsuario.getNombreUsuario(), getHash(cuentaUsuario.getClave()), cuentaUsuario.getLenguaje());
-         controller.edit(cuenta);
+//         controller.edit(cuenta);
       } catch (Exception ex) {
+         System.out.println("ERROR EN MODIFI");
          modificacionExitosa = false;
          Logger.getLogger(AdministracionCuenta.class.getName()).log(Level.SEVERE, null, ex);
       }
@@ -96,10 +102,10 @@ public class AdministracionCuenta implements I_AdministracionCuenta {
     * @return si la cuenta fue eliminada exitosamente
     */
    @Override
-   public boolean desactivarCuenta(String nombreUsuario)  {
+   public boolean desactivarCuenta(String nombreUsuario) {
       boolean cuentaDesactivada = true;
       try {
-         controller.destroy(nombreUsuario);
+//         controller.destroy(nombreUsuario);
       } catch (Exception ex) {
          cuentaDesactivada = false;
          Logger.getLogger(AdministracionCuenta.class.getName()).log(Level.SEVERE, null, ex);
@@ -107,18 +113,23 @@ public class AdministracionCuenta implements I_AdministracionCuenta {
       return cuentaDesactivada;
    }
 
+   /**
+    * Método para recuperar una lista de las cuentas con las 10 mejores puntuaciones
+    *
+    * @return la lista de las cuentas
+    */
    @Override
    public List<CuentaUsuario> obtenerMejoresPuntajes() {
       List<CuentaUsuario> cuentasConMejorPuntaje = null;
-      cuentasConMejorPuntaje = entity.createNamedQuery("Cuenta.obtenerPuntaje").setMaxResults(10).getResultList();
-      return cuentasConMejorPuntaje;      
+//      cuentasConMejorPuntaje = entity.createNamedQuery("Cuenta.obtenerPuntaje").setMaxResults(10).getResultList();
+      return cuentasConMejorPuntaje;
    }
 
    /**
     * Método para registrar el puntaje más alto obtenido en una partida
     *
     * @param cuenta la cuenta de la cual se va a registrar el puntaje
-    * @param puntajeObtenido el puntaje obtenido 
+    * @param puntajeObtenido el puntaje obtenido
     * @return si el registro del nuevo puntaje fue exitoso
     */
    @Override
@@ -127,7 +138,7 @@ public class AdministracionCuenta implements I_AdministracionCuenta {
       if (cuenta.getPuntaje() < puntajeObtenido) {
          try {
             cuenta.setPuntaje(puntajeObtenido);
-            modificarCuenta(cuenta);
+//            modificarCuenta(cuenta);
          } catch (Exception ex) {
             puntajeRegistrado = false;
             Logger.getLogger(AdministracionCuenta.class.getName()).log(Level.SEVERE, null, ex);
@@ -153,7 +164,5 @@ public class AdministracionCuenta implements I_AdministracionCuenta {
       }
       return stringBuilder.toString();
    }
-
-  
 
 }
