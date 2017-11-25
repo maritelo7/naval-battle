@@ -27,6 +27,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import navalBattle.logica.AdministracionCuenta;
 import navalBattle.logica.CuentaUsuario;
+import navalBattle.recursos.Utileria;
 
 /**
  * FXML Controller class
@@ -55,7 +56,6 @@ public class GUI_PuntuacionesController implements Initializable {
 
       cargarIdioma();
       cargarTabla();
-      cargarInformacionTabla();
 
       buttonRegresar.setOnAction(event -> {
          Node node = (Node) event.getSource();
@@ -121,12 +121,18 @@ public class GUI_PuntuacionesController implements Initializable {
 
    public void cargarInformacionTabla() {
       AdministracionCuenta adminCuenta = new AdministracionCuenta();
-      List<CuentaUsuario> cuentasConMejoresPuntajes = adminCuenta.obtenerMejoresPuntajes();
-      ObservableList<CuentaUsuario> listaCuentas = FXCollections.observableArrayList();
-      for (int i = 0; i < cuentasConMejoresPuntajes.size(); i++) {
-         listaCuentas.add(cuentasConMejoresPuntajes.get(i));
+      List<CuentaUsuario> cuentasConMejoresPuntajes = null;
+      try {
+         cuentasConMejoresPuntajes = adminCuenta.obtenerMejoresPuntajes();
+         ObservableList<CuentaUsuario> listaCuentas = FXCollections.observableArrayList();
+         for (int i = 0; i < cuentasConMejoresPuntajes.size(); i++) {
+            listaCuentas.add(cuentasConMejoresPuntajes.get(i));
+         }
+         tablePuntuaciones.setItems(listaCuentas);
+      } catch (Exception ex) {
+         Utileria.cargarAviso("titleAlerta", "mensajeErrorConexion");
       }
-      tablePuntuaciones.setItems(listaCuentas);
+
    }
 
 }

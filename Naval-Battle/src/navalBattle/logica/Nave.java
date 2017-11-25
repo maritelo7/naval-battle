@@ -18,10 +18,21 @@ public class Nave {
    private boolean horizontal;
    private int salud;
 
+   /**
+    * Constructor simple para el inicio de preparar la partida, cuando aún no se sabe qué nave se
+    * colocará
+    * @param horizontal Bandera de la orientación
+    */
    public Nave(boolean horizontal) {
       this.horizontal = horizontal;
    }
 
+   /**
+    * Constructor principal de Nave. Se asigna la salud de la nave del mismo valor del tamaño para poder
+    * calcular posteriormente si no todas sus casillas han sido destruidas
+    * @param tamanio
+    * @param horizontal
+    */
    public Nave(int tamanio, boolean horizontal) {
       this.tamanio = tamanio;
       this.horizontal = horizontal;
@@ -69,12 +80,19 @@ public class Nave {
       this.horizontal = horizontal;
    }
 
+   /**
+    * Método para comprobar que la salud (numero de casillas de la nave sin ser atacadas) aún permanece
+    * @return bandera si aún tiene casillas sin atacar
+    */
    public boolean isViva() {
       return salud > 0;
    }
+
+   /**
+    * Método para reducir la salud de la nave
+    */
    public void atacada(){
       salud--;
-      
    }
    
    

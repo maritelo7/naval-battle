@@ -26,9 +26,6 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.HBox;
@@ -42,7 +39,6 @@ import javafx.util.Duration;
 import navalBattle.logica.Casilla;
 import navalBattle.logica.CuentaUsuario;
 import navalBattle.logica.Misil;
-import navalBattle.logica.Nave;
 import navalBattle.logica.Tablero;
 import navalBattle.recursos.Utileria;
 
@@ -113,9 +109,11 @@ public class GUI_JugarPartidaController implements Initializable {
             if (!casilla.getNave().isViva()) {
                liberarcolindantes(casilla, false);
             }
+         } else {
+            ajustarMiTurno(false);
+            cargarSonidoAgua();
          }
-         ajustarMiTurno(false);
-         cargarSonidoAgua();
+
       });
    }
 
@@ -126,18 +124,6 @@ public class GUI_JugarPartidaController implements Initializable {
     */
    public void cargarCuenta(CuentaUsuario cuenta) {
       this.cuentaLogueada = cuenta;
-   }
-
-   /**
-    * Método para cargar el idioma en etiquetas y botones seleccionado por default
-    */
-   public void cargarIdioma() {
-      Locale locale = Locale.getDefault();
-      ResourceBundle resources = ResourceBundle.getBundle(RECURSO_IDIOMA, locale);
-      labelTiempoRestante.setText(resources.getString("labelTiempoRestante"));
-      labelPuntuacionHost.setText(resources.getString("labelPuntuacionHost"));
-      labelPuntuacionAdversario.setText(resources.getString("labelPuntuacionAdversario"));
-      buttonRendirse.setText(resources.getString("buttonRendirse"));
    }
 
    /**
@@ -210,31 +196,6 @@ public class GUI_JugarPartidaController implements Initializable {
    }
 
    /**
-    * Método para cargar el recurso de sonido de destrucción de una parte de la nave
-    */
-   public void cargarSonidoDestruccion() {
-      final URL resourceSonido;
-      resourceSonido = this.getClass().getResource("/navalBattle/recursos/sonidos/"
-          + "Tommccann_explosion.wav");
-      Media sound = new Media((resourceSonido).toString());
-      MediaPlayer mediaP = new MediaPlayer(sound);
-      mediaP.setVolume(.5);
-      mediaP.play();
-   }
-
-   /**
-    * Método para cargar el recurso de sonido de agua, en caso no de existir nave
-    */
-   public void cargarSonidoAgua() {
-      final URL resourceSonido = this.getClass().getResource("/navalBattle/recursos/sonidos/"
-          + "Bird-man_big-splash.wav");
-      Media sound = new Media((resourceSonido).toString());
-      MediaPlayer mediaP = new MediaPlayer(sound);
-      mediaP.setVolume(1);
-      mediaP.play();
-   }
-
-   /**
     * Método para configurar el turno del jugador
     *
     * @param esTurno boolean
@@ -248,6 +209,180 @@ public class GUI_JugarPartidaController implements Initializable {
       }
    }
 
+   /**
+    * Método para obtener la casilla en tales posiciones
+    *
+    * @param x posición x de la casilla
+    * @param y posición y de la casilla
+    * @param jugador boolean para determinar cuál casilla regresar
+    * @return Casilla de tablero
+    */
+   public Casilla getCasillaJugador(int x, int y, boolean jugador) {
+      if (jugador) {
+         return (Casilla) ((HBox) columnasJugador.getChildren().get(y)).getChildren().get(x);
+      }
+      return (Casilla) ((HBox) columnasEnemigo.getChildren().get(y)).getChildren().get(x);
+   }
+
+   /**
+    * Método para liberar las casillas adyacentes cuando se ha destruido completamente una nave
+    *
+    * @param casillaAtacada última casilla atacada
+    * @param jugador boolean para determinar el tablero
+    */
+   public void liberarcolindantes(Casilla casillaAtacada, boolean jugador) {
+      boolean horizontal = casillaAtacada.getNave().isHorizontal();
+      if (horizontal) {
+         ArrayList<Casilla> casillas = casillasDeNaveHorizontal(casillaAtacada, jugador);
+         liberarCasillas(casillas, jugador);
+      } else {
+         ArrayList<Casilla> casillas = casillasDeNaveVertical(casillaAtacada, jugador);
+         liberarCasillas(casillas, jugador);
+      }
+   }
+
+   /**
+    * Método para liberar (colorear) las casillas colindantes en caso de destruir por completo una nave
+    * @param casillas array con las casillas colindantes
+    * @param jugador bandera para identificar tablero
+    */
+   public void liberarCasillas(ArrayList<Casilla> casillas, boolean jugador) {
+      int x;
+      int y;
+      for (Casilla casilla : casillas) {
+         x = (int) casilla.getX();
+         y = (int) casilla.getY();
+         for (Casilla colindante : getColindantes(x, y, jugador)) {
+            if (!colindante.isAtacado()) {
+               colindante.liberar();
+            }
+         }
+      }
+   }
+
+   /**
+    * Método para recolectar las casillas totales de la nave destruida con posición horizontal
+    * @param casillaAtacada Última casilla atacada
+    * @param jugador bandera para identificar el tablero
+    * @return Array con las casillas colindantes
+    */
+   public ArrayList<Casilla> casillasDeNaveHorizontal(Casilla casillaAtacada, boolean jugador) {
+      int x = (int) casillaAtacada.getX();
+      int y = (int) casillaAtacada.getY();
+      int tamanio = casillaAtacada.getNave().getTamanio();
+      ArrayList<Casilla> casillas = new ArrayList<>();
+      for (int i = x; i > x - tamanio; i--) {
+         if (posicionValida(x, y)) {
+            Casilla casilla = getCasillaJugador(i, y, jugador);
+            if (casilla.getNave() != null && casillas.size() < tamanio) {
+               casillas.add(casilla);
+            } else {
+               break;
+            }
+         }
+      }
+      if (casillas.size() < tamanio) {
+         for (int i = x; i < x + tamanio; i++) {
+            if (posicionValida(x, y)) {
+               Casilla casilla = getCasillaJugador(i, y, jugador);
+               if (casilla.getNave() != null && casillas.size() <= tamanio) {
+                  casillas.add(casilla);
+               } else {
+                  break;
+               }
+            }
+         }
+      }
+      return casillas;
+   }
+
+   /** 
+    * Método para recolectar las casillas totales de la nave destruida con posición vertical
+    * @param casillaAtacada Última casilla atacada
+    * @param jugador bandera para identificar el tablero
+    * @return Array con las casillas colindantes
+    */
+   public ArrayList<Casilla> casillasDeNaveVertical(Casilla casillaAtacada, boolean jugador) {
+      int x = (int) casillaAtacada.getX();
+      int y = (int) casillaAtacada.getY();
+      int tamanio = casillaAtacada.getNave().getTamanio();
+      ArrayList<Casilla> casillas = new ArrayList<>();
+      for (int i = y; i > y - tamanio; i--) {
+         if (posicionValida(x, i)) {
+            Casilla casilla = getCasillaJugador(x, i, jugador);
+            if (casilla.getNave() != null && casillas.size() < tamanio) {
+               casillas.add(casilla);
+            } else {
+               break;
+            }
+         }
+      }
+      if (casillas.size() < tamanio) {
+         for (int i = y; i < y + tamanio; i++) {
+            if (posicionValida(x, i)) {
+               Casilla casilla = getCasillaJugador(x, i, jugador);
+               if (casilla.getNave() != null && casillas.size() <= tamanio) {
+                  casillas.add(casilla);
+               } else {
+                  break;
+               }
+            }
+         }
+      }
+      return casillas;
+   }
+
+   /**
+    * Método para obtener las casillas colindantes
+    *
+    * @param x posición de x de la casilla final
+    * @param y posición de y de la casilla final
+    * @param jugador boolean para determinar el tablero
+    * @return arreglo de casillas
+    */
+   public Casilla[] getColindantes(int x, int y, boolean jugador) {
+      Point2D[] points = new Point2D[]{
+         new Point2D(x - 1, y),
+         new Point2D(x + 1, y),
+         new Point2D(x + 1, y + 1),
+         new Point2D(x - 1, y + 1),
+         new Point2D(x, y - 1),
+         new Point2D(x, y + 1),
+         new Point2D(x + 1, y - 1),
+         new Point2D(x - 1, y - 1),};
+      List<Casilla> colindantes = new ArrayList<>();
+      for (Point2D p : points) {
+         if (posicionValida((int) p.getX(), (int) p.getY())) {
+            colindantes.add(getCasillaJugador((int) p.getX(), (int) p.getY(), jugador));
+         }  
+      }
+      return colindantes.toArray(new Casilla[colindantes.size()]);
+   }
+
+   /**
+    * Método para actualizar el estado del tablero del jugador
+    *
+    * @param misil Misil con posicion de la casilla
+    */
+   public void actualizarMiTablero(Misil misil) {
+      Casilla casilla = getCasillaJugador(misil.getxDestino(), misil.getyDestino(), true);
+      if (casilla.atacadaANave()) {
+         if (!casilla.getNave().isViva()) {
+            liberarcolindantes(casilla, true);
+         }
+      }
+   }
+
+   /**
+    * Método para verificar si la posición seleccionada es válida
+    *
+    * @param x Posición de x de la casilla
+    * @param y Posición de y de la casilla
+    * @return Si es posible
+    */
+   public boolean posicionValida(int x, int y) {
+      return x >= 0 && x < 10 && y >= 0 && y < 10;
+   }
    /**
     * Método para establer el conteo de 30 segundos del turno
     */
@@ -277,103 +412,39 @@ public class GUI_JugarPartidaController implements Initializable {
       ft.setAutoReverse(true);
       ft.play();
    }
-
-   /**
-    * Método para obtener la casilla en tales posiciones
-    *
-    * @param x posición x de la casilla
-    * @param y posición y de la casilla
-    * @param jugador boolean para determinar cuál casilla regresar
-    * @return Casilla de tablero
+      /**
+    * Método para cargar el recurso de sonido de destrucción de una parte de la nave
     */
-   public Casilla getCasillaJugador(int x, int y, boolean jugador) {
-      if (jugador) {
-         return (Casilla) ((HBox) columnasJugador.getChildren().get(y)).getChildren().get(x);
-      }
-      return (Casilla) ((HBox) columnasEnemigo.getChildren().get(y)).getChildren().get(x);
+   public void cargarSonidoDestruccion() {
+      final URL resourceSonido;
+      resourceSonido = this.getClass().getResource("/navalBattle/recursos/sonidos/"
+          + "Tommccann_explosion.wav");
+      Media sound = new Media((resourceSonido).toString());
+      MediaPlayer mediaP = new MediaPlayer(sound);
+      mediaP.setVolume(.5);
+      mediaP.play();
    }
 
    /**
-    * Método para liberar las casillas adyacentes cuando se ha destruido completamente una nave
-    *
-    * @param casillaAtacada última casilla atacada
-    * @param jugador boolean para determinar el tablero
+    * Método para cargar el recurso de sonido de agua, en caso no de existir nave
     */
-   public void liberarcolindantes(Casilla casillaAtacada, boolean jugador) {
-      int x = (int) casillaAtacada.getX();
-      int y = (int) casillaAtacada.getY();
-      Nave nave = casillaAtacada.getNave();
-      boolean horizontal = nave.isHorizontal();
-      int tamanio = nave.getTamanio();
-      if (horizontal) {
-         liberarHorizontal(x, y, tamanio, jugador);
-      } else {
-         liberarVertical(x, y, tamanio, jugador);
-      }
-
+   public void cargarSonidoAgua() {
+      final URL resourceSonido = this.getClass().getResource("/navalBattle/recursos/sonidos/"
+          + "Bird-man_big-splash.wav");
+      Media sound = new Media((resourceSonido).toString());
+      MediaPlayer mediaP = new MediaPlayer(sound);
+      mediaP.setVolume(1);
+      mediaP.play();
    }
-
-   public void liberarHorizontal(int x, int y, int tamanio, boolean jugador) {
-      for (int i = x - tamanio; i < x; i++) {
-         //Casilla casilla = getCasillaJugador(i, y, jugador);
-         for (Casilla colindante : getColindantes(i, y, jugador)) {
-            if (!colindante.isAtacado()) {
-               colindante.liberar();
-            }
-         }
-      }
-   }
-
-   public void liberarVertical(int x, int y, int tamanio, boolean jugador) {
-      for (int i = y - tamanio; i < y; i++) {
-        // Casilla casilla = getCasillaJugador(x, i, jugador);
-         for (Casilla colindante : getColindantes(x, i, jugador)) {
-            if (!colindante.isAtacado()) {
-               colindante.liberar();
-            }
-         }
-      }
-   }
-
-   /**
-    * Método para obtener las casillas colindantes
-    *
-    * @param x posición de x de la casilla final
-    * @param y posición de y de la casilla final
-    * @param jugador boolean para determinar el tablero
-    * @return arreglo de casillas
+      /**
+    * Método para cargar el idioma en etiquetas y botones seleccionado por default
     */
-   public Casilla[] getColindantes(int x, int y, boolean jugador) {
-      Point2D[] points = new Point2D[]{
-         new Point2D(x - 1, y),
-         new Point2D(x + 1, y),
-         new Point2D(x + 1, y + 1),
-         new Point2D(x - 1, y + 1),
-         new Point2D(x, y - 1),
-         new Point2D(x, y + 1),
-         new Point2D(x + 1, y - 1),
-         new Point2D(x - 1, y - 1),};
-      List<Casilla> colindantes = new ArrayList<>();
-      for (Point2D p : points) {
-
-         colindantes.add(getCasillaJugador((int) p.getX(), (int) p.getY(), jugador));
-
-      }
-      //En duda colindantes.size
-      return colindantes.toArray(new Casilla[colindantes.size()]);
-   }
-
-   /**
-    * Método para actualizar el estado del tablero del jugador
-    *
-    * @param misil Misil con posicion de la casilla
-    */
-   public void actualizarMiTablero(Misil misil) {
-      Casilla casilla = getCasillaJugador(misil.getxDestino(), misil.getyDestino(), true);
-      if (casilla.atacadaANave()) {
-         if (!casilla.getNave().isViva()) {
-            liberarcolindantes(casilla, true);
-         }
-      }
+   public void cargarIdioma() {
+      Locale locale = Locale.getDefault();
+      ResourceBundle resources = ResourceBundle.getBundle(RECURSO_IDIOMA, locale);
+      labelTiempoRestante.setText(resources.getString("labelTiempoRestante"));
+      labelPuntuacionHost.setText(resources.getString("labelPuntuacionHost"));
+      labelPuntuacionAdversario.setText(resources.getString("labelPuntuacionAdversario"));
+      buttonRendirse.setText(resources.getString("buttonRendirse"));
    }
 }

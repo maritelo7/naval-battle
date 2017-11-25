@@ -21,6 +21,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -40,7 +41,6 @@ import navalBattle.logica.AdministracionCuenta;
 import navalBattle.logica.CuentaUsuario;
 import navalBattle.recursos.Utileria;
 
-
 /**
  * FXML Controller class
  *
@@ -48,6 +48,7 @@ import navalBattle.recursos.Utileria;
  * @author José Alí Valdivia Ruiz
  */
 public class GUI_IniciarSesionController implements Initializable {
+
    @FXML
    private JFXButton buttonRegistrar;
    @FXML
@@ -66,15 +67,14 @@ public class GUI_IniciarSesionController implements Initializable {
    private Label labelNick;
    @FXML
    private Label labelClave;
-//   @FXML
-//   private JFXButton buttonAcerca;
    @FXML
    private StackPane stackMensaje;
 
-   final static String RECURSO_IDIOMA = "navalBattle.recursos.idiomas.Idioma"; 
+   final static String RECURSO_IDIOMA = "navalBattle.recursos.idiomas.Idioma";
 
    /**
     * Initializes the controller class.
+    *
     * @param url
     * @param rb
     */
@@ -84,7 +84,7 @@ public class GUI_IniciarSesionController implements Initializable {
 
       buttonIdioma.setOnAction((ActionEvent event) -> {
          String idioma = cargarAvisoIdioma();
-         Locale locale;         
+         Locale locale;
          switch (idioma) {
             case "English":
                locale = new Locale("en", "US");
@@ -99,42 +99,60 @@ public class GUI_IniciarSesionController implements Initializable {
          Locale.setDefault(locale);
          cargarIdioma();
       });
-      
+
       buttonRegistrar.setOnAction(event -> {
          cargarVentana(event, "GUI_Registrar.fxml");
       });
-      
+
       buttonReglas.setOnAction(event -> {
          cargarVentana(event, "GUI_Reglas.fxml");
       });
-      
+
       buttonPuntuacion.setOnAction(event -> {
-         cargarVentana(event, "GUI_Puntuaciones.fxml");
-      });
-      
-      buttonIniciar.setOnAction((ActionEvent event) -> {
-         CuentaUsuario cuenta = ingresar();
-         //CuentaUsuario cuenta = new CuentaUsuario("Tello", "Patito", "English");
-         if (cuenta != null) {
+         try {
             Node node = (Node) event.getSource();
             Stage stage = (Stage) node.getScene().getWindow();
-            try { 
-               FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_MenuPartida.fxml"));
-               Scene scene = new Scene(loader.load());
-               GUI_MenuPartidaController controller = loader.getController();
-               controller.cargarCuenta(cuenta);
-               stage.setScene(scene);
-               stage.setResizable(false);
-               stage.show();
-            } catch (IOException ex) {
-               Logger.getLogger(GUI_IniciarSesionController.class.getName()).log(Level.SEVERE, null, ex);
-            }           
-         } else {
-            Utileria.cargarAviso("titleAlerta", "mensajeImposibleIniciarSesion");
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_Puntuaciones.fxml"));
+            Scene scene = new Scene(loader.load());
+            GUI_PuntuacionesController controller = loader.getController();
+            stage.setScene(scene);
+            stage.setResizable(false);
+            stage.show();
+            controller.cargarInformacionTabla();
+         } catch (IOException ex) {
+            Logger.getLogger(GUI_IniciarSesionController.class.getName()).log(Level.SEVERE, null, ex);
+         }
+      });
+
+      buttonIniciar.setOnAction((ActionEvent event) -> {
+         //CuentaUsuario cuenta = ingresar();
+         CuentaUsuario cuenta = new CuentaUsuario("Tello", "Patito", "English");
+         if (cuenta == null) {
+            Utileria.cargarAviso("titleAlerta", "mensajeDatosIncorrectosIniciarSesion");
             limpiar();
+         } else {
+            if (!"0".equals(cuenta.getLenguaje())) {
+               Node node = (Node) event.getSource();
+               Stage stage = (Stage) node.getScene().getWindow();
+               try {
+                  FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_MenuPartida.fxml"));
+                  Scene scene = new Scene(loader.load());
+                  GUI_MenuPartidaController controller = loader.getController();
+                  controller.cargarCuenta(cuenta);
+                  stage.setScene(scene);
+                  stage.setResizable(false);
+                  stage.show();
+               } catch (IOException ex) {
+                  Logger.getLogger(GUI_IniciarSesionController.class.getName()).log(Level.SEVERE, null, ex);
+               }
+            } else {
+               Utileria.cargarAviso("titleAlerta", "mensajeErrorConexion");
+               limpiar();
+            }
          }
       });
    }
+
    /**
     * Método auxiliar para limitar los caracteres introducidos en el field de nickname a solo letras
     * mayúsculas, minúsculas y números
@@ -165,44 +183,47 @@ public class GUI_IniciarSesionController implements Initializable {
          try {
             cuentaRecuperada = adminCuenta.consultarCuenta(nickname, clave);
          } catch (Exception ex) {
-            System.out.println("Error en ingresar");
-           Logger.getLogger(GUI_IniciarSesionController.class.getName()).log(Level.SEVERE, null, ex);
+            cuentaRecuperada = new CuentaUsuario("0", "0", "0");
+            Logger.getLogger(GUI_IniciarSesionController.class.getName()).log(Level.SEVERE, null, ex);
          }
       }
       return cuentaRecuperada;
    }
+
    /**
-    * Método auxiliar para comprobar que los campos obligatorios del Nickname y la Clave no están 
+    * Método auxiliar para comprobar que los campos obligatorios del Nickname y la Clave no están
     * nulos cuando se inicie la sesión
     *
     * @return regresa que es válido si ambos campos no están nulos
     */
-   
    public boolean validarCamposCuenta() {
-      return ((tFieldNick.getText() != null && !(tFieldNick.getText().trim().isEmpty())) && 
-          (pFieldClave.getText() != null && !(pFieldClave.getText().trim().isEmpty())));
+      return ((tFieldNick.getText() != null && !(tFieldNick.getText().trim().isEmpty()))
+          && (pFieldClave.getText() != null && !(pFieldClave.getText().trim().isEmpty())));
 
    }
-    /**
+
+   /**
     * Método para cambiar de la ventana actual a otra
+    *
     * @param event evento que desencadena un cambio de ventana
     * @param url nombre del archivo .fxml de la ventana a cargar
     */
    public void cargarVentana(Event event, String url) {
-         Node node = (Node) event.getSource();
-         Stage stage;
-         stage = (Stage) node.getScene().getWindow();
-         try {
+      Node node = (Node) event.getSource();
+      Stage stage;
+      stage = (Stage) node.getScene().getWindow();
+      try {
          Parent root;
-            root = FXMLLoader.load(getClass().getResource(url));
-            Scene scene = new Scene(root);
-            stage.setScene(scene);
-            stage.setResizable(false);   
-            stage.show();
-         } catch (IOException ex) {
-            Logger.getLogger(GUI_IniciarSesionController.class.getName()).log(Level.SEVERE, null, ex);
-         }
+         root = FXMLLoader.load(getClass().getResource(url));
+         Scene scene = new Scene(root);
+         stage.setScene(scene);
+         stage.setResizable(false);
+         stage.show();
+      } catch (IOException ex) {
+         Logger.getLogger(GUI_IniciarSesionController.class.getName()).log(Level.SEVERE, null, ex);
+      }
    }
+
    /**
     * Método para cargar el idioma en etiquetas y botones establecido como default
     */
@@ -240,21 +261,21 @@ public class GUI_IniciarSesionController implements Initializable {
 
    /**
     * Método para cargar el sonido de la ventana
+    *
     * @param estado
     */
    public void cargarSonido(boolean estado) {
-      
-       URL resourceSonido = this.getClass().getResource("/navalBattle/recursos/sonidos/"
-           + "MainThemeonMarimba.mp3");
+
+      URL resourceSonido = this.getClass().getResource("/navalBattle/recursos/sonidos/"
+          + "MainThemeonMarimba.mp3");
       Media sound = new Media((resourceSonido).toString());
       MediaPlayer mediaP = new MediaPlayer(sound);
       mediaP.setVolume(1);
       if (estado) {
          mediaP.play();
-      } else{
+      } else {
          mediaP.stop();
       }
-      
 
    }
 
@@ -267,7 +288,7 @@ public class GUI_IniciarSesionController implements Initializable {
       dialogLayout.setBody(new Text(bodyMensaje()));
       JFXDialog dialog = new JFXDialog(stackMensaje, dialogLayout, JFXDialog.DialogTransition.CENTER);
       JFXButton buttonOk = new JFXButton("OK");
-      buttonOk.setOnAction(event -> {
+      buttonOk.setOnAction((ActionEvent event) -> {
          dialog.close();
       });
       dialogLayout.setActions(buttonOk);
@@ -285,7 +306,8 @@ public class GUI_IniciarSesionController implements Initializable {
       String mensaje = "Naval Battle\n" + resources.getString("mensajeDesa") + resources.getString("mensajeTradu");
       return mensaje;
    }
-   public void limpiar(){
+
+   public void limpiar() {
       tFieldNick.clear();
       pFieldClave.clear();
    }

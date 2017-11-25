@@ -20,9 +20,6 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -184,21 +181,6 @@ public class GUI_PrepararPartidaController implements Initializable {
    }
 
    /**
-    * Método para cargar el idioma seleccionado por default en etiquetas y botones
-    */
-   public void cargarIdioma() {
-
-      Locale locale = Locale.getDefault();
-      ResourceBundle resources = ResourceBundle.getBundle(RECURSO_IDIOMA, locale);
-      labelColocaNaves.setText(resources.getString("labelColocaNaves"));
-      labelRotar.setText(resources.getString("labelRotar"));
-      buttonContinuar.setText(resources.getString("buttonContinuar"));
-      labelHorizontal.setText(resources.getString("labelHorizontal"));
-      labelVertical.setText(resources.getString("labelVertical"));
-      labelVertical.setVisible(false);
-   }
-
-   /**
     * Método para cargar el tablero con casillas y las etiquetas de las naves
     */
    public void cargarTablero() {
@@ -298,7 +280,7 @@ public class GUI_PrepararPartidaController implements Initializable {
          if (casilla.getNave() != null) {
             return false;
          }
-         puedeVertical = comprobarColindantesVertical(i, y);
+         puedeVertical = comprobarColindantesVertical(x, i);
       }
       return puedeVertical;
    }
@@ -324,8 +306,8 @@ public class GUI_PrepararPartidaController implements Initializable {
    /**
     * Método para verificar si la posición seleccionada es válida
     *
-    * @param x int Posición de x de la casilla
-    * @param y int Posición de y de la casilla
+    * @param x  Posición de x de la casilla
+    * @param y  Posición de y de la casilla
     * @return Si es posible
     */
    public boolean posicionValida(double x, double y) {
@@ -466,6 +448,50 @@ public class GUI_PrepararPartidaController implements Initializable {
    }
 
    /**
+    * Método para recuperar todas las naves colocadas en un tablero
+    *
+    * @return tablero con naves
+    */
+   public Tablero recuperarTablero() {
+      int z = 0;
+      Tablero tableroJugador = new Tablero(false);
+      ArrayList<Casilla> casillas = new ArrayList<>();
+      for (int i = 0; i < 10; i++) {
+         for (int j = 0; j < 10; j++) {
+            casillas.add(getCasilla(j, i));
+            z++;
+         }
+      }
+      tableroJugador.setCasillas(casillas);
+      return tableroJugador;
+   }
+
+   /**
+    * Método para recibir el tablero del contrincante
+    *
+    * @return tablero del contrincante con naves colocadas
+    */
+   public Tablero recibirTablero() {
+      //Aquí debería recibir el objeto tablero del contricante
+      Tablero tablero = recuperarTablero();
+      return tablero;
+   }
+   
+   /**
+    * Método para describir la orientación actual de la nave
+    */
+   public void intercambiarLabelOrientacion() {
+      if (esHorizontal) {
+         labelHorizontal.setVisible(false);
+         labelVertical.setVisible(true);
+         esHorizontal = false;
+      } else {
+         labelVertical.setVisible(false);
+         labelHorizontal.setVisible(true);
+         esHorizontal = true;
+      }
+   }
+   /**
     * Método para refrescar todos los valores de las etiquetas de las naves
     */
    public void refrescarNumNaves() {
@@ -512,49 +538,18 @@ public class GUI_PrepararPartidaController implements Initializable {
       buttonNave2.setDisable(false);
       buttonNave1.setDisable(false);
    }
-
    /**
-    * Método para describir la orientación actual de la nave
+    * Método para cargar el idioma seleccionado por default en etiquetas y botones
     */
-   public void intercambiarLabelOrientacion() {
-      if (esHorizontal) {
-         labelHorizontal.setVisible(false);
-         labelVertical.setVisible(true);
-         esHorizontal = false;
-      } else {
-         labelVertical.setVisible(false);
-         labelHorizontal.setVisible(true);
-         esHorizontal = true;
-      }
-   }
+   public void cargarIdioma() {
 
-   /**
-    * Método para recuperar todas las naves colocadas en un tablero
-    *
-    * @return tablero con naves
-    */
-   public Tablero recuperarTablero() {
-      int z = 0;
-      Tablero tableroJugador = new Tablero(false);
-      ArrayList<Casilla> casillas = new ArrayList<>();
-      for (int i = 0; i < 10; i++) {
-         for (int j = 0; j < 10; j++) {
-            casillas.add(getCasilla(j, i));
-            z++;
-         }
-      }
-      tableroJugador.setCasillas(casillas);
-      return tableroJugador;
-   }
-
-   /**
-    * Método para recibir el tablero del contrincante
-    *
-    * @return tablero del contrincante con naves colocadas
-    */
-   public Tablero recibirTablero() {
-      //Aquí debería recibir el objeto tablero del contricante
-      Tablero tablero = recuperarTablero();
-      return tablero;
+      Locale locale = Locale.getDefault();
+      ResourceBundle resources = ResourceBundle.getBundle(RECURSO_IDIOMA, locale);
+      labelColocaNaves.setText(resources.getString("labelColocaNaves"));
+      labelRotar.setText(resources.getString("labelRotar"));
+      buttonContinuar.setText(resources.getString("buttonContinuar"));
+      labelHorizontal.setText(resources.getString("labelHorizontal"));
+      labelVertical.setText(resources.getString("labelVertical"));
+      labelVertical.setVisible(false);
    }
 }

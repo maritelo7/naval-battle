@@ -20,9 +20,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
@@ -115,15 +112,23 @@ public class GUI_RegistrarController implements Initializable {
             AdministracionCuenta adminCuenta = new AdministracionCuenta();
             if (cuentaLogueada == null) {
                CuentaUsuario nuevaCuenta = new CuentaUsuario(nickname, clave, idioma);
-               adminCuenta.registrarCuenta(nuevaCuenta);
-               cuentaLogueada = adminCuenta.consultarCuenta(nickname, clave);
-               mensaje = "mensajeGuardado";
+               try {
+                  adminCuenta.registrarCuenta(nuevaCuenta);
+                  cuentaLogueada = adminCuenta.consultarCuenta(nickname, clave);
+                  mensaje = "mensajeGuardado";
+               } catch (Exception e) {
+                  mensaje = "mensajeErrorConexion";
+               }
+               Utileria.cargarAviso("titleAlerta", mensaje);
                accionButtonRegresar(event);
-               //tFieldNick.setEditable(false);
             } else {
-               adminCuenta.modificarCuenta(cuentaLogueada);
-               cuentaLogueada = adminCuenta.consultarCuenta(nickname, clave);
-               mensaje = "mensajeGuardado";
+               try {
+                  adminCuenta.modificarCuenta(cuentaLogueada);
+                  cuentaLogueada = adminCuenta.consultarCuenta(nickname, clave);
+                  mensaje = "mensajeGuardado";
+               } catch (Exception e) {
+                  mensaje = "mensajeErrorConexion";
+               }
             }
 
          } else {
@@ -175,10 +180,14 @@ public class GUI_RegistrarController implements Initializable {
     * @param event evento del botón
     */
    public void accionButtonBaja(Event event) {
-      AdministracionCuenta adminCuenta = new AdministracionCuenta();
-      adminCuenta.desactivarCuenta(cuentaLogueada.getNombreUsuario());
-      Utileria.cargarAviso("titleAlerta", "mensajeBaja");
-      cuentaLogueada = null;
+      try {
+         AdministracionCuenta adminCuenta = new AdministracionCuenta();
+         adminCuenta.desactivarCuenta(cuentaLogueada.getNombreUsuario());
+         cuentaLogueada = null;
+         Utileria.cargarAviso("titleAlerta", "mensajeBaja");
+      } catch (Exception e) {
+         Utileria.cargarAviso("titleAlerta", "mensajeErrorConexion");
+      }
       accionButtonRegresar(event);
    }
 

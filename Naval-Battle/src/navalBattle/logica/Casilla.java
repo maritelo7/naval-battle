@@ -19,7 +19,12 @@ public class Casilla extends Rectangle {
    private  Nave nave;
    private  boolean atacado;
 
-
+   /**
+    * Constructor de Casilla con las posiciones X, Y. Utiliza un contructor del padre y además se
+    * colorean para identificarse en el tablero
+    * @param x
+    * @param y
+    */
    public Casilla(int x, int y) {
       super(50, 50);
       this.x = x;
@@ -27,14 +32,25 @@ public class Casilla extends Rectangle {
       setFill(Color.LIGHTGRAY);
       setStroke(Color.BLACK);
    }
+
+   /**
+    * Método para liberar la casilla (colorear en azul). Esto es en caso de no estar relacionada a una
+    * nave
+    */
    public void liberar(){
-      setFill(Color.BLACK);
+      setFill(Color.DEEPSKYBLUE);
+      setStroke(Color.BLUE);
    }
 
    public boolean isAtacado() {
       return atacado;
    }
 
+   /**
+    * Método para realizar las acciones (marcar como ataque a un barco o caída en agua) en caso de 
+    * ser atacada la casilla
+    * @return bandera en caso de haber atacado a una casilla con nave
+    */
    public boolean atacadaANave() {
       this.atacado = true;
       if (this.nave != null) {
@@ -42,7 +58,7 @@ public class Casilla extends Rectangle {
          setFill(Color.RED);
          return true;
       } else {
-         setFill(Color.BLACK);
+         liberar();
       }
       return false;
    }
