@@ -61,6 +61,8 @@ public class GUI_RegistrarController implements Initializable {
    @FXML
    private ComboBox comboIdioma;
 
+   final static String MENSAJE_ERROR = "mensajeErrorConexion";
+   final static String TITULO_ALERTA = "titleAlerta";
    CuentaUsuario cuentaLogueada;
 
    /**
@@ -117,9 +119,9 @@ public class GUI_RegistrarController implements Initializable {
                   cuentaLogueada = adminCuenta.consultarCuenta(nickname, clave);
                   mensaje = "mensajeGuardado";
                } catch (Exception e) {
-                  mensaje = "mensajeErrorConexion";
+                  mensaje = MENSAJE_ERROR;
                }
-               Utileria.cargarAviso("titleAlerta", mensaje);
+               Utileria.cargarAviso(TITULO_ALERTA, mensaje);
                accionButtonRegresar(event);
             } else {
                try {
@@ -127,7 +129,7 @@ public class GUI_RegistrarController implements Initializable {
                   cuentaLogueada = adminCuenta.consultarCuenta(nickname, clave);
                   mensaje = "mensajeGuardado";
                } catch (Exception e) {
-                  mensaje = "mensajeErrorConexion";
+                  mensaje = MENSAJE_ERROR;
                }
             }
 
@@ -137,7 +139,7 @@ public class GUI_RegistrarController implements Initializable {
       } else {
          mensaje = "mensajeCamposLlenos";
       }
-      Utileria.cargarAviso("titleAlerta", mensaje);
+      Utileria.cargarAviso(TITULO_ALERTA, mensaje);
 
    }
 
@@ -184,9 +186,9 @@ public class GUI_RegistrarController implements Initializable {
          AdministracionCuenta adminCuenta = new AdministracionCuenta();
          adminCuenta.desactivarCuenta(cuentaLogueada.getNombreUsuario());
          cuentaLogueada = null;
-         Utileria.cargarAviso("titleAlerta", "mensajeBaja");
+         Utileria.cargarAviso(TITULO_ALERTA, "mensajeBaja");
       } catch (Exception e) {
-         Utileria.cargarAviso("titleAlerta", "mensajeErrorConexion");
+         Utileria.cargarAviso(TITULO_ALERTA, MENSAJE_ERROR);
       }
       accionButtonRegresar(event);
    }

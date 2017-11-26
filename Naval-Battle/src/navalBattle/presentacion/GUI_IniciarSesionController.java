@@ -21,7 +21,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -69,7 +68,7 @@ public class GUI_IniciarSesionController implements Initializable {
    private Label labelClave;
    @FXML
    private StackPane stackMensaje;
-
+   final static String IDIOMA_INGLES = "English";
    final static String RECURSO_IDIOMA = "navalBattle.recursos.idiomas.Idioma";
 
    /**
@@ -86,7 +85,7 @@ public class GUI_IniciarSesionController implements Initializable {
          String idioma = cargarAvisoIdioma();
          Locale locale;
          switch (idioma) {
-            case "English":
+            case IDIOMA_INGLES:
                locale = new Locale("en", "US");
                break;
             case "Français":
@@ -125,8 +124,8 @@ public class GUI_IniciarSesionController implements Initializable {
       });
 
       buttonIniciar.setOnAction((ActionEvent event) -> {
-         //CuentaUsuario cuenta = ingresar();
-         CuentaUsuario cuenta = new CuentaUsuario("Tello", "Patito", "English");
+         CuentaUsuario cuenta = ingresar();
+         //CuentaUsuario cuenta = new CuentaUsuario("Tello", "Patito", "English");
          if (cuenta == null) {
             Utileria.cargarAviso("titleAlerta", "mensajeDatosIncorrectosIniciarSesion");
             limpiar();
@@ -247,7 +246,7 @@ public class GUI_IniciarSesionController implements Initializable {
    public String cargarAvisoIdioma() {
       Locale locale = Locale.getDefault();
       ResourceBundle resources = ResourceBundle.getBundle(RECURSO_IDIOMA, locale);
-      final String[] data = {"Español", "Français", "English"};
+      final String[] data = {"Español", "Français", IDIOMA_INGLES};
       List<String> listIdiomas = Arrays.asList(data);
       ChoiceDialog choiceIdioma = new ChoiceDialog(listIdiomas.get(0), listIdiomas);
       choiceIdioma.setHeaderText(resources.getString("buttonIdioma"));

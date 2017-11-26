@@ -25,8 +25,9 @@ import navalBattle.datos.exceptions.NonexistentEntityException;
  * @author José Alí Valdivia Ruiz
  */
 public class AdministracionCuenta implements I_AdministracionCuenta {
-
-   /**
+final static String UNIDAD_PERSISTENCIA = "Naval-BattlePU";
+    
+    /**
     * Método para registrar una Cuenta en la base de datos
     *
     * @param cuentaUsuario la cuenta a registrar
@@ -37,13 +38,11 @@ public class AdministracionCuenta implements I_AdministracionCuenta {
       boolean registroExitoso = true;
       EntityManagerFactory entityManagerFactory;
       try {
-         entityManagerFactory = Persistence.createEntityManagerFactory("Naval-BattlePU", null);
-         EntityManager entity = entityManagerFactory.createEntityManager();
+         entityManagerFactory = Persistence.createEntityManagerFactory(UNIDAD_PERSISTENCIA, null);
          CuentaJpaController controller = new CuentaJpaController(entityManagerFactory);
          Cuenta cuenta = new Cuenta(cuentaUsuario.getNombreUsuario(), getHash(cuentaUsuario.getClave()), cuentaUsuario.getLenguaje(), 0);
          controller.create(cuenta);
       } catch (Exception ex) {
-         System.out.println("Catch");
          registroExitoso = false;
          Logger.getLogger(AdministracionCuenta.class.getName()).log(Level.SEVERE, null, ex);
       }
@@ -63,7 +62,7 @@ public class AdministracionCuenta implements I_AdministracionCuenta {
       Cuenta cuentaRecuperada;
       EntityManagerFactory entityManagerFactory;
       try {
-         entityManagerFactory = Persistence.createEntityManagerFactory("Naval-BattlePU", null);
+         entityManagerFactory = Persistence.createEntityManagerFactory(UNIDAD_PERSISTENCIA, null);
          EntityManager entity = entityManagerFactory.createEntityManager();
          String claveHasheada = getHash(clave);
          cuentaRecuperada = (Cuenta) entity.createNamedQuery("Cuenta.iniciarSesion").setParameter("nombreUsuario", nombreUsuario).setParameter("clave", claveHasheada).getResultList().get(0);
@@ -85,7 +84,7 @@ public class AdministracionCuenta implements I_AdministracionCuenta {
       boolean modificacionExitosa = true;
       EntityManagerFactory entityManagerFactory;
       try {
-         entityManagerFactory = Persistence.createEntityManagerFactory("Naval-BattlePU", null);
+         entityManagerFactory = Persistence.createEntityManagerFactory(UNIDAD_PERSISTENCIA, null);
          CuentaJpaController controller = new CuentaJpaController(entityManagerFactory);
          Cuenta cuenta = new Cuenta(cuentaUsuario.getNombreUsuario(), getHash(cuentaUsuario.getClave()), cuentaUsuario.getLenguaje());
          controller.edit(cuenta);
@@ -108,7 +107,7 @@ public class AdministracionCuenta implements I_AdministracionCuenta {
       boolean cuentaDesactivada = true;
       EntityManagerFactory entityManagerFactory;
       try {
-         entityManagerFactory = Persistence.createEntityManagerFactory("Naval-BattlePU", null);
+         entityManagerFactory = Persistence.createEntityManagerFactory(UNIDAD_PERSISTENCIA, null);
          CuentaJpaController controller = new CuentaJpaController(entityManagerFactory);
          controller.destroy(nombreUsuario);
       } catch (NonexistentEntityException ex) {
@@ -127,7 +126,7 @@ public class AdministracionCuenta implements I_AdministracionCuenta {
    public List<CuentaUsuario> obtenerMejoresPuntajes() {
       EntityManagerFactory entityManagerFactory;
       List<CuentaUsuario> cuentasConMejorPuntaje = null;
-      entityManagerFactory = Persistence.createEntityManagerFactory("Naval-BattlePU", null);
+      entityManagerFactory = Persistence.createEntityManagerFactory(UNIDAD_PERSISTENCIA, null);
       EntityManager entity = entityManagerFactory.createEntityManager();
       cuentasConMejorPuntaje = entity.createNamedQuery("Cuenta.obtenerPuntaje").setMaxResults(10).getResultList();
       return cuentasConMejorPuntaje;
