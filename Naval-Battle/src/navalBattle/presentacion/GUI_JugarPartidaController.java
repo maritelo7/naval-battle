@@ -36,6 +36,7 @@ import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import navalBattle.logica.AdministracionCuenta;
 import navalBattle.logica.Casilla;
 import navalBattle.logica.CuentaUsuario;
 import navalBattle.logica.Misil;
@@ -71,6 +72,10 @@ public class GUI_JugarPartidaController implements Initializable {
    Tablero tableroJugador;
    Tablero tableroEnemigo;
    CuentaUsuario cuentaLogueada;
+   int navesJugador = 9;
+   int navesEnemigo = 9;
+   int puntajeJugador = 0;
+   int puntajeEnemigo = 0;
    final static String RECURSO_IDIOMA = "navalBattle.recursos.idiomas.Idioma";
 
    /**
@@ -258,6 +263,7 @@ public class GUI_JugarPartidaController implements Initializable {
             }
          }
       }
+      reducirNaves(jugador);
    }
 
    /**
@@ -382,6 +388,28 @@ public class GUI_JugarPartidaController implements Initializable {
     */
    public boolean posicionValida(int x, int y) {
       return x >= 0 && x < 10 && y >= 0 && y < 10;
+   }
+   public void reducirNaves(boolean jugador){
+      if (jugador) {
+         navesJugador--;
+         if (navesJugador == 0) {
+            Utileria.cargarAviso("titleAlerta", "mensajeDerrota");
+         }
+      } else {
+         navesEnemigo--;
+         if (navesEnemigo == 0) {
+            Utileria.cargarAviso("titleAlerta", "mensajeVictoria");
+            comprobarPuntaje();
+         }
+      }
+   }
+   public void comprobarPuntaje(){
+      boolean nuevoPuntaje = false;
+      AdministracionCuenta adminCuenta = new AdministracionCuenta();
+      nuevoPuntaje = adminCuenta.registrarPuntajeMasAlto(cuentaLogueada, puntajeJugador);
+      if (nuevoPuntaje) {
+         Utileria.cargarAviso("titleAlerta", "mensajeNuevoPuntaje");
+      }
    }
    /**
     * Método para establer el conteo de 30 segundos del turno
