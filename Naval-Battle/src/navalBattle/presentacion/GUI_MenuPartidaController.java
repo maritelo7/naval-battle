@@ -7,7 +7,9 @@ package navalBattle.presentacion;
 
 import com.jfoenix.controls.JFXButton;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -27,6 +29,8 @@ import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import navalBattle.logica.CuentaUsuario;
+import navalBattle.logica.InteraccionServidor;
+import navalBattle.recursos.Utileria;
 import navalBattle.recursos.animaciones.Barco;
 import navalBattle.recursos.animaciones.SpriteAnimation;
 
@@ -72,7 +76,7 @@ public class GUI_MenuPartidaController implements Initializable {
 
       buttonCrearPartida.setOnAction(event -> {
          labelIniciando.setVisible(true);
-         //ESTABLECER CONEXIÓN Y SER SERVER
+         conectarConServidor();
          boolean conexion = true;
          if (conexion) {
             irPrepararPartida(event);
@@ -165,6 +169,18 @@ public class GUI_MenuPartidaController implements Initializable {
          }
          Locale.setDefault(locale);
          cargarIdioma();
+   }
+   
+      public void conectarConServidor(){
+      String nombreUsuario = cuentaLogueada.getNombreUsuario();
+      try {
+         InteraccionServidor.conectar(nombreUsuario);
+      } catch (URISyntaxException ex) {
+         Logger.getLogger(GUI_MenuPartidaController.class.getName()).log(Level.SEVERE, null, ex);
+         Utileria.cargarAviso("titleAlerta", "mensajeErrorConexion");
+      } catch (UnknownHostException ex) {
+         Logger.getLogger(GUI_MenuPartidaController.class.getName()).log(Level.SEVERE, null, ex);
+      }
    }
    
     /**
