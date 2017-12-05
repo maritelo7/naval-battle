@@ -8,12 +8,9 @@ package navalBattle.logica;
 import java.net.URISyntaxException;
 import io.socket.client.IO;
 import io.socket.client.Socket;
-import io.socket.emitter.Emitter;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 /**
  *
  * @author Mari
@@ -30,11 +27,11 @@ public class InteraccionServidor {
    
     public static void conectar(String nombreUsuario) throws URISyntaxException, UnknownHostException {
       ResourceBundle resources = ResourceBundle.getBundle("navalBattle.recursos.ConfiguracionServidor");
-      String nombreDelEquipoServidor = resources.getString("nombreDelEquipoServidor");
+      //String nombreDelEquipoServidor = resources.getString("nombreDelEquipoServidor");
       String numeroPuerto = resources.getString("puertoServidor");
-      //String ipServidor = resources.getString("ipServidor");      
-      //Socket socket = IO.socket("http://" + ipServidor + ":"+numeroPuerto);
-      Socket socket = IO.socket("http://"+nombreDelEquipoServidor+":"+numeroPuerto);
+      String ipServidor = resources.getString("ipServidor");      
+      Socket socket = IO.socket("http://" + ipServidor + ":"+numeroPuerto);
+      //Socket socket = IO.socket("http://"+nombreDelEquipoServidor+":"+numeroPuerto);
       socket.on(Socket.EVENT_CONNECT, (Object... os) -> {
       });   
       String ipLocalHost = obtenerIpAddress();

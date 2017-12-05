@@ -6,11 +6,16 @@
 package navalBattle.presentacion;
 
 import com.jfoenix.controls.JFXButton;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.Locale;
+import java.util.Optional;
+import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,11 +28,16 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+
 import navalBattle.logica.CuentaUsuario;
 import navalBattle.logica.InteraccionServidor;
 import navalBattle.recursos.Utileria;
@@ -64,6 +74,7 @@ public class GUI_MenuPartidaController implements Initializable {
    private Label labelIniciando;
    @FXML
    private ImageView imageVBoat;
+   final static String RECURSO_IDIOMA = "navalBattle.recursos.idiomas.Idioma";
 
    /**
     * Initializes the controller class.
@@ -76,19 +87,30 @@ public class GUI_MenuPartidaController implements Initializable {
 
       buttonCrearPartida.setOnAction(event -> {
          labelIniciando.setVisible(true);
-         conectarConServidor();
-         boolean conexion = true;
-         if (conexion) {
-            irPrepararPartida(event);
+         //ESTABLECER CONEXIÓN Y SUMARME AL POOL
+         try {
+            if (cambiarConfig()) {
+               cargarConfiguracionRed("titleRed", "mensajeConfServ");
+            }
+            if (conectarConServidor()) {
+               irPrepararPartida(event);
+            }
+         } catch (IOException ex) {
+            Logger.getLogger(GUI_MenuPartidaController.class.getName()).log(Level.SEVERE, null, ex);
          }
+
       });
 
       buttonUnirmePartida.setOnAction(event -> {
          labelIniciando.setVisible(true);
-         //ESTABLECER CONEXIÓN Y SER CLIENTE
-         boolean conexion = true;
-         if (conexion) {
-            irPrepararPartida(event);
+         //ESTABLECER CONEXIÓN Y BUSCAR JUGADOR EN EL POOL
+         try {
+            cargarConfiguracionRed("titleRed", "mensajeConfClien");
+            if (conectarConServidor()) {
+               irPrepararPartida(event);
+            }
+         } catch (IOException ex) {
+            Logger.getLogger(GUI_MenuPartidaController.class.getName()).log(Level.SEVERE, null, ex);
          }
       });
 
@@ -147,44 +169,47 @@ public class GUI_MenuPartidaController implements Initializable {
          }
       });
    }
-    /**
+
+   /**
     * Método para cargar objeto cuenta y utilzar sus valores en este controller
+    *
     * @param cuenta la CuentaUsuario con la que se ha iniciado sesión
     */
    public void cargarCuenta(CuentaUsuario cuenta) {
       this.cuentaLogueada = cuenta;
-      //AQUÍ DEBERÍA TOMAR EL IDIOMA DE LA CUENTA Y ESTABLECERLO
-         String idioma = cuentaLogueada.getLenguaje();
-         Locale locale;         
-         switch (idioma) {
-            case "English":
-               locale = new Locale("en", "US");
-               break;
-            case "Français":
-               locale = new Locale("fr", "FR");
-               break;
-            default:
-               locale = Locale.ROOT;
-               break;
-         }
-         Locale.setDefault(locale);
-         cargarIdioma();
+      String idioma = cuentaLogueada.getLenguaje();
+      Locale locale;
+      switch (idioma) {
+         case "English":
+            locale = new Locale("en", "US");
+            break;
+         case "Français":
+            locale = new Locale("fr", "FR");
+            break;
+         default:
+            locale = Locale.ROOT;
+            break;
+      }
+      Locale.setDefault(locale);
+      cargarIdioma();
    }
-   
-      public void conectarConServidor(){
+
+   public boolean conectarConServidor() {
+      boolean check = false;
       String nombreUsuario = cuentaLogueada.getNombreUsuario();
       try {
          InteraccionServidor.conectar(nombreUsuario);
-      } catch (URISyntaxException ex) {
+         check = true;
+      } catch (URISyntaxException | UnknownHostException ex) {
          Logger.getLogger(GUI_MenuPartidaController.class.getName()).log(Level.SEVERE, null, ex);
          Utileria.cargarAviso("titleAlerta", "mensajeErrorConexion");
-      } catch (UnknownHostException ex) {
-         Logger.getLogger(GUI_MenuPartidaController.class.getName()).log(Level.SEVERE, null, ex);
       }
+      return check;
    }
-   
-    /**
+
+   /**
     * Método para cambiar de la ventana actual a otra
+    *
     * @param event evento que desencadena un cambio de ventana
     */
    public void irPrepararPartida(Event event) {
@@ -211,7 +236,7 @@ public class GUI_MenuPartidaController implements Initializable {
     */
    public void cargarIdioma() {
       Locale locale = Locale.getDefault();
-      ResourceBundle resources = ResourceBundle.getBundle("navalBattle.recursos.idiomas.Idioma", locale);
+      ResourceBundle resources = ResourceBundle.getBundle(RECURSO_IDIOMA, locale);
       buttonReglas.setText(resources.getString("buttonReglas"));
       buttonPuntuacion.setText(resources.getString("buttonPuntuacion"));
       buttonCrearPartida.setText(resources.getString("buttonCrearPartida"));
@@ -220,8 +245,10 @@ public class GUI_MenuPartidaController implements Initializable {
       labelConfigurar.setText(resources.getString("labelConfigurar"));
       labelIniciando.setText(resources.getString("labelIniciando"));
    }
+
    /**
     * Método para cambiar de la ventana actual a otra
+    *
     * @param event evento que desencadena un cambio de ventana
     * @param url nombre del archivo .fxml de la ventana a cargar
     */
@@ -238,6 +265,63 @@ public class GUI_MenuPartidaController implements Initializable {
       } catch (IOException ex) {
          Logger.getLogger(GUI_MenuPartidaController.class.getName()).log(Level.SEVERE, null, ex);
       }
+   }
+
+   public void cargarConfiguracionRed(String title, String body) throws FileNotFoundException, IOException {
+      String numIp = null;
+      Locale locale = Locale.getDefault();
+      ResourceBundle resources = ResourceBundle.getBundle(RECURSO_IDIOMA, locale);
+      String titulo = resources.getString("title");
+      String mensaje = resources.getString("body");
+      Alert confirmacion = new Alert(Alert.AlertType.INFORMATION);
+      TextField tfNombreDispositivo = new TextField();
+      confirmacion.setTitle(titulo);
+      confirmacion.setHeaderText(mensaje);
+      confirmacion.setGraphic(tfNombreDispositivo);
+      ButtonType btAceptar = new ButtonType("OK", ButtonBar.ButtonData.CANCEL_CLOSE);
+      confirmacion.getButtonTypes().setAll(btAceptar);
+      confirmacion.showAndWait();
+      numIp = tfNombreDispositivo.getText();
+      if (numIp.trim().isEmpty()) {
+         Utileria.cargarAviso("titleAlerta", "mensajeCamposLlenos");
+         cargarConfiguracionRed(title, body);
+      } else {
+         guardarPropiedad(numIp);
+      }
+   }
+
+   public boolean cambiarConfig() {
+      boolean check = false;
+      Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
+      Locale locale = Locale.getDefault();
+      ResourceBundle resources = ResourceBundle.getBundle(RECURSO_IDIOMA, locale);
+      String titulo = resources.getString("titleAlerta");
+      String mensaje = resources.getString("mensajeCambiarConfRed");
+      String btnNomCancelar = resources.getString("buttonCancelar");
+      String btnNomCambiar = resources.getString("titleRed");
+      confirmacion.setTitle(titulo);
+      confirmacion.setHeaderText(mensaje);
+      ButtonType btnCambiar = new ButtonType(btnNomCambiar);
+      ButtonType btnCancelar = new ButtonType(btnNomCancelar, ButtonBar.ButtonData.CANCEL_CLOSE);
+      confirmacion.getButtonTypes().setAll(btnCambiar, btnCancelar);
+      Optional<ButtonType> eleccion = confirmacion.showAndWait();
+      if (eleccion.get() == btnCambiar) {
+         check = true;
+      }
+      return check;
+   }
+
+   public void guardarPropiedad(String numIp) throws FileNotFoundException, IOException {
+      String dir = "src/navalBattle/recursos/ConfiguracionServidor.properties";
+      FileInputStream in = new FileInputStream(dir);
+      Properties proper = new Properties();
+      proper.load(in);
+      in.close();
+
+      FileOutputStream out = new FileOutputStream(dir);
+      proper.setProperty("ipServidor", numIp);
+      proper.store(out, null);
+      out.close();
    }
 
    /**

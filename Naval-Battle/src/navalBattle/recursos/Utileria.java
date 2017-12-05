@@ -5,15 +5,11 @@
  */
 package navalBattle.recursos;
 
-import java.io.UnsupportedEncodingException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
-import javax.xml.bind.DatatypeConverter;
 
 /**
  * Clase con métodos o atributos de utilidad para diferentes clases y usos
