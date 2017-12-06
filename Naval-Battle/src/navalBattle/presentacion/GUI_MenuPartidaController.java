@@ -88,31 +88,29 @@ public class GUI_MenuPartidaController implements Initializable {
       buttonCrearPartida.setOnAction(event -> {
          labelIniciando.setVisible(true);
          //ESTABLECER CONEXIÓN Y SUMARME AL POOL
-//         try {
-//            if (cambiarConfig()) {
-//               cargarConfiguracionRed("titleRed", "mensajeConfServ");
-//            }
-//            if (conectarConServidor()) {
-//               irPrepararPartida(event);
-//            }
-//         } catch (IOException ex) {
-//            Logger.getLogger(GUI_MenuPartidaController.class.getName()).log(Level.SEVERE, null, ex);
-//         }
-      conectarConServidor("Creador");
+         try {
+            if (cambiarConfig()) {
+               cargarConfiguracionRed("titleRed", "mensajeConfServ");
+            }
+            if (conectarConServidor("Creador")) {
+               irPrepararPartida(event);
+            }
+         } catch (IOException ex) {
+            Logger.getLogger(GUI_MenuPartidaController.class.getName()).log(Level.SEVERE, null, ex);
+         }
       });
 
       buttonUnirmePartida.setOnAction(event -> {
          labelIniciando.setVisible(true);
          //ESTABLECER CONEXIÓN Y BUSCAR JUGADOR EN EL POOL
-//         try {
-//            cargarConfiguracionRed("titleRed", "mensajeConfClien");
-//            if (conectarConServidor()) {
-//               irPrepararPartida(event);
-//            }
-//         } catch (IOException ex) {
-//            Logger.getLogger(GUI_MenuPartidaController.class.getName()).log(Level.SEVERE, null, ex);
-//         }
-      conectarConServidor("Invitado");
+         try {
+            cargarConfiguracionRed("titleRed", "mensajeConfClien");
+            if (conectarConServidor("Retador")) {
+               irPrepararPartida(event);
+            }
+         } catch (IOException ex) {
+            Logger.getLogger(GUI_MenuPartidaController.class.getName()).log(Level.SEVERE, null, ex);
+         }
       });
 
       buttonConfigurar.setOnAction(event -> {
@@ -197,12 +195,16 @@ public class GUI_MenuPartidaController implements Initializable {
 
    public boolean conectarConServidor(String jugador) {
       boolean check = false;
+      String jugadorARetar = "";      
       String nombreUsuario = cuentaLogueada.getNombreUsuario();
       try {
-         if(jugador.equals("Creador"))
+         if(jugador.equals("Creador")){
             InteraccionServidor.conectar(nombreUsuario);
-         if(jugador.equals("Invitado"))
-            InteraccionServidor.conectarInvitado(nombreUsuario, "Maribel267");
+         }
+         if(jugador.equals("Retador")){
+            //Pedir u obtener el nickname del jugador a retar            
+            InteraccionServidor.conectarInvitado(nombreUsuario, jugadorARetar);
+         }
          check = true;
       } catch (URISyntaxException | UnknownHostException ex) {
          Logger.getLogger(GUI_MenuPartidaController.class.getName()).log(Level.SEVERE, null, ex);
