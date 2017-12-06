@@ -88,30 +88,31 @@ public class GUI_MenuPartidaController implements Initializable {
       buttonCrearPartida.setOnAction(event -> {
          labelIniciando.setVisible(true);
          //ESTABLECER CONEXIÓN Y SUMARME AL POOL
-         try {
-            if (cambiarConfig()) {
-               cargarConfiguracionRed("titleRed", "mensajeConfServ");
-            }
-            if (conectarConServidor()) {
-               irPrepararPartida(event);
-            }
-         } catch (IOException ex) {
-            Logger.getLogger(GUI_MenuPartidaController.class.getName()).log(Level.SEVERE, null, ex);
-         }
-
+//         try {
+//            if (cambiarConfig()) {
+//               cargarConfiguracionRed("titleRed", "mensajeConfServ");
+//            }
+//            if (conectarConServidor()) {
+//               irPrepararPartida(event);
+//            }
+//         } catch (IOException ex) {
+//            Logger.getLogger(GUI_MenuPartidaController.class.getName()).log(Level.SEVERE, null, ex);
+//         }
+      conectarConServidor("Creador");
       });
 
       buttonUnirmePartida.setOnAction(event -> {
          labelIniciando.setVisible(true);
          //ESTABLECER CONEXIÓN Y BUSCAR JUGADOR EN EL POOL
-         try {
-            cargarConfiguracionRed("titleRed", "mensajeConfClien");
-            if (conectarConServidor()) {
-               irPrepararPartida(event);
-            }
-         } catch (IOException ex) {
-            Logger.getLogger(GUI_MenuPartidaController.class.getName()).log(Level.SEVERE, null, ex);
-         }
+//         try {
+//            cargarConfiguracionRed("titleRed", "mensajeConfClien");
+//            if (conectarConServidor()) {
+//               irPrepararPartida(event);
+//            }
+//         } catch (IOException ex) {
+//            Logger.getLogger(GUI_MenuPartidaController.class.getName()).log(Level.SEVERE, null, ex);
+//         }
+      conectarConServidor("Invitado");
       });
 
       buttonConfigurar.setOnAction(event -> {
@@ -194,11 +195,14 @@ public class GUI_MenuPartidaController implements Initializable {
       cargarIdioma();
    }
 
-   public boolean conectarConServidor() {
+   public boolean conectarConServidor(String jugador) {
       boolean check = false;
       String nombreUsuario = cuentaLogueada.getNombreUsuario();
       try {
-         InteraccionServidor.conectar(nombreUsuario);
+         if(jugador.equals("Creador"))
+            InteraccionServidor.conectar(nombreUsuario);
+         if(jugador.equals("Invitado"))
+            InteraccionServidor.conectarInvitado(nombreUsuario, "Maribel267");
          check = true;
       } catch (URISyntaxException | UnknownHostException ex) {
          Logger.getLogger(GUI_MenuPartidaController.class.getName()).log(Level.SEVERE, null, ex);
@@ -271,8 +275,8 @@ public class GUI_MenuPartidaController implements Initializable {
       String numIp = null;
       Locale locale = Locale.getDefault();
       ResourceBundle resources = ResourceBundle.getBundle(RECURSO_IDIOMA, locale);
-      String titulo = resources.getString("title");
-      String mensaje = resources.getString("body");
+      String titulo = resources.getString(title);
+      String mensaje = resources.getString(body);
       Alert confirmacion = new Alert(Alert.AlertType.INFORMATION);
       TextField tfNombreDispositivo = new TextField();
       confirmacion.setTitle(titulo);
