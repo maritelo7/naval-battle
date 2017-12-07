@@ -89,10 +89,12 @@ public class GUI_MenuPartidaController implements Initializable {
          labelIniciando.setVisible(true);
          //ESTABLECER CONEXIÓN Y SUMARME AL POOL
          try {
-            if (cambiarConfig()) {
-               cargarConfiguracionRed("titleRed", "mensajeConfServ");
+            if (cambiarConfiguracion()) {
+               cargarConfiguracionIp("titleRed", "mensajeConfServ");
             }
-            if (conectarConServidor("Creador")) {
+            
+            if (conectarServidor()) {
+               activarEspera();
                irPrepararPartida(event);
             }
          } catch (IOException ex) {
@@ -104,9 +106,12 @@ public class GUI_MenuPartidaController implements Initializable {
          labelIniciando.setVisible(true);
          //ESTABLECER CONEXIÓN Y BUSCAR JUGADOR EN EL POOL
          try {
-            cargarConfiguracionRed("titleRed", "mensajeConfClien");
-            if (conectarConServidor("Retador")) {
-               irPrepararPartida(event);
+            String nickARetar = cargarConfiguracionNick("titleRed", "mensajeConfClien");
+            if (nickARetar != null) {
+               if (conectarServidor()) {
+                  conectarInvitado(nickARetar);
+                  irPrepararPartida(event);
+               }
             }
          } catch (IOException ex) {
             Logger.getLogger(GUI_MenuPartidaController.class.getName()).log(Level.SEVERE, null, ex);
@@ -193,18 +198,38 @@ public class GUI_MenuPartidaController implements Initializable {
       cargarIdioma();
    }
 
-   public boolean conectarConServidor(String jugador) {
+   public boolean conectarServidor() {
       boolean check = false;
-      String jugadorARetar = "";      
+      if (InteraccionServidor.socket == null) {
+         String nombreUsuario = cuentaLogueada.getNombreUsuario();
+         try {
+            InteraccionServidor.conectarServidor(nombreUsuario);
+            System.out.println("Conexión recién establecida");
+            check = true;
+         } catch (URISyntaxException | UnknownHostException ex) {
+            Logger.getLogger(GUI_MenuPartidaController.class.getName()).log(Level.SEVERE, null, ex);
+            Utileria.cargarAviso("titleAlerta", "mensajeErrorConexion");
+         }
+      } else {
+         System.out.println("Conexión establecida antes");
+         check = true;
+      }
+
+      return check;
+   }
+   public void activarEspera(){
+      try {
+         InteraccionServidor.esperarAInvitado();
+      } catch (URISyntaxException | UnknownHostException ex) {
+         Logger.getLogger(GUI_MenuPartidaController.class.getName()).log(Level.SEVERE, null, ex);
+      }
+   }
+
+   public boolean conectarInvitado(String nickARetar) {
+      boolean check = false;
       String nombreUsuario = cuentaLogueada.getNombreUsuario();
       try {
-         if(jugador.equals("Creador")){
-            InteraccionServidor.conectar(nombreUsuario);
-         }
-         if(jugador.equals("Retador")){
-            //Pedir u obtener el nickname del jugador a retar            
-            InteraccionServidor.conectarInvitado(nombreUsuario, jugadorARetar);
-         }
+         InteraccionServidor.conectarInvitado(nombreUsuario, nickARetar);
          check = true;
       } catch (URISyntaxException | UnknownHostException ex) {
          Logger.getLogger(GUI_MenuPartidaController.class.getName()).log(Level.SEVERE, null, ex);
@@ -273,7 +298,7 @@ public class GUI_MenuPartidaController implements Initializable {
       }
    }
 
-   public void cargarConfiguracionRed(String title, String body) throws FileNotFoundException, IOException {
+   public void cargarConfiguracionIp(String title, String body) throws FileNotFoundException, IOException {
       String numIp = null;
       Locale locale = Locale.getDefault();
       ResourceBundle resources = ResourceBundle.getBundle(RECURSO_IDIOMA, locale);
@@ -290,13 +315,35 @@ public class GUI_MenuPartidaController implements Initializable {
       numIp = tfNombreDispositivo.getText();
       if (numIp.trim().isEmpty()) {
          Utileria.cargarAviso("titleAlerta", "mensajeCamposLlenos");
-         cargarConfiguracionRed(title, body);
+         cargarConfiguracionIp(title, body);
       } else {
          guardarPropiedad(numIp);
       }
    }
 
-   public boolean cambiarConfig() {
+   public String cargarConfiguracionNick(String title, String body) throws FileNotFoundException, IOException {
+      String nick = null;
+      Locale locale = Locale.getDefault();
+      ResourceBundle resources = ResourceBundle.getBundle(RECURSO_IDIOMA, locale);
+      String titulo = resources.getString(title);
+      String mensaje = resources.getString(body);
+      Alert confirmacion = new Alert(Alert.AlertType.INFORMATION);
+      TextField tfNombreDispositivo = new TextField();
+      confirmacion.setTitle(titulo);
+      confirmacion.setHeaderText(mensaje);
+      confirmacion.setGraphic(tfNombreDispositivo);
+      ButtonType btAceptar = new ButtonType("OK", ButtonBar.ButtonData.CANCEL_CLOSE);
+      confirmacion.getButtonTypes().setAll(btAceptar);
+      confirmacion.showAndWait();
+      nick = tfNombreDispositivo.getText();
+      if (nick.trim().isEmpty()) {
+         Utileria.cargarAviso("titleAlerta", "mensajeCamposLlenos");
+         cargarConfiguracionIp(title, body);
+      }
+      return nick;
+   }
+
+   public boolean cambiarConfiguracion() {
       boolean check = false;
       Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
       Locale locale = Locale.getDefault();
