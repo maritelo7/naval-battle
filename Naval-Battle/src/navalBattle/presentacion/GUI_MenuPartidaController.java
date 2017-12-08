@@ -109,6 +109,7 @@ public class GUI_MenuPartidaController implements Initializable {
             String nickARetar = cargarConfiguracionNick("titleRed", "mensajeConfClien");
             if (nickARetar != null) {
                if (conectarServidor()) {
+                  //nunca usas el boolean check que regresa conectarInvitado... no es mejor pasarlo a void?
                   conectarInvitado(nickARetar);
                   irPrepararPartida(event);
                }
@@ -219,7 +220,10 @@ public class GUI_MenuPartidaController implements Initializable {
    }
    public void activarEspera(){
       try {
-         InteraccionServidor.esperarAInvitado();
+         String nombreAdversario = InteraccionServidor.esperarAInvitado();
+         if(!nombreAdversario.equals("")){
+            System.out.println("El adversario es: " + nombreAdversario);
+         }
       } catch (URISyntaxException | UnknownHostException ex) {
          Logger.getLogger(GUI_MenuPartidaController.class.getName()).log(Level.SEVERE, null, ex);
       }
@@ -229,8 +233,11 @@ public class GUI_MenuPartidaController implements Initializable {
       boolean check = false;
       String nombreUsuario = cuentaLogueada.getNombreUsuario();
       try {
-         InteraccionServidor.conectarInvitado(nombreUsuario, nickARetar);
+         if(InteraccionServidor.conectarInvitado(nombreUsuario, nickARetar) == false){
+            System.out.println("Jugador no encontrado");
+         }else{
          check = true;
+         }
       } catch (URISyntaxException | UnknownHostException ex) {
          Logger.getLogger(GUI_MenuPartidaController.class.getName()).log(Level.SEVERE, null, ex);
          Utileria.cargarAviso("titleAlerta", "mensajeErrorConexion");

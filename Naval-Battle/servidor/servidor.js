@@ -26,7 +26,7 @@
           asignarAdversario(nombreUsuario, usuarioRetado.id);
           asignarAdversario(nombreRetado, idUsuario);
 
-          io.sockets.connected[usuarioRetado.id].emit("retado", function(){});
+          io.sockets.connected[usuarioRetado.id].emit("retado", function(nombreUsuario){});
           console.log("Usuario retado: "+ nombreRetado +" Con idAdversario")+ usuarios[i].idAdversario;
           check = true;
           break;
