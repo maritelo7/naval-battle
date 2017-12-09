@@ -6,8 +6,12 @@
 package navalBattle.presentacion;
 
 import com.jfoenix.controls.JFXButton;
+import io.socket.client.IO;
+import io.socket.client.Socket;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -30,6 +34,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import navalBattle.logica.Casilla;
 import navalBattle.logica.CuentaUsuario;
+import navalBattle.logica.InteraccionServidor;
 import navalBattle.logica.Nave;
 import navalBattle.logica.Tablero;
 import navalBattle.recursos.Utileria;
@@ -87,6 +92,7 @@ public class GUI_PrepararPartidaController implements Initializable {
    int[] numeroNaves = {3, 2, 2, 1, 1};
    CuentaUsuario cuentaLogueada;
    final static String RECURSO_IDIOMA = "navalBattle.recursos.idiomas.Idioma";
+   
 
    /**
     * Initializes the controller class.
@@ -476,6 +482,10 @@ public class GUI_PrepararPartidaController implements Initializable {
       Tablero tablero = recuperarTablero();
       return tablero;
    }
+   public void activarEspera() throws URISyntaxException, UnknownHostException{
+      
+      InteraccionServidor.esperarAInvitado();
+   }
    
    /**
     * Método para describir la orientación actual de la nave
@@ -491,6 +501,7 @@ public class GUI_PrepararPartidaController implements Initializable {
          esHorizontal = true;
       }
    }
+
    /**
     * Método para refrescar todos los valores de las etiquetas de las naves
     */
@@ -552,4 +563,5 @@ public class GUI_PrepararPartidaController implements Initializable {
       labelVertical.setText(resources.getString("labelVertical"));
       labelVertical.setVisible(false);
    }
+
 }

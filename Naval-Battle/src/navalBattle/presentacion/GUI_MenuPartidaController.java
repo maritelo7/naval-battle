@@ -75,6 +75,7 @@ public class GUI_MenuPartidaController implements Initializable {
    @FXML
    private ImageView imageVBoat;
    final static String RECURSO_IDIOMA = "navalBattle.recursos.idiomas.Idioma";
+   
 
    /**
     * Initializes the controller class.
@@ -92,11 +93,13 @@ public class GUI_MenuPartidaController implements Initializable {
             if (cambiarConfiguracion()) {
                cargarConfiguracionIp("titleRed", "mensajeConfServ");
             }
-            
-            if (conectarServidor()) {
-               activarEspera();
-               irPrepararPartida(event);
+            conectarServidor();
+            try {
+               prepararPartidaHost(event);
+            } catch (URISyntaxException ex) {
+               Logger.getLogger(GUI_MenuPartidaController.class.getName()).log(Level.SEVERE, null, ex);
             }
+            
          } catch (IOException ex) {
             Logger.getLogger(GUI_MenuPartidaController.class.getName()).log(Level.SEVERE, null, ex);
          }
@@ -106,12 +109,17 @@ public class GUI_MenuPartidaController implements Initializable {
          labelIniciando.setVisible(true);
          //ESTABLECER CONEXIÓN Y BUSCAR JUGADOR EN EL POOL
          try {
+            if (cambiarConfiguracion()) {
+               cargarConfiguracionIp("titleRed", "mensajeConfServ");
+               
+            }
             String nickARetar = cargarConfiguracionNick("titleRed", "mensajeConfClien");
+            
             if (nickARetar != null) {
-               if (conectarServidor()) {
-                  //nunca usas el boolean check que regresa conectarInvitado... no es mejor pasarlo a void?
-                  conectarInvitado(nickARetar);
-                  irPrepararPartida(event);
+               conectarServidor();
+               if (conectarInvitado(nickARetar)) {
+                  
+                  prepararPartidaCliente(event);
                }
             }
          } catch (IOException ex) {
@@ -137,6 +145,7 @@ public class GUI_MenuPartidaController implements Initializable {
       });
 
       buttonSalir.setOnAction(event -> {
+         
          cargarVentana(event, "GUI_IniciarSesion.fxml");
       });
 
@@ -199,43 +208,29 @@ public class GUI_MenuPartidaController implements Initializable {
       cargarIdioma();
    }
 
-   public boolean conectarServidor() {
-      boolean check = false;
+   public void conectarServidor() {
       if (InteraccionServidor.socket == null) {
          String nombreUsuario = cuentaLogueada.getNombreUsuario();
          try {
             InteraccionServidor.conectarServidor(nombreUsuario);
             System.out.println("Conexión recién establecida");
-            check = true;
+           
          } catch (URISyntaxException | UnknownHostException ex) {
             Logger.getLogger(GUI_MenuPartidaController.class.getName()).log(Level.SEVERE, null, ex);
             Utileria.cargarAviso("titleAlerta", "mensajeErrorConexion");
          }
-      } else {
-         System.out.println("Conexión establecida antes");
-         check = true;
-      }
-
-      return check;
-   }
-   public void activarEspera(){
-      try {
-         String nombreAdversario = InteraccionServidor.esperarAInvitado();
-         if(!nombreAdversario.equals("")){
-            System.out.println("El adversario es: " + nombreAdversario);
-         }
-      } catch (URISyntaxException | UnknownHostException ex) {
-         Logger.getLogger(GUI_MenuPartidaController.class.getName()).log(Level.SEVERE, null, ex);
-      }
+      } 
    }
 
    public boolean conectarInvitado(String nickARetar) {
       boolean check = false;
       String nombreUsuario = cuentaLogueada.getNombreUsuario();
       try {
-         if(InteraccionServidor.conectarInvitado(nombreUsuario, nickARetar) == false){
-            System.out.println("Jugador no encontrado");
+         boolean respuesta = InteraccionServidor.conectarInvitado(nombreUsuario, nickARetar);
+         if(respuesta == false){
+            System.out.println("Jugador no encontrado en ConetarINvitado");
          }else{
+            System.out.println("Encontró jugador");
          check = true;
          }
       } catch (URISyntaxException | UnknownHostException ex) {
@@ -250,7 +245,7 @@ public class GUI_MenuPartidaController implements Initializable {
     *
     * @param event evento que desencadena un cambio de ventana
     */
-   public void irPrepararPartida(Event event) {
+   public void prepararPartidaCliente(Event event) {
       Node node = (Node) event.getSource();
       Stage stage;
       stage = (Stage) node.getScene().getWindow();
@@ -260,6 +255,32 @@ public class GUI_MenuPartidaController implements Initializable {
          Scene scene = new Scene(loader.load());
          GUI_PrepararPartidaController controller = loader.getController();
          controller.cargarCuenta(cuentaLogueada);
+         //controller.setSocket(interac.socket);
+         loader.setController(controller);
+         stage.setScene(scene);
+         stage.setResizable(false);
+         stage.show();
+      } catch (IOException ex) {
+         Logger.getLogger(GUI_MenuPartidaController.class.getName()).log(Level.SEVERE, null, ex);
+      }
+   }
+      /**
+    * Método para cambiar de la ventana actual a otra
+    *
+    * @param event evento que desencadena un cambio de ventana
+    */
+   public void prepararPartidaHost(Event event) throws URISyntaxException {
+      Node node = (Node) event.getSource();
+      Stage stage;
+      stage = (Stage) node.getScene().getWindow();
+      try {
+         FXMLLoader loader;
+         loader = new FXMLLoader(getClass().getResource("GUI_PrepararPartida.fxml"));
+         Scene scene = new Scene(loader.load());
+         GUI_PrepararPartidaController controller = loader.getController();
+         controller.cargarCuenta(cuentaLogueada);
+         //controller.setSocket(interac.socket);
+         controller.activarEspera();
          loader.setController(controller);
          stage.setScene(scene);
          stage.setResizable(false);
@@ -334,18 +355,22 @@ public class GUI_MenuPartidaController implements Initializable {
       ResourceBundle resources = ResourceBundle.getBundle(RECURSO_IDIOMA, locale);
       String titulo = resources.getString(title);
       String mensaje = resources.getString(body);
+      String btnNomCancelar = resources.getString("buttonCancelar");
       Alert confirmacion = new Alert(Alert.AlertType.INFORMATION);
-      TextField tfNombreDispositivo = new TextField();
+      TextField tfNombre = new TextField();
       confirmacion.setTitle(titulo);
       confirmacion.setHeaderText(mensaje);
-      confirmacion.setGraphic(tfNombreDispositivo);
-      ButtonType btAceptar = new ButtonType("OK", ButtonBar.ButtonData.CANCEL_CLOSE);
-      confirmacion.getButtonTypes().setAll(btAceptar);
-      confirmacion.showAndWait();
-      nick = tfNombreDispositivo.getText();
-      if (nick.trim().isEmpty()) {
+      confirmacion.setGraphic(tfNombre);
+      ButtonType btnCancelar = new ButtonType(btnNomCancelar, ButtonBar.ButtonData.CANCEL_CLOSE);
+      ButtonType btnAceptar = new ButtonType("OK");
+      confirmacion.getButtonTypes().setAll(btnAceptar, btnCancelar);
+      Optional<ButtonType> eleccion = confirmacion.showAndWait();
+      nick = tfNombre.getText();
+      if (eleccion.get() == btnAceptar) {
+         if (nick.trim().isEmpty()) {
          Utileria.cargarAviso("titleAlerta", "mensajeCamposLlenos");
          cargarConfiguracionIp(title, body);
+         }
       }
       return nick;
    }

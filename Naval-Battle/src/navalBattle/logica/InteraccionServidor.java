@@ -7,10 +7,7 @@ package navalBattle.logica;
 
 import java.net.URISyntaxException;
 import io.socket.client.IO;
-import static io.socket.client.IO.*;
 import io.socket.client.Socket;
-import io.socket.emitter.Emitter;
-import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ResourceBundle;
 
@@ -21,6 +18,7 @@ import java.util.ResourceBundle;
 public class InteraccionServidor {
 
    public static Socket socket;
+
 
 //   public static String obtenerIpAddress() throws UnknownHostException {
 //      InetAddress localhost;
@@ -38,25 +36,25 @@ public class InteraccionServidor {
       socket.on(Socket.EVENT_DISCONNECT, (Object... os) -> {
          //System.out.println("Se fue el servidor");
       });
+      
       socket.connect();
       socket.emit("registrarDatos", nombreUsuario);
    }
 
-   public static String esperarAInvitado() throws URISyntaxException, UnknownHostException {
-      String[] nombreAdversario = new String[1];
-      nombreAdversario[0] = "";
-      socket.on("retado", new Emitter.Listener() {
-      @Override
-         public void call(Object... os) {
-            nombreAdversario[0] = (String)os[0];
-         }
+   public static void esperarAInvitado() throws URISyntaxException, UnknownHostException {
+      socket.on("retado", (Object... os) -> {
+         
+         
+         System.out.println("Fuiste retado en interacción");
+         
       });
-      return nombreAdversario[0];
+      
    }
 
    public static boolean conectarInvitado(String nombreUsuario, String nombreContrincante) throws URISyntaxException, UnknownHostException {
       boolean[] auxiliar = new boolean[1];
-      socket.emit("envioRetador", nombreUsuario, nombreContrincante, socket.id());
+      auxiliar[0] = true;
+      socket.emit("envioRetador", nombreUsuario, nombreContrincante);
       socket.on("sinJugadorRetado", (Object... os) -> {
          System.out.println("No encontró jugador"); 
          auxiliar[0] = false;

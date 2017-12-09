@@ -125,7 +125,7 @@ public class GUI_IniciarSesionController implements Initializable {
 
       buttonIniciar.setOnAction((ActionEvent event) -> {
          //CuentaUsuario cuenta = ingresar();
-         CuentaUsuario cuenta = new CuentaUsuario("Tellito", "Patito", "English");
+         CuentaUsuario cuenta = new CuentaUsuario(tFieldNick.getText(), "Patito", "English");
          if (cuenta == null) {
             Utileria.cargarAviso("titleAlerta", "mensajeDatosIncorrectosIniciarSesion");
             limpiar();
