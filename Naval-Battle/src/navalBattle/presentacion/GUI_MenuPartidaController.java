@@ -75,7 +75,7 @@ public class GUI_MenuPartidaController implements Initializable {
    @FXML
    private ImageView imageVBoat;
    final static String RECURSO_IDIOMA = "navalBattle.recursos.idiomas.Idioma";
-   
+   InteraccionServidor interaccionServidor = new InteraccionServidor();
 
    /**
     * Initializes the controller class.
@@ -85,7 +85,6 @@ public class GUI_MenuPartidaController implements Initializable {
 
       cargarAnimacion();
       labelIniciando.setVisible(false);
-
       buttonCrearPartida.setOnAction(event -> {
          labelIniciando.setVisible(true);
          //ESTABLECER CONEXIÓN Y SUMARME AL POOL
@@ -94,13 +93,8 @@ public class GUI_MenuPartidaController implements Initializable {
                cargarConfiguracionIp("titleRed", "mensajeConfServ");
             }
             conectarServidor();
-            try {
-               prepararPartidaHost(event);
-            } catch (URISyntaxException ex) {
-               Logger.getLogger(GUI_MenuPartidaController.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            
-         } catch (IOException ex) {
+            prepararPartidaHost(event); 
+         } catch (IOException | URISyntaxException ex) {
             Logger.getLogger(GUI_MenuPartidaController.class.getName()).log(Level.SEVERE, null, ex);
          }
       });
@@ -117,8 +111,7 @@ public class GUI_MenuPartidaController implements Initializable {
             
             if (nickARetar != null) {
                conectarServidor();
-               if (conectarInvitado(nickARetar)) {
-                  
+               if (conectarInvitado(nickARetar)) {                  
                   prepararPartidaCliente(event);
                }
             }
@@ -145,7 +138,6 @@ public class GUI_MenuPartidaController implements Initializable {
       });
 
       buttonSalir.setOnAction(event -> {
-         
          cargarVentana(event, "GUI_IniciarSesion.fxml");
       });
 
@@ -211,22 +203,29 @@ public class GUI_MenuPartidaController implements Initializable {
    public void conectarServidor() {
       if (InteraccionServidor.socket == null) {
          String nombreUsuario = cuentaLogueada.getNombreUsuario();
-         try {
-            InteraccionServidor.conectarServidor(nombreUsuario);
-            System.out.println("Conexión recién establecida");
-           
+         try {            
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_MenuPartida.fxml"));
+            GUI_MenuPartidaController controller = loader.getController();
+            interaccionServidor.conectarServidor(nombreUsuario, controller);
+            System.out.println("Conexión recién establecida");           
          } catch (URISyntaxException | UnknownHostException ex) {
             Logger.getLogger(GUI_MenuPartidaController.class.getName()).log(Level.SEVERE, null, ex);
             Utileria.cargarAviso("titleAlerta", "mensajeErrorConexion");
+         } catch (IOException ex) {
+            Logger.getLogger(GUI_MenuPartidaController.class.getName()).log(Level.SEVERE, null, ex);
          }
       } 
+   }
+   
+   public void cargarAviso(String nombreTitulo, String nombreMensaje){
+      Utileria.cargarAviso(nombreTitulo, nombreMensaje);
    }
 
    public boolean conectarInvitado(String nickARetar) {
       boolean check = false;
       String nombreUsuario = cuentaLogueada.getNombreUsuario();
       try {
-         boolean respuesta = InteraccionServidor.conectarInvitado(nombreUsuario, nickARetar);
+         boolean respuesta = interaccionServidor.conectarInvitado(nombreUsuario, nickARetar);
          if(respuesta == false){
             System.out.println("Jugador no encontrado en ConetarINvitado");
          }else{
@@ -247,11 +246,9 @@ public class GUI_MenuPartidaController implements Initializable {
     */
    public void prepararPartidaCliente(Event event) {
       Node node = (Node) event.getSource();
-      Stage stage;
-      stage = (Stage) node.getScene().getWindow();
+      Stage stage = (Stage) node.getScene().getWindow();
       try {
-         FXMLLoader loader;
-         loader = new FXMLLoader(getClass().getResource("GUI_PrepararPartida.fxml"));
+         FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_PrepararPartida.fxml"));
          Scene scene = new Scene(loader.load());
          GUI_PrepararPartidaController controller = loader.getController();
          controller.cargarCuenta(cuentaLogueada);
@@ -271,17 +268,17 @@ public class GUI_MenuPartidaController implements Initializable {
     */
    public void prepararPartidaHost(Event event) throws URISyntaxException {
       Node node = (Node) event.getSource();
-      Stage stage;
-      stage = (Stage) node.getScene().getWindow();
+      Stage stage = (Stage) node.getScene().getWindow();
       try {
-         FXMLLoader loader;
-         loader = new FXMLLoader(getClass().getResource("GUI_PrepararPartida.fxml"));
+         FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_PrepararPartida.fxml"));
          Scene scene = new Scene(loader.load());
          GUI_PrepararPartidaController controller = loader.getController();
          controller.cargarCuenta(cuentaLogueada);
+         controller.cargarInteraccionServidor(interaccionServidor);
+         controller.cargarController(controller);
          //controller.setSocket(interac.socket);
-         controller.activarEspera();
          loader.setController(controller);
+         controller.activarEspera();
          stage.setScene(scene);
          stage.setResizable(false);
          stage.show();
@@ -313,8 +310,7 @@ public class GUI_MenuPartidaController implements Initializable {
     */
    public void cargarVentana(Event event, String url) {
       Node node = (Node) event.getSource();
-      Stage stage;
-      stage = (Stage) node.getScene().getWindow();
+      Stage stage = (Stage) node.getScene().getWindow();
       try {
          Parent root = FXMLLoader.load(getClass().getResource(url));
          Scene scene = new Scene(root);

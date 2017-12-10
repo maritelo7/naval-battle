@@ -10,15 +10,18 @@ import io.socket.client.IO;
 import io.socket.client.Socket;
 import java.net.UnknownHostException;
 import java.util.ResourceBundle;
+import javafx.application.Platform;
+import navalBattle.presentacion.GUI_MenuPartidaController;
+import navalBattle.presentacion.GUI_PrepararPartidaController;
 
 /**
  *
  * @author Mari
  */
 public class InteraccionServidor {
-
    public static Socket socket;
-
+   GUI_MenuPartidaController menuController;
+   
 
 //   public static String obtenerIpAddress() throws UnknownHostException {
 //      InetAddress localhost;
@@ -27,7 +30,8 @@ public class InteraccionServidor {
 //      ipLocalhost = localhost.getHostAddress().trim();
 //      return ipLocalhost;
 //   }
-   public static void conectarServidor(String nombreUsuario) throws URISyntaxException, UnknownHostException {
+   public void conectarServidor(String nombreUsuario, GUI_MenuPartidaController controller) throws URISyntaxException, UnknownHostException {
+      //this.controller = controller;
       ResourceBundle resources = ResourceBundle.getBundle("navalBattle.recursos.ConfiguracionServidor");
       final String numeroPuerto = resources.getString("puertoServidor");
       String ipServidor = resources.getString("ipServidor");
@@ -41,17 +45,17 @@ public class InteraccionServidor {
       socket.emit("registrarDatos", nombreUsuario);
    }
 
-   public static void esperarAInvitado() throws URISyntaxException, UnknownHostException {
+   public void esperarAInvitado(GUI_PrepararPartidaController controller) throws URISyntaxException, UnknownHostException {
       socket.on("retado", (Object... os) -> {
-         
-         
-         System.out.println("Fuiste retado en interacción");
-         
+         Platform.runLater(
+             () -> {
+                controller.cargarAviso("retado", "fuisteRetadoPorNickname");
+             }
+         );
       });
-      
    }
 
-   public static boolean conectarInvitado(String nombreUsuario, String nombreContrincante) throws URISyntaxException, UnknownHostException {
+   public boolean conectarInvitado(String nombreUsuario, String nombreContrincante) throws URISyntaxException, UnknownHostException {
       boolean[] auxiliar = new boolean[1];
       auxiliar[0] = true;
       socket.emit("envioRetador", nombreUsuario, nombreContrincante);

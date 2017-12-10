@@ -25,7 +25,7 @@
   			if (usuarioEncontrado.estado == "disponible") {
   			asignarAdversario(nombreUsuario, usuarioEncontrado.id);
   				asignarAdversario(nombreRetado, encontrarID(nombreUsuario));
-  				io.sockets.connected[usuarioEncontrado.id].emit("retado", nombreUsuario);
+  				io.sockets.connected[usuarioEncontrado.id].emit("retado", function());
   				console.log("Usuario retado: "+ nombreRetado +" Con idAdversario"+ usuarioEncontrado.idAdversario);
   			} else {
   				socket.emit("sinJugadorRetado", function(){});

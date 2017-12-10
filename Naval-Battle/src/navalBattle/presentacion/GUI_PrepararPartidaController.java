@@ -23,6 +23,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -92,14 +93,14 @@ public class GUI_PrepararPartidaController implements Initializable {
    int[] numeroNaves = {3, 2, 2, 1, 1};
    CuentaUsuario cuentaLogueada;
    final static String RECURSO_IDIOMA = "navalBattle.recursos.idiomas.Idioma";
+   InteraccionServidor interaccionServidor = new InteraccionServidor();
+    GUI_PrepararPartidaController controller;
    
-
    /**
     * Initializes the controller class.
     */
    @Override
    public void initialize(URL url, ResourceBundle rb) {
-
       cargarIdioma();
       cargarTablero();
       buttonContinuar.setOnAction(event -> {
@@ -174,7 +175,7 @@ public class GUI_PrepararPartidaController implements Initializable {
       buttonLimpiar.setOnAction(event -> {
          limpiarTablero();
       });
-
+      
    }
 
    /**
@@ -185,6 +186,15 @@ public class GUI_PrepararPartidaController implements Initializable {
    public void cargarCuenta(CuentaUsuario cuenta) {
       this.cuentaLogueada = cuenta;
    }
+   
+    public void cargarInteraccionServidor(InteraccionServidor interaccionServidor) {
+      this.interaccionServidor = interaccionServidor;
+   }
+    
+    public void cargarController(GUI_PrepararPartidaController controller) {
+     this.controller = controller;
+   }   
+
 
    /**
     * Método para cargar el tablero con casillas y las etiquetas de las naves
@@ -482,10 +492,16 @@ public class GUI_PrepararPartidaController implements Initializable {
       Tablero tablero = recuperarTablero();
       return tablero;
    }
-   public void activarEspera() throws URISyntaxException, UnknownHostException{
-      
-      InteraccionServidor.esperarAInvitado();
+   
+   
+   public void activarEspera() throws URISyntaxException, UnknownHostException, IOException{       
+      interaccionServidor.esperarAInvitado(controller);
    }
+   
+   public void cargarAviso(String nombreTitulo, String nombreMensaje){
+      Utileria.cargarAviso("retado", "fuisteRetadoPorNickname");
+   }
+
    
    /**
     * Método para describir la orientación actual de la nave
