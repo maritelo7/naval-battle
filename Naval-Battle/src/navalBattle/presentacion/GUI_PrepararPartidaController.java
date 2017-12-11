@@ -5,9 +5,8 @@
  */
 package navalBattle.presentacion;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.jfoenix.controls.JFXButton;
-import io.socket.client.IO;
-import io.socket.client.Socket;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -23,8 +22,10 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -86,6 +87,8 @@ public class GUI_PrepararPartidaController implements Initializable {
    private Label labelHorizontal;
    @FXML
    private Label labelVertical;
+   @FXML
+   private Label labelEspera;
 
    private boolean esHorizontal = true;
    VBox columna = new VBox();
@@ -94,36 +97,37 @@ public class GUI_PrepararPartidaController implements Initializable {
    CuentaUsuario cuentaLogueada;
    final static String RECURSO_IDIOMA = "navalBattle.recursos.idiomas.Idioma";
    InteraccionServidor interaccionServidor = new InteraccionServidor();
-    GUI_PrepararPartidaController controller;
-   
+   GUI_PrepararPartidaController controller;
+   Tablero tableroEnemigo = new Tablero(true);
+   boolean ready = false;
+
    /**
     * Initializes the controller class.
     */
    @Override
-   public void initialize(URL url, ResourceBundle rb) {
+   public void initialize(URL url, ResourceBundle rb)  {
       cargarIdioma();
       cargarTablero();
       buttonContinuar.setOnAction(event -> {
-         Tablero tableroEnemigo = recibirTablero();
-         if (tableroEnemigo != null) {
-            Node node = (Node) event.getSource();
-            Stage stage = (Stage) node.getScene().getWindow();
-            Tablero tablero = recuperarTablero();
-            try {
-               FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_JugarPartida.fxml"));
-               Scene scene = new Scene(loader.load());
-               GUI_JugarPartidaController controller = loader.getController();
-               controller.cargarCuenta(cuentaLogueada);
-               controller.setTableroJugador(tablero);
-               controller.setTableroEnemigo(tableroEnemigo);
-               loader.setController(controller);
-               stage.setScene(scene);
-               stage.setResizable(false);
-               stage.show();
-            } catch (IOException ex) {
-               Logger.getLogger(GUI_PrepararPartidaController.class.getName()).log(Level.SEVERE, null, ex);
-            }
+
+         Node node = (Node) event.getSource();
+         Stage stage = (Stage) node.getScene().getWindow();
+         Tablero tablero = recuperarTablero();
+         try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_JugarPartida.fxml"));
+            Scene scene = new Scene(loader.load());
+            GUI_JugarPartidaController controller = loader.getController();
+            controller.cargarCuenta(cuentaLogueada);
+            controller.setTableroJugador(tablero);
+            controller.setTableroEnemigo(tableroEnemigo);
+            loader.setController(controller);
+            stage.setScene(scene);
+            stage.setResizable(false);
+            stage.show();
+         } catch (IOException ex) {
+            Logger.getLogger(GUI_PrepararPartidaController.class.getName()).log(Level.SEVERE, null, ex);
          }
+
       });
       buttonRegresar.setOnAction(event -> {
          Utileria.cargarAviso("titleCancelarPartida", "mensajeCancelarPartida");
@@ -164,7 +168,13 @@ public class GUI_PrepararPartidaController implements Initializable {
             if (!colocarNave(casilla, nave)) {
                Utileria.cargarAviso("tittlePosicion", "mensajePosicion");
             } else {
-               actualizarNaves();
+        
+               try {
+                  actualizarNaves();
+               } catch (InterruptedException | JsonProcessingException ex) {
+                  Logger.getLogger(GUI_PrepararPartidaController.class.getName()).log(Level.SEVERE, null, ex);
+               }
+   
             }
          }
 
@@ -175,7 +185,7 @@ public class GUI_PrepararPartidaController implements Initializable {
       buttonLimpiar.setOnAction(event -> {
          limpiarTablero();
       });
-      
+
    }
 
    /**
@@ -186,15 +196,14 @@ public class GUI_PrepararPartidaController implements Initializable {
    public void cargarCuenta(CuentaUsuario cuenta) {
       this.cuentaLogueada = cuenta;
    }
-   
-    public void cargarInteraccionServidor(InteraccionServidor interaccionServidor) {
+
+   public void cargarInteraccionServidor(InteraccionServidor interaccionServidor) {
       this.interaccionServidor = interaccionServidor;
    }
-    
-    public void cargarController(GUI_PrepararPartidaController controller) {
-     this.controller = controller;
-   }   
 
+   public void cargarController(GUI_PrepararPartidaController controller) {
+      this.controller = controller;
+   }
 
    /**
     * Método para cargar el tablero con casillas y las etiquetas de las naves
@@ -219,7 +228,6 @@ public class GUI_PrepararPartidaController implements Initializable {
       buttonContinuar.setDisable(true);
    }
 
-
    /**
     * Método para verificar que la posición del tablero es válida para colocar una nave con tales
     * dimensiones
@@ -239,6 +247,7 @@ public class GUI_PrepararPartidaController implements Initializable {
 
    /**
     * Método para comprobar si es posible colocar una nave de forma horizontal
+    *
     * @param casillaInicio casilla en donde inicia la nave
     * @param tamanio tamaño de la nave
     * @return boolean si se peude colocar la nave
@@ -262,6 +271,7 @@ public class GUI_PrepararPartidaController implements Initializable {
 
    /**
     * Método para comprobar si los colindantes de la casilla son aceptables
+    *
     * @param i valor variable de la posición de X
     * @param y valor de y de la casilla
     * @return regresa los colindantes son aptos para colocar la nave
@@ -280,6 +290,7 @@ public class GUI_PrepararPartidaController implements Initializable {
 
    /**
     * Método para comprobar si se puede colocar una nave en vertical
+    *
     * @param casillaInicio casilla en donde inicia la nave a colocar
     * @param tamanio tamaño de la nave
     * @return regresa se se puede colocar la nave en dicha posición
@@ -303,6 +314,7 @@ public class GUI_PrepararPartidaController implements Initializable {
 
    /**
     * Método para comprobar los colindantes de una casilla
+    *
     * @param x valor de X de la casilla
     * @param i valor varibale de Y de la casilla
     * @return si las casillas colindantes son aptas para colocar la nave
@@ -322,8 +334,8 @@ public class GUI_PrepararPartidaController implements Initializable {
    /**
     * Método para verificar si la posición seleccionada es válida
     *
-    * @param x  Posición de x de la casilla
-    * @param y  Posición de y de la casilla
+    * @param x Posición de x de la casilla
+    * @param y Posición de y de la casilla
     * @return Si es posible
     */
    public boolean posicionValida(double x, double y) {
@@ -337,7 +349,7 @@ public class GUI_PrepararPartidaController implements Initializable {
     * @return regresa si es posible
     */
    public boolean posicionValida(Point2D point) {
-      return point.getX() >= 0 && point.getX() < 10 && point.getY() >=0 && point.getY() < 10;
+      return point.getX() >= 0 && point.getX() < 10 && point.getY() >= 0 && point.getY() < 10;
    }
 
    /**
@@ -412,7 +424,7 @@ public class GUI_PrepararPartidaController implements Initializable {
     * Método para actualizar los números de naves disposibles y en caso de colocar todas habilitar
     * la continuación
     */
-   public void actualizarNaves() {
+   public void actualizarNaves() throws InterruptedException, JsonProcessingException {
       int restante = 0;
       int sumaRestantes = 0;
       for (int i = 1; i < 6; i++) {
@@ -457,9 +469,24 @@ public class GUI_PrepararPartidaController implements Initializable {
                tamanioNave = 0;
          }
       }
-      if (sumaRestantes == 0) {
-         //Aquí debería enviar al contrincante el tablero que ha creado el jugador
-         buttonContinuar.setDisable(false);
+      checkListo(sumaRestantes);
+   }
+
+   public void enviarTablero() throws InterruptedException, JsonProcessingException {
+      Tablero tableroJugador = recuperarTablero();
+      interaccionServidor.enviarTablero(cuentaLogueada.getNombreUsuario(), tableroJugador, tableroEnemigo);
+      synchronized (tableroEnemigo) {
+         tableroEnemigo.wait();
+      }
+   }
+
+   public void checkListo(int sumaNavesRestantes) throws InterruptedException, JsonProcessingException {
+      if (sumaNavesRestantes == 0) {
+         System.out.println("Cero restantes");
+         labelEspera.setVisible(true);
+         if (ready) {
+            enlazarContrincante();
+         }
       }
    }
 
@@ -469,40 +496,37 @@ public class GUI_PrepararPartidaController implements Initializable {
     * @return tablero con naves
     */
    public Tablero recuperarTablero() {
-      int z = 0;
+      
       Tablero tableroJugador = new Tablero(false);
       ArrayList<Casilla> casillas = new ArrayList<>();
       for (int i = 0; i < 10; i++) {
          for (int j = 0; j < 10; j++) {
             casillas.add(getCasilla(j, i));
-            z++;
+            
          }
       }
       tableroJugador.setCasillas(casillas);
       return tableroJugador;
    }
 
-   /**
-    * Método para recibir el tablero del contrincante
-    *
-    * @return tablero del contrincante con naves colocadas
-    */
-   public Tablero recibirTablero() {
-      //Aquí debería recibir el objeto tablero del contricante
-      Tablero tablero = recuperarTablero();
-      return tablero;
-   }
-   
-   
-   public void activarEspera() throws URISyntaxException, UnknownHostException, IOException{       
+   public void activarEspera() throws URISyntaxException, UnknownHostException, IOException {
       interaccionServidor.esperarAInvitado(controller);
    }
-   
-   public void cargarAviso(String nombreTitulo, String nombreMensaje){
-      Utileria.cargarAviso("retado", "fuisteRetadoPorNickname");
+
+   public void cargarAviso(String nombreTitulo, String nombreMensaje, String nick) {
+      Locale locale = Locale.getDefault();
+      ResourceBundle resources = ResourceBundle.getBundle("navalBattle.recursos.idiomas.Idioma", locale);
+      String titulo = resources.getString(nombreTitulo);
+      String mensaje = resources.getString(nombreMensaje);
+      Alert confirmacion = new Alert(Alert.AlertType.INFORMATION);
+      confirmacion.setTitle(titulo);
+      confirmacion.setHeaderText(mensaje);
+      confirmacion.setContentText(nick);
+      ButtonType btAceptar = new ButtonType("OK", ButtonBar.ButtonData.CANCEL_CLOSE);
+      confirmacion.getButtonTypes().setAll(btAceptar);
+      confirmacion.showAndWait();
    }
 
-   
    /**
     * Método para describir la orientación actual de la nave
     */
@@ -565,6 +589,7 @@ public class GUI_PrepararPartidaController implements Initializable {
       buttonNave2.setDisable(false);
       buttonNave1.setDisable(false);
    }
+
    /**
     * Método para cargar el idioma seleccionado por default en etiquetas y botones
     */
@@ -578,6 +603,14 @@ public class GUI_PrepararPartidaController implements Initializable {
       labelHorizontal.setText(resources.getString("labelHorizontal"));
       labelVertical.setText(resources.getString("labelVertical"));
       labelVertical.setVisible(false);
+      labelEspera.setText(resources.getString("labelEspera"));
+      labelEspera.setVisible(false);
+   }
+
+   public void enlazarContrincante() throws InterruptedException, JsonProcessingException {
+      System.out.println("Enlaza");
+      enviarTablero();
+      buttonContinuar.setDisable(false);
    }
 
 }

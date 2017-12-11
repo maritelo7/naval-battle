@@ -196,7 +196,7 @@ public class GUI_JugarPartidaController implements Initializable {
     */
    public void setTableroEnemigo(Tablero tableroEnemigo) {
       this.tableroEnemigo = tableroEnemigo;
-      tableroEnemigo.setEnemigo(true);
+      //tableroEnemigo.setEnemigo(true);
       cargarTableroEnemigo();
    }
 

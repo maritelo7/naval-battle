@@ -6,13 +6,13 @@
 package navalBattle.logica;
 
 import java.util.ArrayList;
-import javafx.scene.Parent;
+
 
 /**
  *
  * @author javr
  */
-public class Tablero extends Parent {
+public class Tablero {
    //private final Pane paneTablero;
    private boolean enemigo;
    private ArrayList<Casilla> casillas = new ArrayList<>();

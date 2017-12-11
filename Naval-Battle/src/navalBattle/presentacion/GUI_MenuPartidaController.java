@@ -211,30 +211,31 @@ public class GUI_MenuPartidaController implements Initializable {
          } catch (URISyntaxException | UnknownHostException ex) {
             Logger.getLogger(GUI_MenuPartidaController.class.getName()).log(Level.SEVERE, null, ex);
             Utileria.cargarAviso("titleAlerta", "mensajeErrorConexion");
-         } catch (IOException ex) {
-            Logger.getLogger(GUI_MenuPartidaController.class.getName()).log(Level.SEVERE, null, ex);
          }
       } 
    }
    
-   public void cargarAviso(String nombreTitulo, String nombreMensaje){
-      Utileria.cargarAviso(nombreTitulo, nombreMensaje);
-   }
+//   public void cargarAviso(String nombreTitulo, String nombreMensaje){
+//      Utileria.cargarAviso(nombreTitulo, nombreMensaje);
+//   }
 
    public boolean conectarInvitado(String nickARetar) {
       boolean check = false;
       String nombreUsuario = cuentaLogueada.getNombreUsuario();
       try {
-         boolean respuesta = interaccionServidor.conectarInvitado(nombreUsuario, nickARetar);
-         if(respuesta == false){
-            System.out.println("Jugador no encontrado en ConetarINvitado");
-         }else{
+         Utileria bandera = new Utileria(false);
+         interaccionServidor.conectarInvitado(nombreUsuario, nickARetar, bandera);
+         synchronized (bandera){
+            bandera.wait();
+         }
+         if(bandera.isBandera() == false){
+            Utileria.cargarAviso("tittleAlerta", "sinJugador");
+         } else{
             System.out.println("Encontró jugador");
          check = true;
          }
-      } catch (URISyntaxException | UnknownHostException ex) {
+      } catch (InterruptedException | URISyntaxException | UnknownHostException ex) {
          Logger.getLogger(GUI_MenuPartidaController.class.getName()).log(Level.SEVERE, null, ex);
-         Utileria.cargarAviso("titleAlerta", "mensajeErrorConexion");
       }
       return check;
    }
@@ -252,7 +253,8 @@ public class GUI_MenuPartidaController implements Initializable {
          Scene scene = new Scene(loader.load());
          GUI_PrepararPartidaController controller = loader.getController();
          controller.cargarCuenta(cuentaLogueada);
-         //controller.setSocket(interac.socket);
+         controller.cargarInteraccionServidor(interaccionServidor);
+         controller.ready = true;
          loader.setController(controller);
          stage.setScene(scene);
          stage.setResizable(false);
@@ -276,7 +278,6 @@ public class GUI_MenuPartidaController implements Initializable {
          controller.cargarCuenta(cuentaLogueada);
          controller.cargarInteraccionServidor(interaccionServidor);
          controller.cargarController(controller);
-         //controller.setSocket(interac.socket);
          loader.setController(controller);
          controller.activarEspera();
          stage.setScene(scene);
@@ -389,6 +390,7 @@ public class GUI_MenuPartidaController implements Initializable {
       if (eleccion.get() == btnCambiar) {
          check = true;
       }
+      System.out.println("Terminó cambiar confg");
       return check;
    }
 
@@ -403,6 +405,7 @@ public class GUI_MenuPartidaController implements Initializable {
       proper.setProperty("ipServidor", numIp);
       proper.store(out, null);
       out.close();
+      System.out.println("Terminó guardar");
    }
 
    /**

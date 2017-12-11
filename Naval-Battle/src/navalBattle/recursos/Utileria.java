@@ -17,7 +17,20 @@ import javafx.scene.control.ButtonType;
  * @author José Alí Valdivia Ruiz
  */
 public class Utileria {
+   boolean bandera;
 
+   public boolean isBandera() {
+      return bandera;
+   }
+
+   public void setBandera(boolean bandera) {
+      this.bandera = bandera;
+   }
+
+   public Utileria(boolean bandera) {
+      this.bandera = bandera;
+   }
+    
 /**
     * Método reutilizable para cargar un ventana emergente
     *

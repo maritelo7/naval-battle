@@ -123,5 +123,10 @@
             <Font size="14.0" />
          </font>
       </Label>
+      <Label id="labelColocaNaves" fx:id="labelEspera" layoutX="471.0" layoutY="622.0" prefHeight="28.0" prefWidth="285.0" text="labelEspera">
+         <font>
+            <Font name="Century Gothic" size="16.0" fx:id="x11" />
+         </font>
+      </Label>
   </children>
 </AnchorPane>

@@ -25,8 +25,9 @@
   			if (usuarioEncontrado.estado == "disponible") {
   			asignarAdversario(nombreUsuario, usuarioEncontrado.id);
   				asignarAdversario(nombreRetado, encontrarID(nombreUsuario));
-  				io.sockets.connected[usuarioEncontrado.id].emit("retado", function());
+  				io.sockets.connected[usuarioEncontrado.id].emit("retado", nombreUsuario);
   				console.log("Usuario retado: "+ nombreRetado +" Con idAdversario"+ usuarioEncontrado.idAdversario);
+  				socket.emit("conJugadorRetado",function () {});
   			} else {
   				socket.emit("sinJugadorRetado", function(){});
   			}
@@ -37,6 +38,9 @@
   		eliminarUsuario(socket.id);
   		numUsuarios--;
   		console.log("Jugador desconectado");
+  	});
+  	socket.on("envioTablero", function (nombreUsuario, tablero) {
+  		io.sockets.connected[encontrarIDAdversario(nombreUsuario)].emit("recibirTablero", tablero);
   	});
 
 
@@ -57,5 +61,9 @@
   function eliminarUsuario(idUsuarioEliminar) {
   	var posicion = usuarios.findIndex(item => item.id == idUsuarioEliminar);
   	usuarios.splice(posicion, 1);
+  }
+   function encontrarIDAdversario(nombreUsuario) {
+  	var usuarioEncontrado = usuarios.find(item => item.nombreUsuario == nombreUsuario);
+  	return usuarioEncontrado.idAdversario;
   }
   
