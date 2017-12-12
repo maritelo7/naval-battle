@@ -35,6 +35,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import navalBattle.logica.Casilla;
+import navalBattle.logica.CasillaSimple;
 import navalBattle.logica.CuentaUsuario;
 import navalBattle.logica.InteraccionServidor;
 import navalBattle.logica.Nave;
@@ -162,8 +163,9 @@ public class GUI_PrepararPartidaController implements Initializable {
          tamanioNave = 1;
       });
       paneTablero.setOnMouseClicked(event -> {
-         Casilla casilla = (Casilla) event.getTarget();
-         if (tamanioNave != 0) {
+        
+         if ( tamanioNave != 0) {
+            Casilla casilla = (Casilla) event.getTarget();
             Nave nave = new Nave(tamanioNave, esHorizontal);
             if (!colocarNave(casilla, nave)) {
                Utileria.cargarAviso("tittlePosicion", "mensajePosicion");
@@ -208,7 +210,7 @@ public class GUI_PrepararPartidaController implements Initializable {
    /**
     * Método para cargar el tablero con casillas y las etiquetas de las naves
     */
-   public void cargarTablero() {
+    public void cargarTablero() {
       for (int i = 0; i < 10; i++) {
          HBox fila = new HBox();
          for (int j = 0; j < 10; j++) {
@@ -437,8 +439,7 @@ public class GUI_PrepararPartidaController implements Initializable {
       refrescarNumNaves();
       if (restante <= 0) {
          String separator = System.getProperty("file.separator");
-         Image image = new Image(getClass().getResourceAsStream(separator + "navalBattle" + separator
-             + "recursos" + separator + "imagenes" + separator + "lineaRoja.png"));
+         Image image = new Image(getClass().getResourceAsStream("/navalBattle/recursos/imagenes/lineaRoja.png"));
          switch (tamanioNave) {
             case 1:
                tamanioNave = 0;
@@ -446,22 +447,22 @@ public class GUI_PrepararPartidaController implements Initializable {
                buttonNave1.setDisable(true);
                break;
             case 2:
-               tamanioNave = 1;
+               tamanioNave = 0;
                buttonNave2.setGraphic(new ImageView(image));
                buttonNave2.setDisable(true);
                break;
             case 3:
-               tamanioNave = 2;
+               tamanioNave = 0;
                buttonNave3.setGraphic(new ImageView(image));
                buttonNave3.setDisable(true);
                break;
             case 4:
-               tamanioNave = 3;
+               tamanioNave = 0;
                buttonNave4.setGraphic(new ImageView(image));
                buttonNave4.setDisable(true);
                break;
             case 5:
-               tamanioNave = 4;
+               tamanioNave = 0;
                buttonNave5.setGraphic(new ImageView(image));
                buttonNave5.setDisable(true);
                break;
@@ -469,6 +470,7 @@ public class GUI_PrepararPartidaController implements Initializable {
                tamanioNave = 0;
          }
       }
+      System.out.println("Suma resto "+sumaRestantes);
       checkListo(sumaRestantes);
    }
 
@@ -481,6 +483,7 @@ public class GUI_PrepararPartidaController implements Initializable {
    }
 
    public void checkListo(int sumaNavesRestantes) throws InterruptedException, JsonProcessingException {
+      System.out.println("CHEQUEA");
       if (sumaNavesRestantes == 0) {
          System.out.println("Cero restantes");
          labelEspera.setVisible(true);
@@ -495,17 +498,20 @@ public class GUI_PrepararPartidaController implements Initializable {
     *
     * @return tablero con naves
     */
-   public Tablero recuperarTablero() {
-      
+   public Tablero recuperarTablero() {      
       Tablero tableroJugador = new Tablero(false);
-      ArrayList<Casilla> casillas = new ArrayList<>();
+      ArrayList<CasillaSimple> casillasSimples = new ArrayList<>();
+      Casilla casilla;
+      CasillaSimple casillaSimple;
       for (int i = 0; i < 10; i++) {
          for (int j = 0; j < 10; j++) {
-            casillas.add(getCasilla(j, i));
-            
+            casilla = (getCasilla(j, i));
+            casillaSimple = new CasillaSimple(j,i);
+            casillaSimple.setNave(casilla.getNave());
+            casillasSimples.add(casillaSimple);
          }
       }
-      tableroJugador.setCasillas(casillas);
+      tableroJugador.setCasillasSimples(casillasSimples);
       return tableroJugador;
    }
 

@@ -40,7 +40,9 @@
   		console.log("Jugador desconectado");
   	});
   	socket.on("envioTablero", function (nombreUsuario, tablero) {
+  		console.log("Recibo tablero");
   		io.sockets.connected[encontrarIDAdversario(nombreUsuario)].emit("recibirTablero", tablero);
+  		console.log("Envíe tablero");
   	});
 
 

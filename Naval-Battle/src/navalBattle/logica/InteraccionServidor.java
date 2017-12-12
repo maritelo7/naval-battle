@@ -5,17 +5,20 @@
  */
 package navalBattle.logica;
 
+
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import java.net.URISyntaxException;
 import io.socket.client.IO;
 import io.socket.client.Socket;
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,6 +26,8 @@ import javafx.application.Platform;
 import navalBattle.presentacion.GUI_MenuPartidaController;
 import navalBattle.presentacion.GUI_PrepararPartidaController;
 import navalBattle.recursos.Utileria;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  *
@@ -72,7 +77,6 @@ public class InteraccionServidor {
    }
 
    public void conectarInvitado(String nombreUsuario, String nombreContrincante, Utileria bandera) throws URISyntaxException, UnknownHostException {
-
       socket.emit("envioRetador", nombreUsuario, nombreContrincante);
       socket.on("sinJugadorRetado", (Object... os) -> {
          synchronized (bandera) {
@@ -87,46 +91,73 @@ public class InteraccionServidor {
       });
 
    }
-//   public void enviarTablero(String nombreUsuario, Tablero tablero, Tablero tableroEnemigo){
-//      Gson gson = new Gson();
-//      JsonParser parser = new JsonParser();
-//      
-//      socket.emit("envioTablero",nombreUsuario, gson.toJson(tablero));
-//      socket.on("recibirTablero", (Object... os) -> {
-//         String data = (String) os[0];
-//         JsonObject obj = parser.parse(data).getAsJsonObject();
-//         Tablero tableroEnemigoLocal = gson.fromJson(data, Tablero.class);
-//         synchronized (tableroEnemigo) {
-//            tableroEnemigo.setCasillas(tableroEnemigoLocal.getCasillas());
-//            tableroEnemigo.setEnemigo(tableroEnemigoLocal.isEnemigo());
-//            tableroEnemigo.notify();
-//         }
-//      
-//      });
-//   }
-
-   public void enviarTablero(String nombreUsuario, Tablero tablero, Tablero tableroEnemigo) throws JsonProcessingException {
-      ObjectMapper mapper = new ObjectMapper();
-      mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-         System.out.println("Intenta");
-         String jsonInString = mapper.writeValueAsString(tablero);
-         socket.emit("envioTablero", nombreUsuario, jsonInString);
-         System.out.println("Enviado");
-
-
+   public void enviarTablero(String nombreUsuario, Tablero tablero, Tablero tableroEnemigo){
+      Gson gson = new Gson();
+      JsonParser parser = new JsonParser();
+      TableroSimple tableroSimple = new TableroSimple(tablero.isEnemigo());
+      tableroSimple.setCasillasSimples(tablero.getCasillasSimples());
+      socket.emit("envioTablero",nombreUsuario, gson.toJson(tableroSimple));
       socket.on("recibirTablero", (Object... os) -> {
          String data = (String) os[0];
-         try {
-            Tablero tableroEnemigoLocal = mapper.readValue(data, Tablero.class);
-            synchronized (tableroEnemigo) {
-               tableroEnemigo.setCasillas(tableroEnemigoLocal.getCasillas());
-               tableroEnemigo.setEnemigo(tableroEnemigoLocal.isEnemigo());
-               tableroEnemigo.notify();
+         JsonObject obj = parser.parse(data).getAsJsonObject();
+         TableroSimple tableroEnemigoLocalSimple = gson.fromJson(data, TableroSimple.class);
+         synchronized (tableroEnemigo) {
+            CasillaSimple casillaSimple;
+            Casilla casilla;
+            ArrayList<Casilla> casillas = new ArrayList<>();
+            int contador = 0;
+            for (int i = 0; i < 10; i++) {
+               for (int j = 0; j < 10; j++) {
+                  casillaSimple = tableroEnemigoLocalSimple.getCasillasSimples().get(contador);
+                  casilla = new Casilla(j,i);
+                  casilla.setNave(casillaSimple.getNave());
+                  casillas.add(casilla);
+                  contador++;
+               }
             }
-         } catch (IOException ex) {
-            Logger.getLogger(InteraccionServidor.class.getName()).log(Level.SEVERE, null, ex);
+            tableroEnemigo.setCasillas(casillas);
+            tableroEnemigo.setEnemigo(tableroEnemigoLocalSimple.isEnemigo());
+            tableroEnemigo.notify();
          }
-
+      
       });
    }
+
+//   public void enviarTablero(String nombreUsuario, Tablero tablero, Tablero tableroEnemigo) throws JsonProcessingException {
+//      ObjectMapper mapper = new ObjectMapper();
+//      //mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+//      //System.out.println("Intenta");
+//      //String jsonInString = mapper.writeValueAsString(tablero);
+//      JSONObject json = new JSONObject();
+//      try {
+//         //json.putOnce("Tablero", tablero);
+//         json.putOpt("Tablero", tablero);
+//      } catch (JSONException jsone) {
+//      }
+//      
+//      socket.emit("envioTablero", nombreUsuario, json.toString());
+//      
+//      System.out.println("Enviado");
+//
+//      socket.on("recibirTablero", (Object... os) -> {
+//         String data = (String) os[0];
+//         System.out.println(data);
+//         try {
+//            Tablero tableroEnemigoLocal = deserializeJson(data, Tablero.class);
+//            synchronized (tableroEnemigo) {
+//               tableroEnemigo.setCasillas(tableroEnemigoLocal.getCasillas());
+//               tableroEnemigo.setEnemigo(tableroEnemigoLocal.isEnemigo());
+//               tableroEnemigo.notify();
+//            }
+//         } catch (IOException ex) {
+//            Logger.getLogger(InteraccionServidor.class.getName()).log(Level.SEVERE, null, ex);
+//         }
+//      });
+//   }
+//      
+//   public static <T> T deserializeJson(final String json, final Class<T> clazz) throws JsonParseException, JsonMappingException, IOException {
+//      ObjectMapper om = new ObjectMapper();
+//   return om.readValue(json, clazz);
+//}
+   
 }

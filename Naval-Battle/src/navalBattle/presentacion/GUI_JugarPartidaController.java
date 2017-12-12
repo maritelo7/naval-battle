@@ -141,10 +141,10 @@ public class GUI_JugarPartidaController implements Initializable {
       for (int i = 0; i < 10; i++) {
          HBox filas = new HBox();
          for (int j = 0; j < 10; j++) {
-            Casilla casilla = new Casilla(j, i);
+            Casilla casilla = new Casilla(j,i);
             casilla.setNave(casillas.get(contador).getNave());
-            casilla.setX(j);
-            casilla.setY(i);
+            //casilla.setX(j);
+            //casilla.setY(i);
             filas.getChildren().add(casilla);
             if (casilla.getNave() != null) {
                casilla.setFill(Color.ORANGE);
@@ -166,10 +166,10 @@ public class GUI_JugarPartidaController implements Initializable {
       for (int i = 0; i < 10; i++) {
          HBox filas = new HBox();
          for (int j = 0; j < 10; j++) {
-            Casilla casilla = new Casilla(j, i);
+            Casilla casilla = new Casilla(j,i);
             casilla.setNave(casillas.get(contador).getNave());
-            casilla.setX(j);
-            casilla.setY(i);
+            //casilla.setX(j);
+            //casilla.setY(i);
             filas.getChildren().add(casilla);
             contador++;
          }
