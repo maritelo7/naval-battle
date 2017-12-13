@@ -27,20 +27,25 @@ public class CasillaSimple {
       this.y = y;
    }
 
-   /**
-    * Método para liberar la casilla (colorear en azul). Esto es en caso de no estar relacionada a una
-    * nave
-    */
+   public int getX() {
+      return x;
+   }
 
-//   public boolean isAtacado() {
-//      return atacado;
-//   }
+   public int getY() {
+      return y;
+   }
+
 
    public Nave getNave() {
       return nave;
    }
    public void setNave(Nave nave) {
       this.nave = nave;
+   }
+
+   @Override
+   public String toString() {
+      return "CasillaSimple{" + "x=" + x + ", y=" + y + '}';
    }
    
 }

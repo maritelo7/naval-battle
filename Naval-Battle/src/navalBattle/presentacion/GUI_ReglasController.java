@@ -56,7 +56,6 @@ public class GUI_ReglasController implements Initializable {
          Stage stage = (Stage) node.getScene().getWindow();
          Scene scene;
          try {
-             
             if (cuentaLogueada != null) {
                FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_MenuPartida.fxml"));
                scene = new Scene(loader.load());

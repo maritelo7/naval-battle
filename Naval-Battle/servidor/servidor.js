@@ -12,7 +12,7 @@
   	socket.on("registrarDatos", function(nombreUsuario) {
   		var usuario = {nombreUsuario: nombreUsuario, id: socket.id, estado: "disponible"};
   		usuarios.push(usuario);
-  		console.log("Nombre de usuario: " + usuarios[numUsuarios].nombreUsuario+"ID "+usuarios[numUsuarios].id);
+  		console.log("Nombre de usuario: " + usuarios[numUsuarios].nombreUsuario+" ID "+usuarios[numUsuarios].id);
   		numUsuarios++; 
   		console.log("total conectados: "+ numUsuarios);
   	});
@@ -40,11 +40,27 @@
   		console.log("Jugador desconectado");
   	});
   	socket.on("envioTablero", function (nombreUsuario, tablero) {
-  		console.log("Recibo tablero");
   		io.sockets.connected[encontrarIDAdversario(nombreUsuario)].emit("recibirTablero", tablero);
-  		console.log("Envíe tablero");
   	});
-
+  	socket.on("enviarMisil", function (nombreUsuario, misil) {
+  		io.sockets.connected[encontrarIDAdversario(nombreUsuario)].emit("recibirMisil", misil);
+  	});
+  	socket.on("cederTurno", function (nombreUsuario) {
+  		io.sockets.connected[encontrarIDAdversario(nombreUsuario)].emit("ajustarTurno", function () {});
+  	});
+  	socket.on("adversarioListo", function (nombreUsuario) {
+  		io.sockets.connected[encontrarIDAdversario(nombreUsuario)].emit("esperarAdversario", function () {});
+  	});
+  	socket.on("enviarCasillasALiberar", function (nombreUsuario, tableroActual) {
+  		io.sockets.connected[encontrarIDAdversario(nombreUsuario)].emit("recibirCasillasALiberar", tableroActual);
+  	});
+  	socket.on("enviarPuntuacion", function (nombreUsuario, puntuacion) {
+  		io.sockets.connected[encontrarIDAdversario(nombreUsuario)].emit("recibirPuntuacion", puntuacion);
+  	});
+  	socket.on("adiosAdversario", function (nombreUsuario, nombreRetado) {
+  		mostrarDisponible(nombreUsuario);
+  		mostrarDisponible(nombreRetado);
+  	});
 
   });
   function asignarAdversario(nombreUsuario, idRetado) {
@@ -52,7 +68,6 @@
   		if (usuarios[i].nombreUsuario == nombreUsuario) {
   			usuarios[i].idAdversario = idRetado;
   			usuarios[i].estado = "ocupado";
-  			console.log("idAdversario"+ usuarios[i].idAdversario)
   		}
   	}
   }
@@ -67,5 +82,12 @@
    function encontrarIDAdversario(nombreUsuario) {
   	var usuarioEncontrado = usuarios.find(item => item.nombreUsuario == nombreUsuario);
   	return usuarioEncontrado.idAdversario;
+  }
+  function mostrarDisponible (nombreUsuario) {
+  	for (var i = 0; i < numUsuarios; i++) {
+  		if (usuarios[i].nombreUsuario == nombreUsuario) {
+  			usuarios[i].estado = "disponible";
+  		}
+  	}
   }
   

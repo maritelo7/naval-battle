@@ -35,7 +35,7 @@ final static String UNIDAD_PERSISTENCIA = "Naval-BattlePU";
     */
    @Override
    public boolean registrarCuenta(CuentaUsuario cuentaUsuario) {
-      boolean registroExitoso = true;
+      boolean registroExitoso = false;
       EntityManagerFactory entityManagerFactory;
       try {
          entityManagerFactory = Persistence.createEntityManagerFactory(UNIDAD_PERSISTENCIA, null);
@@ -43,8 +43,8 @@ final static String UNIDAD_PERSISTENCIA = "Naval-BattlePU";
          Cuenta cuenta = new Cuenta(cuentaUsuario.getNombreUsuario(), getHash(cuentaUsuario.getClave()),
              cuentaUsuario.getLenguaje(), 0);
          controller.create(cuenta);
+         registroExitoso = true;
       } catch (Exception ex) {
-         registroExitoso = false;
          Logger.getLogger(AdministracionCuenta.class.getName()).log(Level.SEVERE, null, ex);
       }
       return registroExitoso;
@@ -84,7 +84,7 @@ final static String UNIDAD_PERSISTENCIA = "Naval-BattlePU";
     */
    @Override
    public boolean modificarCuenta(CuentaUsuario cuentaUsuario) {
-      boolean modificacionExitosa = true;
+      boolean modificacionExitosa = false;
       EntityManagerFactory entityManagerFactory;
       try {
          entityManagerFactory = Persistence.createEntityManagerFactory(UNIDAD_PERSISTENCIA, null);
@@ -92,9 +92,8 @@ final static String UNIDAD_PERSISTENCIA = "Naval-BattlePU";
          Cuenta cuenta = new Cuenta(cuentaUsuario.getNombreUsuario(), getHash(cuentaUsuario.getClave()),
              cuentaUsuario.getLenguaje(), cuentaUsuario.getPuntaje());
          controller.edit(cuenta);
+         modificacionExitosa = true;
       } catch (Exception ex) {
-         System.out.println("ERROR EN MODIFI");
-         modificacionExitosa = false;
          Logger.getLogger(AdministracionCuenta.class.getName()).log(Level.SEVERE, null, ex);
       }
       return modificacionExitosa;
@@ -108,14 +107,14 @@ final static String UNIDAD_PERSISTENCIA = "Naval-BattlePU";
     */
    @Override
    public boolean desactivarCuenta(String nombreUsuario) {
-      boolean cuentaDesactivada = true;
+      boolean cuentaDesactivada = false;
       EntityManagerFactory entityManagerFactory;
       try {
          entityManagerFactory = Persistence.createEntityManagerFactory(UNIDAD_PERSISTENCIA, null);
          CuentaJpaController controller = new CuentaJpaController(entityManagerFactory);
          controller.destroy(nombreUsuario);
+         cuentaDesactivada = true;
       } catch (NonexistentEntityException ex) {
-         cuentaDesactivada = false;
          Logger.getLogger(AdministracionCuenta.class.getName()).log(Level.SEVERE, null, ex);
       }
       return cuentaDesactivada;
@@ -145,13 +144,14 @@ final static String UNIDAD_PERSISTENCIA = "Naval-BattlePU";
     */
    @Override
    public boolean registrarPuntajeMasAlto(CuentaUsuario cuenta, int puntajeObtenido) {
-      boolean puntajeRegistrado = true;
+      boolean puntajeRegistrado = false;
       if (cuenta.getPuntaje() < puntajeObtenido) {
          try {
             cuenta.setPuntaje(puntajeObtenido);
-            modificarCuenta(cuenta);
-         } catch (Exception ex) {
-            puntajeRegistrado = false;
+            if (modificarCuenta(cuenta)){
+               puntajeRegistrado = true;
+            } 
+         } catch (Exception ex) {           
             Logger.getLogger(AdministracionCuenta.class.getName()).log(Level.SEVERE, null, ex);
          }
       }

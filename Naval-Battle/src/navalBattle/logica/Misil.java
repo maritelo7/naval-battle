@@ -11,38 +11,20 @@ package navalBattle.logica;
  * @author José Alí Valdivia Ruiz
  */
 public class Misil {
-   private int idMisil; //Necesario?
-   private int xDestino;
-   private int yDestino;  
+   private final int xDestino;
+   private final int yDestino;  
 
    public Misil(int xDestino, int yDestino) {
       this.xDestino = xDestino;
       this.yDestino = yDestino;
    }
 
-   public int getIdMisil() {
-      return idMisil;
-   }
-
-   public void setIdMisil(int idMisil) {
-      this.idMisil = idMisil;
-   }
-
    public int getxDestino() {
       return xDestino;
-   }
-
-   public void setxDestino(int xDestino) {
-      this.xDestino = xDestino;
    }
 
    public int getyDestino() {
       return yDestino;
    }
-
-   public void setyDestino(int yDestino) {
-      this.yDestino = yDestino;
-   }
-   
    
 }

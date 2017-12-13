@@ -7,9 +7,13 @@ package navalBattle.recursos;
 
 import java.util.Locale;
 import java.util.ResourceBundle;
+import javafx.animation.FadeTransition;
+import javafx.animation.Timeline;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
+import javafx.util.Duration;
 
 /**
  * Clase con métodos o atributos de utilidad para diferentes clases y usos
@@ -51,4 +55,16 @@ public class Utileria {
       confirmacion.showAndWait();
    }
 
+      /**
+    * Método para hacer un efecto de desvanecimiento de la etiqueta del tiempo
+    * @param nombreLabel
+    */
+   public static void fadeConteo(Label nombreLabel) {
+      FadeTransition ft = new FadeTransition(Duration.millis(3000), nombreLabel);
+      ft.setFromValue(1.0);
+      ft.setToValue(0.1);
+      ft.setCycleCount(Timeline.INDEFINITE);
+      ft.setAutoReverse(true);
+      ft.play();
+   }
 }

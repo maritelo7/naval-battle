@@ -14,18 +14,21 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.animation.FadeTransition;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.HBox;
@@ -38,9 +41,12 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import navalBattle.logica.AdministracionCuenta;
 import navalBattle.logica.Casilla;
+import navalBattle.logica.CasillaSimple;
 import navalBattle.logica.CuentaUsuario;
+import navalBattle.logica.InteraccionServidor;
 import navalBattle.logica.Misil;
 import navalBattle.logica.Tablero;
+import navalBattle.logica.TableroSimple;
 import navalBattle.recursos.Utileria;
 
 /**
@@ -58,15 +64,26 @@ public class GUI_JugarPartidaController implements Initializable {
    @FXML
    private Label labelPuntuacionHost;
    @FXML
-   private JFXButton buttonRendirse;
-   @FXML
    private Label labelPuntuacionAdversario;
+   @FXML
+   private Label labelTurno;
+   @FXML
+   private Label labelMiPuntuacion;
+   @FXML
+   private Label labelPuntuacionEnemigo;
+   @FXML
+   private Label labelMiNombre;
+   @FXML
+   private Label labelNombreAdversario;
+   @FXML
+   private JFXButton buttonRendirse;
    @FXML
    private Pane paneTableroJugador;
    @FXML
    private Pane paneTableroEnemigo;
    @FXML
    private ProgressBar pbConteo;
+   
    VBox columnasJugador = new VBox();
    VBox columnasEnemigo = new VBox();
    Tablero tableroJugador;
@@ -74,9 +91,14 @@ public class GUI_JugarPartidaController implements Initializable {
    CuentaUsuario cuentaLogueada;
    int navesJugador = 9;
    int navesEnemigo = 9;
-   int puntajeJugador = 0;
-   int puntajeEnemigo = 0;
+//   int puntajeJugador = 0;
+//   int puntajeEnemigo = 0;
+   int numeroTirosFallidos = 0;
+   int numeroTirosAcertados = 0;
    final static String RECURSO_IDIOMA = "navalBattle.recursos.idiomas.Idioma";
+   InteraccionServidor interaccionServidor = new InteraccionServidor();
+   GUI_JugarPartidaController controller;
+   Timeline timeline = new Timeline();
 
    /**
     * Initializes the controller class.
@@ -86,39 +108,25 @@ public class GUI_JugarPartidaController implements Initializable {
       cargarIdioma();
 
       buttonRendirse.setOnAction(event -> {
-         ajustarMiTurno(true);
          Utileria.cargarAviso("titleDerrota", "mensajeDerrota");
-         Node node = (Node) event.getSource();
-         Stage stage = (Stage) node.getScene().getWindow();
-         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_MenuPartida.fxml"));
-            Scene scene = new Scene(loader.load());
-            GUI_MenuPartidaController controller = loader.getController();
-            controller.cargarCuenta(cuentaLogueada);
-            loader.setController(controller);
-            stage.setScene(scene);
-            stage.setResizable(false);
-            stage.show();
-         } catch (IOException ex) {
-            Logger.getLogger(GUI_JugarPartidaController.class.getName()).log(Level.SEVERE, null, ex);
-         }
+         regresarAMenu(event);
       });
 
       paneTableroEnemigo.setOnMouseClicked(event -> {
          Casilla casilla = (Casilla) event.getTarget();
-         //Enviar objeto misil para actualizar el tablero del otro jugador
          Misil misil = new Misil((int) casilla.getX(), (int) casilla.getY());
+         enviarMisil(misil);
          if (casilla.atacadaANave()) {
+            numeroTirosAcertados++;
             ajustarMiTurno(true);
             cargarSonidoDestruccion();
-            if (!casilla.getNave().isViva()) {
-               liberarcolindantes(casilla, false);
-            }
+            actualizarMiPuntuacion(numeroTirosAcertados);
          } else {
+            numeroTirosFallidos++;
+            cederTurno();
             ajustarMiTurno(false);
-            cargarSonidoAgua();
+            cargarSonidoAgua();  
          }
-
       });
    }
 
@@ -129,22 +137,47 @@ public class GUI_JugarPartidaController implements Initializable {
     */
    public void cargarCuenta(CuentaUsuario cuenta) {
       this.cuentaLogueada = cuenta;
+      labelMiNombre.setText(cuentaLogueada.getNombreUsuario());
+   }
+   /**
+    * Método para recibir el tablero del jugador
+    *
+    * @param tableroJugador Tablero
+    */
+   public void setTableroJugador(Tablero tableroJugador) {
+      this.tableroJugador = tableroJugador;
+      cargarTableroJugador();
+
    }
 
+   /**
+    * Método para recirbir el tablero del enemigo
+    *
+    * @param tableroEnemigo Tablero
+    */
+   public void setTableroEnemigo(Tablero tableroEnemigo) {
+      this.tableroEnemigo = tableroEnemigo;
+      cargarTableroEnemigo();
+   }
+   public void setInteraccionServidor(InteraccionServidor interaccionServidor){
+      this.interaccionServidor = interaccionServidor;
+   }
+   public void cargarController(GUI_JugarPartidaController controller){
+      this.controller = controller;
+   }
    /**
     * Método para cargar el tablero del jugador
     */
    public void cargarTableroJugador() {
       int contador = 0;
-      ArrayList<Casilla> casillas;
-      casillas = tableroJugador.getCasillas();
+      ArrayList<Casilla> casillas = tableroJugador.getCasillas();
       for (int i = 0; i < 10; i++) {
          HBox filas = new HBox();
          for (int j = 0; j < 10; j++) {
             Casilla casilla = new Casilla(j,i);
             casilla.setNave(casillas.get(contador).getNave());
-            //casilla.setX(j);
-            //casilla.setY(i);
+            casilla.setX(j);
+            casilla.setY(i);
             filas.getChildren().add(casilla);
             if (casilla.getNave() != null) {
                casilla.setFill(Color.ORANGE);
@@ -168,8 +201,8 @@ public class GUI_JugarPartidaController implements Initializable {
          for (int j = 0; j < 10; j++) {
             Casilla casilla = new Casilla(j,i);
             casilla.setNave(casillas.get(contador).getNave());
-            //casilla.setX(j);
-            //casilla.setY(i);
+            casilla.setX(j);
+            casilla.setY(i);
             filas.getChildren().add(casilla);
             contador++;
          }
@@ -178,27 +211,7 @@ public class GUI_JugarPartidaController implements Initializable {
       paneTableroEnemigo.getChildren().add(columnasEnemigo);
    }
 
-   /**
-    * Método para recibir el tablero del jugador
-    *
-    * @param tableroJugador Tablero
-    */
-   public void setTableroJugador(Tablero tableroJugador) {
-      this.tableroJugador = tableroJugador;
-      cargarTableroJugador();
 
-   }
-
-   /**
-    * Método para recirbir el tablero del enemigo
-    *
-    * @param tableroEnemigo Tablero
-    */
-   public void setTableroEnemigo(Tablero tableroEnemigo) {
-      this.tableroEnemigo = tableroEnemigo;
-      //tableroEnemigo.setEnemigo(true);
-      cargarTableroEnemigo();
-   }
 
    /**
     * Método para configurar el turno del jugador
@@ -208,6 +221,8 @@ public class GUI_JugarPartidaController implements Initializable {
    public void ajustarMiTurno(boolean esTurno) {
       if (esTurno) {
          paneTableroEnemigo.disableProperty().set(false);
+         labelTurno.setVisible(true);
+         Utileria.fadeConteo(labelTurno);
          iniciarConteo();
       } else {
          paneTableroEnemigo.disableProperty().set(true);
@@ -254,15 +269,20 @@ public class GUI_JugarPartidaController implements Initializable {
    public void liberarCasillas(ArrayList<Casilla> casillas, boolean jugador) {
       int x;
       int y;
+      ArrayList<CasillaSimple> casillasALiberar = new ArrayList<>();
+      CasillaSimple casillaSimple;
       for (Casilla casilla : casillas) {
          x = (int) casilla.getX();
          y = (int) casilla.getY();
          for (Casilla colindante : getColindantes(x, y, jugador)) {
             if (!colindante.isAtacado()) {
+               casillaSimple = new CasillaSimple((int)colindante.getX(), (int)colindante.getY());
                colindante.liberar();
+               casillasALiberar.add(casillaSimple);
             }
          }
       }
+      actualizarTableroEnemigo(casillasALiberar);
       reducirNaves(jugador);
    }
 
@@ -378,6 +398,30 @@ public class GUI_JugarPartidaController implements Initializable {
          }
       }
    }
+   public void liberarCasillasEnemigo(TableroSimple tableroActual){
+      Casilla casilla;
+      for (CasillaSimple casillasSimple : tableroActual.getCasillasSimples()) {
+         casilla = getCasillaJugador(casillasSimple.getX(), casillasSimple.getY(), false);
+         casilla.liberar();
+      }
+      reducirNaves(false);
+   }
+   public void actualizarTableroEnemigo(ArrayList<CasillaSimple> casillasSimples){
+      TableroSimple tableroActualizado = new TableroSimple(true);
+      tableroActualizado.setCasillasSimples(casillasSimples);
+      interaccionServidor.enviarCasillasALiberar(cuentaLogueada.getNombreUsuario(), tableroActualizado);
+   }
+   public void actualizarMiPuntuacion (int tirosAcertados){
+      int puntos = tirosAcertados * 50;
+      labelMiPuntuacion.setText(Integer.toString(puntos));
+      interaccionServidor.enviarPuntuacion(cuentaLogueada.getNombreUsuario(), puntos);
+   }
+   public void actualizarPuntuacionEnemigo(int puntos){
+      labelPuntuacionEnemigo.setText(Integer.toString(puntos));
+   }
+   public void setNombreAdversario(String nombre){
+      labelNombreAdversario.setText(nombre);
+   }
 
    /**
     * Método para verificar si la posición seleccionada es válida
@@ -394,22 +438,63 @@ public class GUI_JugarPartidaController implements Initializable {
          navesJugador--;
          if (navesJugador == 0) {
             Utileria.cargarAviso("titleAlerta", "mensajeDerrota");
+            timeline.stop();
+//            regresarAMenu()
          }
       } else {
          navesEnemigo--;
          if (navesEnemigo == 0) {
-            Utileria.cargarAviso("titleAlerta", "mensajeVictoria");
-            comprobarPuntaje();
+            int puntuacionFinal = ajustarPuntuacion();
+            cargarAviso("titleAlerta", "mensajeVictoria", Integer.toString(puntuacionFinal));
+            timeline.stop();
+            interaccionServidor.dejarAdversario(cuentaLogueada.getNombreUsuario(), 
+                labelNombreAdversario.getText());
+            comprobarPuntaje(puntuacionFinal);
          }
       }
    }
-   public void comprobarPuntaje(){
+   public int ajustarPuntuacion(){
+      int puntuacion;
+      puntuacion = (numeroTirosAcertados * 50) - (numeroTirosFallidos * 10);
+      if (puntuacion > 0) {
+         return puntuacion;
+      } 
+      return 0;
+   }
+   public void activarServicios(){
+      interaccionServidor.activarServiciosJugarPartida(controller);
+   }
+   public void enviarMisil(Misil misil){
+      interaccionServidor.enviarMisil(cuentaLogueada.getNombreUsuario(), misil, controller);
+   }
+   public void cederTurno(){
+      timeline.playFrom(Duration.ZERO);
+      timeline.stop();
+      interaccionServidor.cederTurno(cuentaLogueada.getNombreUsuario());
+   }
+   public void comprobarPuntaje(int puntajeFinal){
       boolean nuevoPuntaje = false;
       AdministracionCuenta adminCuenta = new AdministracionCuenta();
-      nuevoPuntaje = adminCuenta.registrarPuntajeMasAlto(cuentaLogueada, puntajeJugador);
+      nuevoPuntaje = adminCuenta.registrarPuntajeMasAlto(cuentaLogueada, puntajeFinal);
       if (nuevoPuntaje) {
          Utileria.cargarAviso("titleAlerta", "mensajeNuevoPuntaje");
       }
+   }
+   public void regresarAMenu(Event event){
+      Node node = (Node) event.getSource();
+         Stage stage = (Stage) node.getScene().getWindow();
+         try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_MenuPartida.fxml"));
+            Scene scene = new Scene(loader.load());
+            GUI_MenuPartidaController controller = loader.getController();
+            controller.cargarCuenta(cuentaLogueada);
+            loader.setController(controller);
+            stage.setScene(scene);
+            stage.setResizable(false);
+            stage.show();
+         } catch (IOException ex) {
+            Logger.getLogger(GUI_JugarPartidaController.class.getName()).log(Level.SEVERE, null, ex);
+         }
    }
    /**
     * Método para establer el conteo de 30 segundos del turno
@@ -419,26 +504,17 @@ public class GUI_JugarPartidaController implements Initializable {
       IntegerProperty centecimas = new SimpleIntegerProperty(tiempo * 100);
       labelConteo.textProperty().bind(centecimas.divide(100).asString());
       pbConteo.progressProperty().bind(centecimas.divide(tiempo * 100.0));
-      centecimas.set((tiempo + 1) * 100);
-      Timeline timeline = new Timeline();
+      centecimas.set((tiempo) * 100);
       timeline.getKeyFrames().add(
           new KeyFrame(Duration.seconds(tiempo), new KeyValue(centecimas, 0))
       );
       timeline.playFromStart();
-      fadeConteo();
+      Utileria.fadeConteo(labelTiempoRestante);
+      timeline.setOnFinished(event ->{
+         cederTurno();
+         ajustarMiTurno(false);
+      });
 
-   }
-
-   /**
-    * Método para hacer un efecto de desvanecimiento de la etiqueta del tiempo
-    */
-   public void fadeConteo() {
-      FadeTransition ft = new FadeTransition(Duration.millis(3000), labelTiempoRestante);
-      ft.setFromValue(1.0);
-      ft.setToValue(0.1);
-      ft.setCycleCount(Timeline.INDEFINITE);
-      ft.setAutoReverse(true);
-      ft.play();
    }
       /**
     * Método para cargar el recurso de sonido de destrucción de una parte de la nave
@@ -473,6 +549,21 @@ public class GUI_JugarPartidaController implements Initializable {
       labelTiempoRestante.setText(resources.getString("labelTiempoRestante"));
       labelPuntuacionHost.setText(resources.getString("labelPuntuacionHost"));
       labelPuntuacionAdversario.setText(resources.getString("labelPuntuacionAdversario"));
+      labelTurno.setText(resources.getString("labelTurno"));
       buttonRendirse.setText(resources.getString("buttonRendirse"));
+      labelTurno.setVisible(false);
+   }
+      public void cargarAviso(String nombreTitulo, String cabecera, String body) {
+      Locale locale = Locale.getDefault();
+      ResourceBundle resources = ResourceBundle.getBundle("navalBattle.recursos.idiomas.Idioma", locale);
+      String titulo = resources.getString(nombreTitulo);
+      String head = resources.getString(cabecera);
+      Alert confirmacion = new Alert(Alert.AlertType.INFORMATION);
+      confirmacion.setTitle(titulo);
+      confirmacion.setHeaderText(head);
+      confirmacion.setContentText(body);
+      ButtonType btAceptar = new ButtonType("OK", ButtonBar.ButtonData.CANCEL_CLOSE);
+      confirmacion.getButtonTypes().setAll(btAceptar);
+      confirmacion.showAndWait();
    }
 }

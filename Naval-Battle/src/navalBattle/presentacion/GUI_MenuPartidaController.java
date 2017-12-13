@@ -92,9 +92,12 @@ public class GUI_MenuPartidaController implements Initializable {
             if (cambiarConfiguracion()) {
                cargarConfiguracionIp("titleRed", "mensajeConfServ");
             }
-            conectarServidor();
-            prepararPartidaHost(event); 
-         } catch (IOException | URISyntaxException ex) {
+            if (conectarServidor()) {
+               prepararPartidaHost(event);
+            } else {
+               Utileria.cargarAviso("titleAlerta", "mensajeErrorConexion");
+            }
+         } catch (InterruptedException | URISyntaxException | IOException ex) {
             Logger.getLogger(GUI_MenuPartidaController.class.getName()).log(Level.SEVERE, null, ex);
          }
       });
@@ -105,17 +108,19 @@ public class GUI_MenuPartidaController implements Initializable {
          try {
             if (cambiarConfiguracion()) {
                cargarConfiguracionIp("titleRed", "mensajeConfServ");
-               
             }
             String nickARetar = cargarConfiguracionNick("titleRed", "mensajeConfClien");
-            
+
             if (nickARetar != null) {
-               conectarServidor();
-               if (conectarInvitado(nickARetar)) {                  
-                  prepararPartidaCliente(event);
+               if (conectarServidor()) {
+                  if (conectarInvitado(nickARetar)) {
+                     prepararPartidaCliente(event);
+                  }
+               } else {
+                  Utileria.cargarAviso("titleAlerta", "mensajeErrorConexion");
                }
             }
-         } catch (IOException ex) {
+         } catch (IOException | InterruptedException ex) {
             Logger.getLogger(GUI_MenuPartidaController.class.getName()).log(Level.SEVERE, null, ex);
          }
       });
@@ -200,44 +205,33 @@ public class GUI_MenuPartidaController implements Initializable {
       cargarIdioma();
    }
 
-   public void conectarServidor() {
+   public boolean conectarServidor() throws InterruptedException {
+      Utileria bandera = new Utileria(true);
       if (InteraccionServidor.socket == null) {
          String nombreUsuario = cuentaLogueada.getNombreUsuario();
-         try {            
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_MenuPartida.fxml"));
-            GUI_MenuPartidaController controller = loader.getController();
-            interaccionServidor.conectarServidor(nombreUsuario, controller);
-            System.out.println("Conexión recién establecida");           
-         } catch (URISyntaxException | UnknownHostException ex) {
-            Logger.getLogger(GUI_MenuPartidaController.class.getName()).log(Level.SEVERE, null, ex);
-            Utileria.cargarAviso("titleAlerta", "mensajeErrorConexion");
-         }
-      } 
-   }
-   
-//   public void cargarAviso(String nombreTitulo, String nombreMensaje){
-//      Utileria.cargarAviso(nombreTitulo, nombreMensaje);
-//   }
-
-   public boolean conectarInvitado(String nickARetar) {
-      boolean check = false;
-      String nombreUsuario = cuentaLogueada.getNombreUsuario();
-      try {
-         Utileria bandera = new Utileria(false);
-         interaccionServidor.conectarInvitado(nombreUsuario, nickARetar, bandera);
-         synchronized (bandera){
+         interaccionServidor.conectarServidor(nombreUsuario, bandera);
+         synchronized (bandera) {
             bandera.wait();
          }
-         if(bandera.isBandera() == false){
-            Utileria.cargarAviso("tittleAlerta", "sinJugador");
-         } else{
-            System.out.println("Encontró jugador");
-         check = true;
+      }
+      return bandera.isBandera();
+   }
+
+   public boolean conectarInvitado(String nickARetar) {
+      Utileria bandera = new Utileria(true);
+      String nombreUsuario = cuentaLogueada.getNombreUsuario();
+      try {
+         interaccionServidor.conectarInvitado(nombreUsuario, nickARetar, bandera);
+         synchronized (bandera) {
+            bandera.wait();
+         }
+         if (bandera.isBandera() == false) {
+            Utileria.cargarAviso("titleAlerta", "sinJugador");
          }
       } catch (InterruptedException | URISyntaxException | UnknownHostException ex) {
          Logger.getLogger(GUI_MenuPartidaController.class.getName()).log(Level.SEVERE, null, ex);
       }
-      return check;
+      return bandera.isBandera();
    }
 
    /**
@@ -254,7 +248,9 @@ public class GUI_MenuPartidaController implements Initializable {
          GUI_PrepararPartidaController controller = loader.getController();
          controller.cargarCuenta(cuentaLogueada);
          controller.cargarInteraccionServidor(interaccionServidor);
-         controller.ready = true;
+         controller.activarReady();
+         controller.cargarController(controller);
+         controller.activarRecibirTablero();
          loader.setController(controller);
          stage.setScene(scene);
          stage.setResizable(false);
@@ -263,7 +259,8 @@ public class GUI_MenuPartidaController implements Initializable {
          Logger.getLogger(GUI_MenuPartidaController.class.getName()).log(Level.SEVERE, null, ex);
       }
    }
-      /**
+
+   /**
     * Método para cambiar de la ventana actual a otra
     *
     * @param event evento que desencadena un cambio de ventana
@@ -365,8 +362,8 @@ public class GUI_MenuPartidaController implements Initializable {
       nick = tfNombre.getText();
       if (eleccion.get() == btnAceptar) {
          if (nick.trim().isEmpty()) {
-         Utileria.cargarAviso("titleAlerta", "mensajeCamposLlenos");
-         cargarConfiguracionIp(title, body);
+            Utileria.cargarAviso("titleAlerta", "mensajeCamposLlenos");
+            cargarConfiguracionIp(title, body);
          }
       }
       return nick;
@@ -390,7 +387,6 @@ public class GUI_MenuPartidaController implements Initializable {
       if (eleccion.get() == btnCambiar) {
          check = true;
       }
-      System.out.println("Terminó cambiar confg");
       return check;
    }
 
@@ -405,7 +401,10 @@ public class GUI_MenuPartidaController implements Initializable {
       proper.setProperty("ipServidor", numIp);
       proper.store(out, null);
       out.close();
-      System.out.println("Terminó guardar");
+   }
+
+   public void cargarAviso(String tittle, String body) {
+      Utileria.cargarAviso(tittle, body);
    }
 
    /**

@@ -11,21 +11,11 @@ package navalBattle.logica;
  * @author José Alí Valdivia Ruiz
  */
 public class Nave {
-   private int idNave;//Necesario?
-   private String descripcion;//Delete
    private String nombre;
    private int tamanio;
    private boolean horizontal;
    private int salud;
 
-   /**
-    * Constructor simple para el inicio de preparar la partida, cuando aún no se sabe qué nave se
-    * colocará
-    * @param horizontal Bandera de la orientación
-    */
-   public Nave(boolean horizontal) {
-      this.horizontal = horizontal;
-   }
 
    /**
     * Constructor principal de Nave. Se asigna la salud de la nave del mismo valor del tamaño para poder
@@ -40,22 +30,6 @@ public class Nave {
    }
    
 
-   public int getIdNave() {
-      return idNave;
-   }
-
-   public void setIdNave(int idNave) {
-      this.idNave = idNave;
-   }
-
-   public String getDescripcion() {
-      return descripcion;
-   }
-
-   public void setDescripcion(String descripcion) {
-      this.descripcion = descripcion;
-   }
-
    public String getNombre() {
       return nombre;
    }
@@ -67,17 +41,9 @@ public class Nave {
    public int getTamanio() {
       return tamanio;
    }
-
-   public void setTamanio(int tamanio) {
-      this.tamanio = tamanio;
-   }
-
+   
    public boolean isHorizontal() {
       return horizontal;
-   }
-
-   public void setHorizontal(boolean horizontal) {
-      this.horizontal = horizontal;
    }
 
    /**
@@ -94,7 +60,5 @@ public class Nave {
    public void atacada(){
       salud--;
    }
-   
-   
 
 }

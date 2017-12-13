@@ -23,19 +23,44 @@
       </font>
     </Label>
     <Label id="labelPuntuacionAdversario" fx:id="labelPuntuacionAdversario" font="$x1" layoutX="124.0" layoutY="52.0" text="labelPuntuacionAdversario" />
-    <Label id="labelCronometro" fx:id="labelConteo" layoutX="592.0" layoutY="435.0" text="30" textFill="#cd1f1f">
+    <Label id="labelCronometro" fx:id="labelConteo" layoutX="592.0" layoutY="460.0" text="30" textFill="#cd1f1f">
          <font>
             <Font name="Century Gothic" size="72.0" />
          </font></Label>
-    <Label id="labelTiempoRestante" fx:id="labelTiempoRestante" font="$x1" layoutX="569.0" layoutY="539.0" prefWidth="179.0" text="labelTiempoRestante" />
+    <Label id="labelTiempoRestante" fx:id="labelTiempoRestante" font="$x1" layoutX="569.0" layoutY="563.0" prefWidth="179.0" text="labelTiempoRestante" />
       <JFXButton fx:id="buttonRendirse" layoutX="1113.0" layoutY="61.0" minHeight="30.0" minWidth="120.0" style="-fx-background-color: e7a46c;" text="buttonRendirse">
          <font>
             <Font name="Century Gothic" size="16.0" />
          </font>
       </JFXButton>
       <Pane fx:id="paneTableroEnemigo" layoutX="751.0" layoutY="117.0" prefHeight="500.0" prefWidth="500.0" />
-      <Pane fx:id="paneTableroJugador" layoutX="17.0" layoutY="77.0" prefHeight="500.0" prefWidth="500.0" />
-      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="343.0" layoutX="625.0" layoutY="85.0" stroke="BLACK" strokeType="INSIDE" width="13.0" />
-      <ProgressBar fx:id="pbConteo" layoutX="543.0" layoutY="586.0" prefWidth="200.0" progress="1.0" />
+      <Pane fx:id="paneTableroJugador" layoutX="51.0" layoutY="77.0" prefHeight="500.0" prefWidth="500.0" />
+      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="343.0" layoutX="625.0" layoutY="124.0" stroke="BLACK" strokeType="INSIDE" width="13.0" />
+      <ProgressBar fx:id="pbConteo" layoutX="543.0" layoutY="599.0" prefWidth="200.0" progress="1.0" />
+      <Label fx:id="labelTurno" layoutX="569.0" layoutY="93.0" prefHeight="17.0" prefWidth="126.0" text="LabelTurno" textFill="#e47b25">
+         <font>
+            <Font name="Century Gothic Bold" size="16.0" />
+         </font>
+      </Label>
+      <Label fx:id="labelPuntuacionEnemigo" layoutX="358.0" layoutY="48.0" text="0">
+         <font>
+            <Font name="Century Gothic" size="24.0" />
+         </font>
+      </Label>
+      <Label fx:id="labelMiPuntuacion" layoutX="977.0" layoutY="47.0" text="0">
+         <font>
+            <Font name="Century Gothic" size="24.0" />
+         </font>
+      </Label>
+      <Label fx:id="labelMiNombre" layoutX="619.0" layoutY="210.0" prefHeight="29.0" prefWidth="200.0" rotate="-90.0" text="Label" textFill="#807e7e">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Label>
+      <Label fx:id="labelNombreAdversario" layoutX="-71.0" layoutY="179.0" prefHeight="29.0" prefWidth="200.0" rotate="-90.0" text="Label" textFill="#837f7f">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Label>
   </children>
 </AnchorPane>

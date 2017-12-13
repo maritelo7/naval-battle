@@ -185,6 +185,8 @@ public class GUI_IniciarSesionController implements Initializable {
             cuentaRecuperada = new CuentaUsuario("0", "0", "0");
             Logger.getLogger(GUI_IniciarSesionController.class.getName()).log(Level.SEVERE, null, ex);
          }
+      } else {
+         
       }
       return cuentaRecuperada;
    }

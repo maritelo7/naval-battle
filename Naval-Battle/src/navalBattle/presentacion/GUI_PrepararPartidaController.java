@@ -5,7 +5,7 @@
  */
 package navalBattle.presentacion;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+
 import com.jfoenix.controls.JFXButton;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -40,6 +40,7 @@ import navalBattle.logica.CuentaUsuario;
 import navalBattle.logica.InteraccionServidor;
 import navalBattle.logica.Nave;
 import navalBattle.logica.Tablero;
+import navalBattle.logica.TableroSimple;
 import navalBattle.recursos.Utileria;
 
 /**
@@ -100,8 +101,10 @@ public class GUI_PrepararPartidaController implements Initializable {
    InteraccionServidor interaccionServidor = new InteraccionServidor();
    GUI_PrepararPartidaController controller;
    Tablero tableroEnemigo = new Tablero(true);
+   TableroSimple tableroEnemigoSimple = new TableroSimple(true);
    boolean ready = false;
-
+   boolean soyHost = false;
+   String nombreAdversario;
    /**
     * Initializes the controller class.
     */
@@ -110,10 +113,9 @@ public class GUI_PrepararPartidaController implements Initializable {
       cargarIdioma();
       cargarTablero();
       buttonContinuar.setOnAction(event -> {
-
          Node node = (Node) event.getSource();
          Stage stage = (Stage) node.getScene().getWindow();
-         Tablero tablero = recuperarTablero();
+         Tablero tablero = recuperarTableroGrafico();
          try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_JugarPartida.fxml"));
             Scene scene = new Scene(loader.load());
@@ -121,6 +123,11 @@ public class GUI_PrepararPartidaController implements Initializable {
             controller.cargarCuenta(cuentaLogueada);
             controller.setTableroJugador(tablero);
             controller.setTableroEnemigo(tableroEnemigo);
+            controller.ajustarMiTurno(soyHost);
+            controller.setInteraccionServidor(interaccionServidor);
+            controller.setNombreAdversario(nombreAdversario);
+            controller.cargarController(controller);
+            controller.activarServicios();
             loader.setController(controller);
             stage.setScene(scene);
             stage.setResizable(false);
@@ -132,6 +139,9 @@ public class GUI_PrepararPartidaController implements Initializable {
       });
       buttonRegresar.setOnAction(event -> {
          Utileria.cargarAviso("titleCancelarPartida", "mensajeCancelarPartida");
+         if (nombreAdversario != null) {
+            interaccionServidor.dejarAdversario(nombreAdversario, cuentaLogueada.getNombreUsuario());
+         }
          Node node = (Node) event.getSource();
          Stage stage = (Stage) node.getScene().getWindow();
          try {
@@ -163,17 +173,15 @@ public class GUI_PrepararPartidaController implements Initializable {
          tamanioNave = 1;
       });
       paneTablero.setOnMouseClicked(event -> {
-        
          if ( tamanioNave != 0) {
             Casilla casilla = (Casilla) event.getTarget();
             Nave nave = new Nave(tamanioNave, esHorizontal);
             if (!colocarNave(casilla, nave)) {
-               Utileria.cargarAviso("tittlePosicion", "mensajePosicion");
+               Utileria.cargarAviso("titlePosicion", "mensajePosicion");
             } else {
-        
                try {
                   actualizarNaves();
-               } catch (InterruptedException | JsonProcessingException ex) {
+               } catch (InterruptedException ex) {
                   Logger.getLogger(GUI_PrepararPartidaController.class.getName()).log(Level.SEVERE, null, ex);
                }
    
@@ -205,6 +213,9 @@ public class GUI_PrepararPartidaController implements Initializable {
 
    public void cargarController(GUI_PrepararPartidaController controller) {
       this.controller = controller;
+   }
+   public void setTableroEnemigo(Tablero tableroEnemigo){
+      this.tableroEnemigo = tableroEnemigo;
    }
 
    /**
@@ -255,7 +266,6 @@ public class GUI_PrepararPartidaController implements Initializable {
     * @return boolean si se peude colocar la nave
     */
    public boolean colocarHorizontal(Casilla casillaInicio, int tamanio) {
-      boolean puedeHorizontal = false;
       int x = (int) casillaInicio.getX();
       int y = (int) casillaInicio.getY();
       for (int i = x; i < x + tamanio; i++) {
@@ -266,9 +276,12 @@ public class GUI_PrepararPartidaController implements Initializable {
          if (casilla.getNave() != null) {
             return false;
          }
-         puedeHorizontal = comprobarColindantesHorizontal(i, y);
+         if (!comprobarColindantesHorizontal(i, y)) {
+            return false;
+         }
       }
-      return puedeHorizontal;
+      
+      return true;
    }
 
    /**
@@ -278,15 +291,15 @@ public class GUI_PrepararPartidaController implements Initializable {
     * @param y valor de y de la casilla
     * @return regresa los colindantes son aptos para colocar la nave
     */
-   public boolean comprobarColindantesHorizontal(int i, int y) {
+   public boolean comprobarColindantesHorizontal(int i, int y) {   
       for (Casilla colindante : getColindantes(i, y)) {
          if (!posicionValida(i, y)) {
-            return false;
+            return false;   
          }
          if (colindante.getNave() != null) {
             return false;
          }
-      }
+      }  
       return true;
    }
 
@@ -298,7 +311,6 @@ public class GUI_PrepararPartidaController implements Initializable {
     * @return regresa se se puede colocar la nave en dicha posición
     */
    public boolean colocarVertical(Casilla casillaInicio, int tamanio) {
-      boolean puedeVertical = false;
       int x = (int) casillaInicio.getX();
       int y = (int) casillaInicio.getY();
       for (int i = y; i < y + tamanio; i++) {
@@ -309,9 +321,11 @@ public class GUI_PrepararPartidaController implements Initializable {
          if (casilla.getNave() != null) {
             return false;
          }
-         puedeVertical = comprobarColindantesVertical(x, i);
+         if (!comprobarColindantesVertical(x, i)) {
+            return false;
+         }
       }
-      return puedeVertical;
+      return true;
    }
 
    /**
@@ -321,7 +335,7 @@ public class GUI_PrepararPartidaController implements Initializable {
     * @param i valor varibale de Y de la casilla
     * @return si las casillas colindantes son aptas para colocar la nave
     */
-   public boolean comprobarColindantesVertical(int x, int i) {
+   public boolean comprobarColindantesVertical(int x, int i) {     
       for (Casilla colindante : getColindantes(x, i)) {
          if (!posicionValida(x, i)) {
             return false;
@@ -426,19 +440,16 @@ public class GUI_PrepararPartidaController implements Initializable {
     * Método para actualizar los números de naves disposibles y en caso de colocar todas habilitar
     * la continuación
     */
-   public void actualizarNaves() throws InterruptedException, JsonProcessingException {
+   public void actualizarNaves() throws InterruptedException {
       int restante = 0;
-      int sumaRestantes = 0;
       for (int i = 1; i < 6; i++) {
          if (tamanioNave == i) {
             numeroNaves[i - 1]--;
             restante = numeroNaves[i - 1];
          }
-         sumaRestantes = sumaRestantes + numeroNaves[i - 1];
       }
       refrescarNumNaves();
-      if (restante <= 0) {
-         String separator = System.getProperty("file.separator");
+      if (restante == 0) {
          Image image = new Image(getClass().getResourceAsStream("/navalBattle/recursos/imagenes/lineaRoja.png"));
          switch (tamanioNave) {
             case 1:
@@ -470,27 +481,33 @@ public class GUI_PrepararPartidaController implements Initializable {
                tamanioNave = 0;
          }
       }
-      System.out.println("Suma resto "+sumaRestantes);
-      checkListo(sumaRestantes);
+      checkListo();
    }
 
-   public void enviarTablero() throws InterruptedException, JsonProcessingException {
-      Tablero tableroJugador = recuperarTablero();
-      interaccionServidor.enviarTablero(cuentaLogueada.getNombreUsuario(), tableroJugador, tableroEnemigo);
-      synchronized (tableroEnemigo) {
-         tableroEnemigo.wait();
+   public void enviarTablero() throws InterruptedException {
+      TableroSimple tableroJugador = recuperarTablero();
+      interaccionServidor.enviarTablero(cuentaLogueada.getNombreUsuario(), tableroJugador);
+   }
+
+   public void checkListo() throws InterruptedException {
+      int sumaNavesRestantes = 0;
+      for (int i = 1; i < 6; i++) {
+         sumaNavesRestantes = sumaNavesRestantes + numeroNaves[i - 1];
       }
-   }
-
-   public void checkListo(int sumaNavesRestantes) throws InterruptedException, JsonProcessingException {
-      System.out.println("CHEQUEA");
       if (sumaNavesRestantes == 0) {
-         System.out.println("Cero restantes");
          labelEspera.setVisible(true);
+         Utileria.fadeConteo(labelEspera);
+         if (!soyHost) {
+            notificarHost();
+         }
          if (ready) {
-            enlazarContrincante();
+            enviarTablero();
+            buttonContinuar.setDisable(false);
          }
       }
+   }
+   public void notificarHost(){
+      interaccionServidor.adversarioListo(cuentaLogueada.getNombreUsuario());
    }
 
    /**
@@ -498,8 +515,8 @@ public class GUI_PrepararPartidaController implements Initializable {
     *
     * @return tablero con naves
     */
-   public Tablero recuperarTablero() {      
-      Tablero tableroJugador = new Tablero(false);
+   public TableroSimple recuperarTablero() {      
+      TableroSimple tableroJugadorSimple = new TableroSimple(false);
       ArrayList<CasillaSimple> casillasSimples = new ArrayList<>();
       Casilla casilla;
       CasillaSimple casillaSimple;
@@ -511,12 +528,29 @@ public class GUI_PrepararPartidaController implements Initializable {
             casillasSimples.add(casillaSimple);
          }
       }
-      tableroJugador.setCasillasSimples(casillasSimples);
+      tableroJugadorSimple.setCasillasSimples(casillasSimples);
+      return tableroJugadorSimple;
+   }
+   public Tablero recuperarTableroGrafico(){
+      Tablero tableroJugador = new Tablero(false);
+      ArrayList<Casilla> casillas = new ArrayList<>();
+      Casilla casilla;
+      for (int i = 0; i < 10; i++) {
+         for (int j = 0; j < 10; j++) {
+            casilla = getCasilla(j, i);
+            casillas.add(casilla);
+         }
+      }
+      tableroJugador.setCasillas(casillas);
       return tableroJugador;
    }
 
    public void activarEspera() throws URISyntaxException, UnknownHostException, IOException {
-      interaccionServidor.esperarAInvitado(controller);
+      interaccionServidor.esperarAInvitado(cuentaLogueada.getNombreUsuario(), controller);
+      soyHost = true;
+   }
+   public void activarRecibirTablero(){
+      interaccionServidor.esperarTablero(controller);
    }
 
    public void cargarAviso(String nombreTitulo, String nombreMensaje, String nick) {
@@ -600,12 +634,12 @@ public class GUI_PrepararPartidaController implements Initializable {
     * Método para cargar el idioma seleccionado por default en etiquetas y botones
     */
    public void cargarIdioma() {
-
       Locale locale = Locale.getDefault();
       ResourceBundle resources = ResourceBundle.getBundle(RECURSO_IDIOMA, locale);
       labelColocaNaves.setText(resources.getString("labelColocaNaves"));
       labelRotar.setText(resources.getString("labelRotar"));
       buttonContinuar.setText(resources.getString("buttonContinuar"));
+      buttonLimpiar.setText(resources.getString("buttonLimpiar"));
       labelHorizontal.setText(resources.getString("labelHorizontal"));
       labelVertical.setText(resources.getString("labelVertical"));
       labelVertical.setVisible(false);
@@ -613,10 +647,11 @@ public class GUI_PrepararPartidaController implements Initializable {
       labelEspera.setVisible(false);
    }
 
-   public void enlazarContrincante() throws InterruptedException, JsonProcessingException {
-      System.out.println("Enlaza");
-      enviarTablero();
-      buttonContinuar.setDisable(false);
+   public void activarReady(){
+      ready = true;
+   }
+   public void setNombreAdversario(String nombre){
+      nombreAdversario = nombre;
    }
 
 }
