@@ -17,6 +17,7 @@ import javax.persistence.Persistence;
 import navalBattle.datos.Cuenta;
 import navalBattle.datos.CuentaJpaController;
 import navalBattle.datos.exceptions.NonexistentEntityException;
+import navalBattle.datos.exceptions.PreexistingEntityException;
 
 /**
  * Clase para implementar las gestiones de la entidad cuenta
@@ -34,20 +35,13 @@ final static String UNIDAD_PERSISTENCIA = "Naval-BattlePU";
     * @return si el registro de la cuenta fue exitoso o no
     */
    @Override
-   public boolean registrarCuenta(CuentaUsuario cuentaUsuario) {
-      boolean registroExitoso = false;
+   public void registrarCuenta(CuentaUsuario cuentaUsuario) throws PreexistingEntityException, NoSuchAlgorithmException {
       EntityManagerFactory entityManagerFactory;
-      try {
-         entityManagerFactory = Persistence.createEntityManagerFactory(UNIDAD_PERSISTENCIA, null);
-         CuentaJpaController controller = new CuentaJpaController(entityManagerFactory);
-         Cuenta cuenta = new Cuenta(cuentaUsuario.getNombreUsuario(), getHash(cuentaUsuario.getClave()),
-             cuentaUsuario.getLenguaje(), 0);
-         controller.create(cuenta);
-         registroExitoso = true;
-      } catch (Exception ex) {
-         Logger.getLogger(AdministracionCuenta.class.getName()).log(Level.SEVERE, null, ex);
-      }
-      return registroExitoso;
+      entityManagerFactory = Persistence.createEntityManagerFactory(UNIDAD_PERSISTENCIA, null);
+      CuentaJpaController controller = new CuentaJpaController(entityManagerFactory);
+      Cuenta cuenta = new Cuenta(cuentaUsuario.getNombreUsuario(), getHash(cuentaUsuario.getClave()),
+          cuentaUsuario.getLenguaje(), 0);
+      controller.create(cuenta);
    }
 
    /**
@@ -66,11 +60,10 @@ final static String UNIDAD_PERSISTENCIA = "Naval-BattlePU";
          entityManagerFactory = Persistence.createEntityManagerFactory(UNIDAD_PERSISTENCIA, null);
          EntityManager entity = entityManagerFactory.createEntityManager();
          String claveHasheada = getHash(clave);
-         cuentaRecuperada = (Cuenta) entity.createNamedQuery("Cuenta.iniciarSesion").setParameter("nombreUsuario",
-             nombreUsuario).setParameter("clave", claveHasheada).getResultList().get(0);
+         cuentaRecuperada = (Cuenta) entity.createNamedQuery("Cuenta.iniciarSesion").setParameter("nombreUsuario", nombreUsuario).setParameter("clave", claveHasheada).getResultList().get(0);
          cuentaUsuario = new CuentaUsuario(cuentaRecuperada.getNombreUsuario(), cuentaRecuperada.getClave(),
              cuentaRecuperada.getLenguaje(), cuentaRecuperada.getPuntaje());
-      } catch (NoSuchAlgorithmException ex) {
+      } catch (Exception ex) {
          Logger.getLogger(AdministracionCuenta.class.getName()).log(Level.SEVERE, null, ex);
       }
       return cuentaUsuario;
@@ -89,8 +82,8 @@ final static String UNIDAD_PERSISTENCIA = "Naval-BattlePU";
       try {
          entityManagerFactory = Persistence.createEntityManagerFactory(UNIDAD_PERSISTENCIA, null);
          CuentaJpaController controller = new CuentaJpaController(entityManagerFactory);
-         Cuenta cuenta = new Cuenta(cuentaUsuario.getNombreUsuario(), getHash(cuentaUsuario.getClave()),
-             cuentaUsuario.getLenguaje(), cuentaUsuario.getPuntaje());
+         Cuenta cuenta = new Cuenta(cuentaUsuario.getNombreUsuario(), cuentaUsuario.getClave(),
+         cuentaUsuario.getLenguaje(), cuentaUsuario.getPuntaje());
          controller.edit(cuenta);
          modificacionExitosa = true;
       } catch (Exception ex) {

@@ -124,8 +124,8 @@ public class GUI_IniciarSesionController implements Initializable {
       });
 
       buttonIniciar.setOnAction((ActionEvent event) -> {
-         //CuentaUsuario cuenta = ingresar();
-         CuentaUsuario cuenta = new CuentaUsuario(tFieldNick.getText(), "Patito", "English");
+         CuentaUsuario cuenta = ingresar();
+         //CuentaUsuario cuenta = new CuentaUsuario(tFieldNick.getText(), "Patito", "English");
          if (cuenta == null) {
             Utileria.cargarAviso("titleAlerta", "mensajeDatosIncorrectosIniciarSesion");
             limpiar();
@@ -200,7 +200,6 @@ public class GUI_IniciarSesionController implements Initializable {
    public boolean validarCamposCuenta() {
       return ((tFieldNick.getText() != null && !(tFieldNick.getText().trim().isEmpty()))
           && (pFieldClave.getText() != null && !(pFieldClave.getText().trim().isEmpty())));
-
    }
 
    /**
@@ -266,7 +265,6 @@ public class GUI_IniciarSesionController implements Initializable {
     * @param estado
     */
    public void cargarSonido(boolean estado) {
-
       URL resourceSonido = this.getClass().getResource("/navalBattle/recursos/sonidos/"
           + "MainThemeonMarimba.mp3");
       Media sound = new Media((resourceSonido).toString());

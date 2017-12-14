@@ -7,13 +7,14 @@ package navalBattle.logica;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
+import navalBattle.datos.exceptions.PreexistingEntityException;
 
 /**
  *
  * @author Mari
  */
 public interface I_AdministracionCuenta {
-   public boolean registrarCuenta(CuentaUsuario cuentaUsuario) throws NoSuchAlgorithmException;
+   public void registrarCuenta(CuentaUsuario cuentaUsuario) throws NoSuchAlgorithmException, PreexistingEntityException;
    public CuentaUsuario consultarCuenta(String nombreUsuario, String clave) throws NoSuchAlgorithmException;
    public boolean modificarCuenta(CuentaUsuario cuentaUsuario) throws NoSuchAlgorithmException;
    public boolean desactivarCuenta(String nombreUsuario) throws NoSuchAlgorithmException;

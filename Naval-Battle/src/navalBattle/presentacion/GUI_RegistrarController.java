@@ -8,7 +8,9 @@ package navalBattle.presentacion;
 import com.jfoenix.controls.JFXButton;
 import java.io.IOException;
 import java.net.URL;
+import java.security.NoSuchAlgorithmException;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,12 +22,16 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
+import navalBattle.datos.exceptions.PreexistingEntityException;
 import navalBattle.logica.AdministracionCuenta;
 import navalBattle.logica.CuentaUsuario;
 import navalBattle.recursos.Utileria;
@@ -79,9 +85,8 @@ public class GUI_RegistrarController implements Initializable {
          accionButtonGuardar(event);
       });
       buttonBaja.setOnAction(event -> {
-         accionButtonBaja(event);
+         cargarConfirmacionDeEliminarCuenta(event);
       });
-
    }
 
    /**
@@ -118,11 +123,11 @@ public class GUI_RegistrarController implements Initializable {
                   adminCuenta.registrarCuenta(nuevaCuenta);
                   cuentaLogueada = adminCuenta.consultarCuenta(nickname, clave);
                   mensaje = "mensajeGuardado";
-               } catch (Exception e) {
+               } catch (PreexistingEntityException ex) {
+                  mensaje = "mensajeCuentaYaExistente";
+               } catch (NoSuchAlgorithmException ex) {
                   mensaje = MENSAJE_ERROR;
                }
-               Utileria.cargarAviso(TITULO_ALERTA, mensaje);
-               accionButtonRegresar(event);
             } else {
                try {
                   adminCuenta.modificarCuenta(cuentaLogueada);
@@ -132,7 +137,7 @@ public class GUI_RegistrarController implements Initializable {
                   mensaje = MENSAJE_ERROR;
                }
             }
-
+            accionButtonRegresar(event);
          } else {
             mensaje = "mensajeClaveNoCoincide";
          }
@@ -158,7 +163,6 @@ public class GUI_RegistrarController implements Initializable {
       }
    }
 
-
    /**
     * Método auxiliar para comprobar que los campos obligatorios del Nickname y la Clave no están
     * nulos cuando se inicie la sesión
@@ -179,9 +183,8 @@ public class GUI_RegistrarController implements Initializable {
    /**
     * Método para dar de baja la cuenta con la que se ha iniciado sesión
     *
-    * @param event evento del botón
     */
-   public void accionButtonBaja(Event event) {
+   public void darDeBajaCuenta() {
       try {
          AdministracionCuenta adminCuenta = new AdministracionCuenta();
          adminCuenta.desactivarCuenta(cuentaLogueada.getNombreUsuario());
@@ -189,8 +192,7 @@ public class GUI_RegistrarController implements Initializable {
          Utileria.cargarAviso(TITULO_ALERTA, "mensajeBaja");
       } catch (Exception e) {
          Utileria.cargarAviso(TITULO_ALERTA, MENSAJE_ERROR);
-      }
-      accionButtonRegresar(event);
+      }      
    }
 
    /**
@@ -232,6 +234,23 @@ public class GUI_RegistrarController implements Initializable {
          }
       }
 
+   }
+   
+   public void cargarConfirmacionDeEliminarCuenta(Event event) {
+      Locale locale = Locale.getDefault();
+      ResourceBundle resources = ResourceBundle.getBundle("navalBattle.recursos.idiomas.Idioma", locale);
+      String titulo = resources.getString("titleAlerta");
+      String mensaje = resources.getString("mensajeconfirmacionElimiarCuenta");
+      Alert confirmacion = new Alert(Alert.AlertType.INFORMATION);
+      confirmacion.setTitle(titulo);
+      confirmacion.setHeaderText(mensaje);
+      ButtonType btAceptar = new ButtonType("OK", ButtonBar.ButtonData.CANCEL_CLOSE);
+      confirmacion.getButtonTypes().setAll(btAceptar);
+      Optional<ButtonType> eleccion = confirmacion.showAndWait();
+      if (eleccion.get() == btAceptar) {
+         darDeBajaCuenta();
+         accionButtonRegresar(event);
+      }      
    }
 
    /**

@@ -11,6 +11,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
+import javax.persistence.Persistence;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import navalBattle.datos.exceptions.NonexistentEntityException;
@@ -21,7 +22,7 @@ import navalBattle.datos.exceptions.PreexistingEntityException;
  * @author Mari
  */
 public class CuentaJpaController implements Serializable {
-   private EntityManagerFactory emf = null;
+   private EntityManagerFactory emf = Persistence.createEntityManagerFactory("Naval-BattlePU", null);
    
    /**
     * Método para ininiciar la clase con un EMF específico
@@ -35,7 +36,7 @@ public class CuentaJpaController implements Serializable {
       return emf.createEntityManager();
    }
 
-   public void create(Cuenta cuenta) throws PreexistingEntityException, Exception {
+   public void create(Cuenta cuenta) throws PreexistingEntityException  {
       EntityManager em = null;
       try {
          em = getEntityManager();
@@ -54,6 +55,16 @@ public class CuentaJpaController implements Serializable {
       }
    }
 
+   public void modificar(Cuenta cuenta){
+      EntityManager em = getEntityManager();
+      String nombreUsuario = cuenta.getNombreUsuario();
+      String clave = cuenta.getClave();
+      String lenguaje = cuenta.getLenguaje();
+      int puntaje = cuenta.getPuntaje();
+       Query query = em.createQuery("UPDATE Cuenta set clave = :c, lenguaje = :l, puntaje = :p where nombreUsuario = :n");
+       query.setParameter("c", clave).executeUpdate();
+   }
+   
    public void edit(Cuenta cuenta) throws NonexistentEntityException, Exception {
       EntityManager em = null;
       try {

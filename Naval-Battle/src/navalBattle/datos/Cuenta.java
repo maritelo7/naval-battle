@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(name = "cuenta")
 @XmlRootElement
 @NamedQueries({
+   
    @NamedQuery(name = "Cuenta.findAll", query = "SELECT c FROM Cuenta c"),
    @NamedQuery(name = "Cuenta.findByNombreUsuario", query = "SELECT c FROM Cuenta c WHERE c.nombreUsuario = :nombreUsuario"),
    @NamedQuery(name = "Cuenta.findByClave", query = "SELECT c FROM Cuenta c WHERE c.clave = :clave"),

@@ -99,6 +99,7 @@ public class GUI_JugarPartidaController implements Initializable {
    InteraccionServidor interaccionServidor = new InteraccionServidor();
    GUI_JugarPartidaController controller;
    Timeline timeline = new Timeline();
+   Event event;
 
    /**
     * Initializes the controller class.
@@ -113,6 +114,7 @@ public class GUI_JugarPartidaController implements Initializable {
       });
 
       paneTableroEnemigo.setOnMouseClicked(event -> {
+         this.event = event;
          Casilla casilla = (Casilla) event.getTarget();
          Misil misil = new Misil((int) casilla.getX(), (int) casilla.getY());
          enviarMisil(misil);
@@ -439,7 +441,7 @@ public class GUI_JugarPartidaController implements Initializable {
          if (navesJugador == 0) {
             Utileria.cargarAviso("titleAlerta", "mensajeDerrota");
             timeline.stop();
-//            regresarAMenu()
+            regresarAMenu(event);
          }
       } else {
          navesEnemigo--;
@@ -450,6 +452,7 @@ public class GUI_JugarPartidaController implements Initializable {
             interaccionServidor.dejarAdversario(cuentaLogueada.getNombreUsuario(), 
                 labelNombreAdversario.getText());
             comprobarPuntaje(puntuacionFinal);
+            regresarAMenu(event);
          }
       }
    }
