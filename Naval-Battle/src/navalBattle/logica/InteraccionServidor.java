@@ -40,8 +40,6 @@ public class InteraccionServidor {
             Platform.runLater(() -> {
                Utileria.cargarAviso("titleAviso", "mensajeErrorConexion");
             });
-            System.out.println("Se fue el servidor");
-
          });
          socket.connect();
          socket.emit("registrarDatos", nombreUsuario);
@@ -65,7 +63,7 @@ public class InteraccionServidor {
       socket.on("retado", (Object... os) -> {
          String nombre = (String) os[0];
          Platform.runLater(() -> {
-            controller.cargarAviso("titleRetado", "mensajeRetado", nombre);
+            Utileria.cargarAviso("titleRetado", "mensajeRetado", nombre);
             controller.setNombreAdversario(nombre);
 
          });
@@ -104,11 +102,36 @@ public class InteraccionServidor {
       Gson gson = new Gson();
       socket.emit("envioTablero", nombreUsuario, gson.toJson(tablero));
    }
-
-   public void enviarMisil(String nombreUsuario, Misil misil, GUI_JugarPartidaController controller) {
+   
+   public void esperarTablero(GUI_PrepararPartidaController controller) {
       Gson gson = new Gson();
-      socket.emit("enviarMisil", nombreUsuario, gson.toJson(misil));
+      JsonParser parser = new JsonParser();
+      socket.on("recibirTablero", (Object... os) -> {
+         Tablero tableroEnemigo = new Tablero(true);
+         String data = (String) os[0];
+         JsonObject obj = parser.parse(data).getAsJsonObject();
+         TableroSimple tableroEnemigoLocalSimple = gson.fromJson(data, TableroSimple.class);
+         CasillaSimple casillaSimple;
+         Casilla casilla;
+         ArrayList<Casilla> casillas = new ArrayList<>();
+         int contador = 0;
+         for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++) {
+               casillaSimple = tableroEnemigoLocalSimple.getCasillasSimples().get(contador);
+               casilla = new Casilla(j, i);
+               casilla.setNave(casillaSimple.getNave());
+               casillas.add(casilla);
+               contador++;
+            }
+         }
+         tableroEnemigo.setCasillas(casillas);
+         tableroEnemigo.setEnemigo(tableroEnemigoLocalSimple.isEnemigo());
+         Platform.runLater(() -> {
+            controller.setTableroEnemigo(tableroEnemigo);
 
+         });
+
+      });
    }
 
    public void activarServiciosJugarPartida(GUI_JugarPartidaController controller) {
@@ -142,6 +165,17 @@ public class InteraccionServidor {
             controller.actualizarPuntuacionEnemigo(puntos);
          });
       });
+      socket.on("recibirRendicion", (Object... os)-> {
+         Platform.runLater(() -> {
+            controller.enemigoRendido();
+         });
+      });
+   }
+   
+   public void enviarMisil(String nombreUsuario, Misil misil, GUI_JugarPartidaController controller) {
+      Gson gson = new Gson();
+      socket.emit("enviarMisil", nombreUsuario, gson.toJson(misil));
+
    }
    public void enviarPuntuacion (String nombreUsuario, int puntaje){
       socket.emit("enviarPuntuacion", nombreUsuario, puntaje);
@@ -157,36 +191,8 @@ public class InteraccionServidor {
       Gson gson = new Gson();
       socket.emit("enviarCasillasALiberar", nombreUsuario, gson.toJson(tableroActualizado));
    }
-
-   public void esperarTablero(GUI_PrepararPartidaController controller) {
-      Gson gson = new Gson();
-      JsonParser parser = new JsonParser();
-      socket.on("recibirTablero", (Object... os) -> {
-         Tablero tableroEnemigo = new Tablero(true);
-         String data = (String) os[0];
-         JsonObject obj = parser.parse(data).getAsJsonObject();
-         TableroSimple tableroEnemigoLocalSimple = gson.fromJson(data, TableroSimple.class);
-         CasillaSimple casillaSimple;
-         Casilla casilla;
-         ArrayList<Casilla> casillas = new ArrayList<>();
-         int contador = 0;
-         for (int i = 0; i < 10; i++) {
-            for (int j = 0; j < 10; j++) {
-               casillaSimple = tableroEnemigoLocalSimple.getCasillasSimples().get(contador);
-               casilla = new Casilla(j, i);
-               casilla.setNave(casillaSimple.getNave());
-               casillas.add(casilla);
-               contador++;
-            }
-         }
-         tableroEnemigo.setCasillas(casillas);
-         tableroEnemigo.setEnemigo(tableroEnemigoLocalSimple.isEnemigo());
-         Platform.runLater(() -> {
-            controller.setTableroEnemigo(tableroEnemigo);
-
-         });
-
-      });
+   public void enviarRendicion(String nombreUsuario){
+      socket.emit("enviarRendicion", nombreUsuario);
    }
 
 }

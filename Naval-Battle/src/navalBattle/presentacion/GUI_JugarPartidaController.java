@@ -26,9 +26,6 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.HBox;
@@ -91,15 +88,15 @@ public class GUI_JugarPartidaController implements Initializable {
    CuentaUsuario cuentaLogueada;
    int navesJugador = 9;
    int navesEnemigo = 9;
-//   int puntajeJugador = 0;
-//   int puntajeEnemigo = 0;
+   int puntajeJugador = 0;
+   int puntajeEnemigo = 0;
    int numeroTirosFallidos = 0;
    int numeroTirosAcertados = 0;
    final static String RECURSO_IDIOMA = "navalBattle.recursos.idiomas.Idioma";
    InteraccionServidor interaccionServidor = new InteraccionServidor();
    GUI_JugarPartidaController controller;
    Timeline timeline = new Timeline();
-   Event event;
+   Event ultimoEvent;
 
    /**
     * Initializes the controller class.
@@ -110,11 +107,12 @@ public class GUI_JugarPartidaController implements Initializable {
 
       buttonRendirse.setOnAction(event -> {
          Utileria.cargarAviso("titleDerrota", "mensajeDerrota");
+         notificarRendicion();
          regresarAMenu(event);
       });
 
       paneTableroEnemigo.setOnMouseClicked(event -> {
-         this.event = event;
+         this.ultimoEvent = event;
          Casilla casilla = (Casilla) event.getTarget();
          Misil misil = new Misil((int) casilla.getX(), (int) casilla.getY());
          enviarMisil(misil);
@@ -441,18 +439,18 @@ public class GUI_JugarPartidaController implements Initializable {
          if (navesJugador == 0) {
             Utileria.cargarAviso("titleAlerta", "mensajeDerrota");
             timeline.stop();
-            regresarAMenu(event);
+            regresarAMenu(ultimoEvent);
          }
       } else {
          navesEnemigo--;
          if (navesEnemigo == 0) {
             int puntuacionFinal = ajustarPuntuacion();
-            cargarAviso("titleAlerta", "mensajeVictoria", Integer.toString(puntuacionFinal));
+            Utileria.cargarAviso("titleAlerta", "mensajeVictoria", Integer.toString(puntuacionFinal));
             timeline.stop();
             interaccionServidor.dejarAdversario(cuentaLogueada.getNombreUsuario(), 
                 labelNombreAdversario.getText());
             comprobarPuntaje(puntuacionFinal);
-            regresarAMenu(event);
+            regresarAMenu(ultimoEvent);
          }
       }
    }
@@ -475,8 +473,17 @@ public class GUI_JugarPartidaController implements Initializable {
       timeline.stop();
       interaccionServidor.cederTurno(cuentaLogueada.getNombreUsuario());
    }
+   public void notificarRendicion(){
+      interaccionServidor.enviarRendicion(cuentaLogueada.getNombreUsuario());
+   }
+   public void enemigoRendido(){
+      timeline.stop();
+      Utileria.cargarAviso("titleAlerta", "mensajeDerrota");
+      Utileria.cargarAviso("titleAlerta", "mensajeRendicion");
+      regresarAMenu(ultimoEvent);
+   }
    public void comprobarPuntaje(int puntajeFinal){
-      boolean nuevoPuntaje = false;
+      boolean nuevoPuntaje;
       AdministracionCuenta adminCuenta = new AdministracionCuenta();
       nuevoPuntaje = adminCuenta.registrarPuntajeMasAlto(cuentaLogueada, puntajeFinal);
       if (nuevoPuntaje) {
@@ -556,17 +563,5 @@ public class GUI_JugarPartidaController implements Initializable {
       buttonRendirse.setText(resources.getString("buttonRendirse"));
       labelTurno.setVisible(false);
    }
-      public void cargarAviso(String nombreTitulo, String cabecera, String body) {
-      Locale locale = Locale.getDefault();
-      ResourceBundle resources = ResourceBundle.getBundle("navalBattle.recursos.idiomas.Idioma", locale);
-      String titulo = resources.getString(nombreTitulo);
-      String head = resources.getString(cabecera);
-      Alert confirmacion = new Alert(Alert.AlertType.INFORMATION);
-      confirmacion.setTitle(titulo);
-      confirmacion.setHeaderText(head);
-      confirmacion.setContentText(body);
-      ButtonType btAceptar = new ButtonType("OK", ButtonBar.ButtonData.CANCEL_CLOSE);
-      confirmacion.getButtonTypes().setAll(btAceptar);
-      confirmacion.showAndWait();
-   }
+
 }

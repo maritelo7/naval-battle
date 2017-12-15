@@ -23,9 +23,6 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -551,20 +548,6 @@ public class GUI_PrepararPartidaController implements Initializable {
    }
    public void activarRecibirTablero(){
       interaccionServidor.esperarTablero(controller);
-   }
-
-   public void cargarAviso(String nombreTitulo, String nombreMensaje, String nick) {
-      Locale locale = Locale.getDefault();
-      ResourceBundle resources = ResourceBundle.getBundle("navalBattle.recursos.idiomas.Idioma", locale);
-      String titulo = resources.getString(nombreTitulo);
-      String mensaje = resources.getString(nombreMensaje);
-      Alert confirmacion = new Alert(Alert.AlertType.INFORMATION);
-      confirmacion.setTitle(titulo);
-      confirmacion.setHeaderText(mensaje);
-      confirmacion.setContentText(nick);
-      ButtonType btAceptar = new ButtonType("OK", ButtonBar.ButtonData.CANCEL_CLOSE);
-      confirmacion.getButtonTypes().setAll(btAceptar);
-      confirmacion.showAndWait();
    }
 
    /**

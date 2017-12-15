@@ -17,10 +17,12 @@ import javafx.util.Duration;
 
 /**
  * Clase con métodos o atributos de utilidad para diferentes clases y usos
+ *
  * @author Maribel Tello Rodriguez
  * @author José Alí Valdivia Ruiz
  */
 public class Utileria {
+
    boolean bandera;
 
    public boolean isBandera() {
@@ -34,8 +36,8 @@ public class Utileria {
    public Utileria(boolean bandera) {
       this.bandera = bandera;
    }
-    
-/**
+
+   /**
     * Método reutilizable para cargar un ventana emergente
     *
     * @param nombreTitulo nombre del key del título
@@ -55,8 +57,9 @@ public class Utileria {
       confirmacion.showAndWait();
    }
 
-      /**
+   /**
     * Método para hacer un efecto de desvanecimiento de la etiqueta del tiempo
+    *
     * @param nombreLabel
     */
    public static void fadeConteo(Label nombreLabel) {
@@ -66,5 +69,19 @@ public class Utileria {
       ft.setCycleCount(Timeline.INDEFINITE);
       ft.setAutoReverse(true);
       ft.play();
+   }
+
+   public static void cargarAviso(String nombreTitulo, String cabecera, String body) {
+      Locale locale = Locale.getDefault();
+      ResourceBundle resources = ResourceBundle.getBundle("navalBattle.recursos.idiomas.Idioma", locale);
+      String titulo = resources.getString(nombreTitulo);
+      String head = resources.getString(cabecera);
+      Alert confirmacion = new Alert(Alert.AlertType.INFORMATION);
+      confirmacion.setTitle(titulo);
+      confirmacion.setHeaderText(head);
+      confirmacion.setContentText(body);
+      ButtonType btAceptar = new ButtonType("OK", ButtonBar.ButtonData.CANCEL_CLOSE);
+      confirmacion.getButtonTypes().setAll(btAceptar);
+      confirmacion.showAndWait();
    }
 }
