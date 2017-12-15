@@ -22,14 +22,14 @@ import navalBattle.datos.exceptions.PreexistingEntityException;
  * @author Mari
  */
 public class CuentaJpaController implements Serializable {
-   private EntityManagerFactory emf = Persistence.createEntityManagerFactory("Naval-BattlePU", null);
+   private EntityManagerFactory emf;
    
    /**
     * Método para ininiciar la clase con un EMF específico
     * @param emf
     */
    public CuentaJpaController(EntityManagerFactory emf) {
-      this.emf = emf;
+      this.emf = Persistence.createEntityManagerFactory("Naval-BattlePU", null);
    }
    
    public EntityManager getEntityManager() {
@@ -54,17 +54,7 @@ public class CuentaJpaController implements Serializable {
          }
       }
    }
-
-   public void modificar(Cuenta cuenta){
-      EntityManager em = getEntityManager();
-      String nombreUsuario = cuenta.getNombreUsuario();
-      String clave = cuenta.getClave();
-      String lenguaje = cuenta.getLenguaje();
-      int puntaje = cuenta.getPuntaje();
-       Query query = em.createQuery("UPDATE Cuenta set clave = :c, lenguaje = :l, puntaje = :p where nombreUsuario = :n");
-       query.setParameter("c", clave).executeUpdate();
-   }
-   
+  
    public void edit(Cuenta cuenta) throws NonexistentEntityException, Exception {
       EntityManager em = null;
       try {

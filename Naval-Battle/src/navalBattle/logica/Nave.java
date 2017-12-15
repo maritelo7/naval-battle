@@ -12,8 +12,8 @@ package navalBattle.logica;
  */
 public class Nave {
    private String nombre;
-   private int tamanio;
-   private boolean horizontal;
+   private final int tamanio;
+   private final boolean horizontal;
    private int salud;
 
 

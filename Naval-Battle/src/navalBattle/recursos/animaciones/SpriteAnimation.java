@@ -5,17 +5,17 @@
  */
 package navalBattle.recursos.animaciones;
 
-/**
- * Clase secundaria utilizada para la animación del barco
- * @author Maribel Tello Rodriguez
- * @author José Alí Valdivia Ruiz
- */
 import javafx.animation.Interpolator;
 import javafx.animation.Transition;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.image.ImageView;
 import javafx.util.Duration;
 
+/**
+ * Clase secundaria utilizada para la animación del barco
+ * @author Maribel Tello Rodriguez
+ * @author José Alí Valdivia Ruiz
+ */
 public class SpriteAnimation extends Transition {
 
     private final ImageView imageView;
@@ -28,7 +28,18 @@ public class SpriteAnimation extends Transition {
 
     private int lastIndex;
 
-    public SpriteAnimation(
+   /**
+    * Método para ajustar los recortes de la imagen completa para crear pequeños escenarios y animar
+    * @param imageView
+    * @param duration
+    * @param count
+    * @param columns
+    * @param offsetX
+    * @param offsetY
+    * @param width
+    * @param height
+    */
+   public SpriteAnimation(
             ImageView imageView, 
             Duration duration, 
             int count,   int columns,

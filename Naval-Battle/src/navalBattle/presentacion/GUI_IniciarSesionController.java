@@ -125,7 +125,6 @@ public class GUI_IniciarSesionController implements Initializable {
 
       buttonIniciar.setOnAction((ActionEvent event) -> {
          CuentaUsuario cuenta = ingresar();
-         //CuentaUsuario cuenta = new CuentaUsuario(tFieldNick.getText(), "Patito", "English");
          if (cuenta == null) {
             Utileria.cargarAviso("titleAlerta", "mensajeDatosIncorrectosIniciarSesion");
             limpiar();
@@ -151,22 +150,6 @@ public class GUI_IniciarSesionController implements Initializable {
          }
       });
    }
-
-   /**
-    * Método auxiliar para limitar los caracteres introducidos en el field de nickname a solo letras
-    * mayúsculas, minúsculas y números
-    *
-    * @param e evento de teclado
-    */
-   @FXML
-   public void limitarCaracteresNick(KeyEvent e) {
-      String s = e.getCharacter();
-      char c = s.charAt(0);
-      if ((c > 'z' || c < 'A') && (c > '9' || c < '0')) {
-         e.consume();
-      }
-   }
-
    /**
     * Método para el inicio de sesión, donde se recupera el nickname y la clave y se intenta loguear
     * en una cuenta
@@ -192,17 +175,6 @@ public class GUI_IniciarSesionController implements Initializable {
    }
 
    /**
-    * Método auxiliar para comprobar que los campos obligatorios del Nickname y la Clave no están
-    * nulos cuando se inicie la sesión
-    *
-    * @return regresa que es válido si ambos campos no están nulos
-    */
-   public boolean validarCamposCuenta() {
-      return ((tFieldNick.getText() != null && !(tFieldNick.getText().trim().isEmpty()))
-          && (pFieldClave.getText() != null && !(pFieldClave.getText().trim().isEmpty())));
-   }
-
-   /**
     * Método para cambiar de la ventana actual a otra
     *
     * @param event evento que desencadena un cambio de ventana
@@ -210,11 +182,9 @@ public class GUI_IniciarSesionController implements Initializable {
     */
    public void cargarVentana(Event event, String url) {
       Node node = (Node) event.getSource();
-      Stage stage;
-      stage = (Stage) node.getScene().getWindow();
+      Stage stage = (Stage) node.getScene().getWindow();
       try {
-         Parent root;
-         root = FXMLLoader.load(getClass().getResource(url));
+         Parent root = FXMLLoader.load(getClass().getResource(url));
          Scene scene = new Scene(root);
          stage.setScene(scene);
          stage.setResizable(false);
@@ -225,7 +195,7 @@ public class GUI_IniciarSesionController implements Initializable {
    }
 
    /**
-    * Método para cargar el idioma en etiquetas y botones establecido como default
+    * Método para cargar el idioma establecido como default en etiquetas y botones 
     */
    public void cargarIdioma() {
       Locale locale = Locale.getDefault();
@@ -306,9 +276,35 @@ public class GUI_IniciarSesionController implements Initializable {
       return mensaje;
    }
 
+   /**
+    * Método auxiliar par limpiar los campos de texto
+    */
    public void limpiar() {
       tFieldNick.clear();
       pFieldClave.clear();
    }
-
+      /**
+    * Método auxiliar para limitar los caracteres introducidos en el field de nickname a solo letras
+    * mayúsculas, minúsculas y números
+    *
+    * @param e evento de teclado
+    */
+   @FXML
+   public void limitarCaracteresNick(KeyEvent e) {
+      String s = e.getCharacter();
+      char c = s.charAt(0);
+      if ((c > 'z' || c < 'A') && (c > '9' || c < '0')) {
+         e.consume();
+      }
+   }
+   /**
+    * Método auxiliar para comprobar que los campos obligatorios del Nickname y la Clave no están
+    * nulos cuando se inicie la sesión
+    *
+    * @return regresa que es válido si ambos campos no están nulos
+    */
+   public boolean validarCamposCuenta() {
+      return ((tFieldNick.getText() != null && !(tFieldNick.getText().trim().isEmpty()))
+          && (pFieldClave.getText() != null && !(pFieldClave.getText().trim().isEmpty())));
+   }
 }

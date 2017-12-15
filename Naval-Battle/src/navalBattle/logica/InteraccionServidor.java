@@ -23,13 +23,18 @@ import navalBattle.presentacion.GUI_PrepararPartidaController;
 import navalBattle.recursos.Utileria;
 
 /**
- *
- * @author Mari
+ * @author José Alí Valdivia
+ * @author Maribel Tello
  */
 public class InteraccionServidor {
 
    public static Socket socket;
 
+   /**
+    * Método para conectar con el servidor remoto y registrar los datos del jugador
+    * @param nombreUsuario
+    * @param bandera
+    */
    public void conectarServidor(String nombreUsuario, Utileria bandera) {
       try {
          ResourceBundle resources = ResourceBundle.getBundle("navalBattle.recursos.ConfiguracionServidor");
@@ -59,6 +64,13 @@ public class InteraccionServidor {
       }
    }
 
+   /**
+    * Método para esperar a un adversario o activar un evento cuando se recibe un reto
+    * @param jugador
+    * @param controller
+    * @throws URISyntaxException
+    * @throws UnknownHostException
+    */
    public void esperarAInvitado(String jugador, GUI_PrepararPartidaController controller) throws URISyntaxException, UnknownHostException {
       socket.on("retado", (Object... os) -> {
          String nombre = (String) os[0];
@@ -78,10 +90,23 @@ public class InteraccionServidor {
       });
       esperarTablero(controller);
    }
+
+   /**
+    * Método para notificar que el adversario está listo
+    * @param nombreUsuario
+    */
    public void adversarioListo(String nombreUsuario){
       socket.emit("adversarioListo", nombreUsuario);
    }
 
+   /**
+    * Método para conectar con un adversario y esperar la respuesta
+    * @param nombreUsuario
+    * @param nombreContrincante
+    * @param bandera
+    * @throws URISyntaxException
+    * @throws UnknownHostException
+    */
    public void conectarInvitado(String nombreUsuario, String nombreContrincante, Utileria bandera) throws URISyntaxException, UnknownHostException {
       socket.emit("envioRetador", nombreUsuario, nombreContrincante);
       socket.on("sinJugadorRetado", (Object... os) -> {
@@ -98,11 +123,20 @@ public class InteraccionServidor {
 
    }
 
+   /**
+    * Método par envíar un tablero al adversario
+    * @param nombreUsuario
+    * @param tablero
+    */
    public void enviarTablero(String nombreUsuario, TableroSimple tablero) {
       Gson gson = new Gson();
       socket.emit("envioTablero", nombreUsuario, gson.toJson(tablero));
    }
    
+   /**
+    * Método para activar la esperar del tablero enemigo
+    * @param controller
+    */
    public void esperarTablero(GUI_PrepararPartidaController controller) {
       Gson gson = new Gson();
       JsonParser parser = new JsonParser();
@@ -134,6 +168,10 @@ public class InteraccionServidor {
       });
    }
 
+   /**
+    * Método para activar todos los eventos posibles que pueden ocurrir en una partida
+    * @param controller
+    */
    public void activarServiciosJugarPartida(GUI_JugarPartidaController controller) {
       JsonParser parser = new JsonParser();
       Gson gson = new Gson();
@@ -172,25 +210,58 @@ public class InteraccionServidor {
       });
    }
    
+   /**
+    * Método para envíar un misil al tablero enemigo
+    * @param nombreUsuario
+    * @param misil
+    * @param controller
+    */
    public void enviarMisil(String nombreUsuario, Misil misil, GUI_JugarPartidaController controller) {
       Gson gson = new Gson();
       socket.emit("enviarMisil", nombreUsuario, gson.toJson(misil));
 
    }
+
+   /**
+    * Método para envíar una puntuacion local 
+    * @param nombreUsuario
+    * @param puntaje
+    */
    public void enviarPuntuacion (String nombreUsuario, int puntaje){
       socket.emit("enviarPuntuacion", nombreUsuario, puntaje);
    }
+
+   /**
+    * Método para notificar al adversario que se abandonará la partida
+    * @param nombreUsuario
+    * @param retado
+    */
    public void dejarAdversario(String nombreUsuario, String retado){
       socket.emit("adiosAdversario", nombreUsuario, retado);
    }
 
+   /**
+    * Método para notificar al adversario que ahora es su turno
+    * @param nombreUsuario
+    */
    public void cederTurno(String nombreUsuario) {
       socket.emit("cederTurno", nombreUsuario);
    }
+
+   /**
+    * Método para envíar un tablero con laa casillas actualizadas
+    * @param nombreUsuario
+    * @param tableroActualizado
+    */
    public void enviarCasillasALiberar (String nombreUsuario, TableroSimple tableroActualizado){
       Gson gson = new Gson();
       socket.emit("enviarCasillasALiberar", nombreUsuario, gson.toJson(tableroActualizado));
    }
+
+   /**
+    * Método para envíar un rendición al jugador enemigo
+    * @param nombreUsuario
+    */
    public void enviarRendicion(String nombreUsuario){
       socket.emit("enviarRendicion", nombreUsuario);
    }

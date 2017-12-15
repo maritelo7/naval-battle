@@ -71,6 +71,12 @@ public class Utileria {
       ft.play();
    }
 
+   /**
+    * Método sobrecargado en caso de ser necesario desplegar 3 elementos en un aviso
+    * @param nombreTitulo
+    * @param cabecera
+    * @param body
+    */
    public static void cargarAviso(String nombreTitulo, String cabecera, String body) {
       Locale locale = Locale.getDefault();
       ResourceBundle resources = ResourceBundle.getBundle("navalBattle.recursos.idiomas.Idioma", locale);

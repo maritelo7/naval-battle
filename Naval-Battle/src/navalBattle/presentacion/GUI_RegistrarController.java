@@ -67,17 +67,21 @@ public class GUI_RegistrarController implements Initializable {
    @FXML
    private ComboBox comboIdioma;
 
-   final static String MENSAJE_ERROR = "mensajeErrorConexion";
-   final static String TITULO_ALERTA = "titleAlerta";
-   CuentaUsuario cuentaLogueada;
+   private final static String MENSAJE_ERROR = "mensajeErrorConexion";
+   private final static String TITULO_ALERTA = "titleAlerta";
+   private CuentaUsuario cuentaLogueada;
 
    /**
     * Initializes the controller class.
+    *
+    * @param url
+    * @param rb
     */
    @Override
    public void initialize(URL url, ResourceBundle rb) {
       cargarIdioma();
       cargarComboIdioma();
+      buttonBaja.setDisable(true);
       buttonRegreso.setOnAction(event -> {
          accionButtonRegresar(event);
       });
@@ -100,6 +104,7 @@ public class GUI_RegistrarController implements Initializable {
          tFieldNick.setText(cuentaLogueada.getNombreUsuario());
          comboIdioma.setValue(cuentaLogueada.getLenguaje());
          tFieldNick.setEditable(false);
+         buttonBaja.setDisable(false);
       }
    }
 
@@ -164,35 +169,18 @@ public class GUI_RegistrarController implements Initializable {
    }
 
    /**
-    * Método auxiliar para comprobar que los campos obligatorios del Nickname y la Clave no están
-    * nulos cuando se inicie la sesión
-    *
-    *
-    * @return regresa que es válido si ambos campos no están nulos
-    */
-   public boolean validarCamposCuenta() {
-      boolean esValido = false;
-      if ((!tFieldNick.getText().isEmpty() && !(tFieldNick.getText().trim().isEmpty()))
-          && (!pFieldClave.getText().isEmpty() && !(pFieldClave.getText().trim().isEmpty()))
-          && (!pFieldConfirmacionClave.getText().isEmpty() && !(pFieldConfirmacionClave.getText().trim().isEmpty()))) {
-         esValido = true;
-      }
-      return esValido;
-   }
-
-   /**
     * Método para dar de baja la cuenta con la que se ha iniciado sesión
     *
     */
    public void darDeBajaCuenta() {
-      try {
-         AdministracionCuenta adminCuenta = new AdministracionCuenta();
-         adminCuenta.desactivarCuenta(cuentaLogueada.getNombreUsuario());
+      AdministracionCuenta adminCuenta = new AdministracionCuenta();
+      boolean check = adminCuenta.desactivarCuenta(cuentaLogueada.getNombreUsuario());
+      if (check) {
          cuentaLogueada = null;
          Utileria.cargarAviso(TITULO_ALERTA, "mensajeBaja");
-      } catch (Exception e) {
+      } else {
          Utileria.cargarAviso(TITULO_ALERTA, MENSAJE_ERROR);
-      }      
+      }
    }
 
    /**
@@ -235,7 +223,12 @@ public class GUI_RegistrarController implements Initializable {
       }
 
    }
-   
+
+   /**
+    * Método para cargar la confirmación antes de eliminar una cuenta
+    *
+    * @param event
+    */
    public void cargarConfirmacionDeEliminarCuenta(Event event) {
       Locale locale = Locale.getDefault();
       ResourceBundle resources = ResourceBundle.getBundle("navalBattle.recursos.idiomas.Idioma", locale);
@@ -250,7 +243,7 @@ public class GUI_RegistrarController implements Initializable {
       if (eleccion.get() == btAceptar) {
          darDeBajaCuenta();
          accionButtonRegresar(event);
-      }      
+      }
    }
 
    /**
@@ -275,5 +268,22 @@ public class GUI_RegistrarController implements Initializable {
       ObservableList<String> listIdiomas = FXCollections.observableArrayList(data);
       comboIdioma.setItems(listIdiomas);
       comboIdioma.getSelectionModel().selectFirst();
+   }
+
+   /**
+    * Método auxiliar para comprobar que los campos obligatorios del Nickname y la Clave no están
+    * nulos cuando se inicie la sesión
+    *
+    *
+    * @return regresa que es válido si ambos campos no están nulos
+    */
+   public boolean validarCamposCuenta() {
+      boolean esValido = false;
+      if ((!tFieldNick.getText().isEmpty() && !(tFieldNick.getText().trim().isEmpty()))
+          && (!pFieldClave.getText().isEmpty() && !(pFieldClave.getText().trim().isEmpty()))
+          && (!pFieldConfirmacionClave.getText().isEmpty() && !(pFieldConfirmacionClave.getText().trim().isEmpty()))) {
+         esValido = true;
+      }
+      return esValido;
    }
 }

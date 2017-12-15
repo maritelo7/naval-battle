@@ -43,20 +43,22 @@ public class GUI_PuntuacionesController implements Initializable {
    private Label labelPuntuaciones;
    @FXML
    private TableView<CuentaUsuario> tablePuntuaciones;
-   CuentaUsuario cuentaLogueada = null;
+   private CuentaUsuario cuentaLogueada = null;
    final static String RECURSO_IDIOMA = "navalBattle.recursos.idiomas.Idioma";
-   String usuarioTable;
-   String puntajeTable;
+   private String usuarioTable;
+   private String puntajeTable;
 
    /**
     * Initializes the controller class.
+    *
+    * @param url
+    * @param rb
     */
    @Override
    public void initialize(URL url, ResourceBundle rb) {
 
       cargarIdioma();
       cargarTabla();
-
       buttonRegresar.setOnAction(event -> {
          Node node = (Node) event.getSource();
          Stage stage = (Stage) node.getScene().getWindow();
@@ -107,6 +109,9 @@ public class GUI_PuntuacionesController implements Initializable {
 
    }
 
+   /**
+    * Método para cargar los elementos de la tabla
+    */
    public void cargarTabla() {
       tablePuntuaciones.setStyle("-fx-selection-bar: orange; -fx-selection-bar-non-focused: salmon");
       TableColumn nomUsuario = new TableColumn(usuarioTable);
@@ -119,17 +124,20 @@ public class GUI_PuntuacionesController implements Initializable {
 
    }
 
+   /**
+    * Método para cargar la información en la tabla
+    */
    public void cargarInformacionTabla() {
       AdministracionCuenta adminCuenta = new AdministracionCuenta();
-      List<CuentaUsuario> cuentasConMejoresPuntajes = null;
-      try {
-         cuentasConMejoresPuntajes = adminCuenta.obtenerMejoresPuntajes();
-         ObservableList<CuentaUsuario> listaCuentas = FXCollections.observableArrayList();
+      List<CuentaUsuario> cuentasConMejoresPuntajes;
+      cuentasConMejoresPuntajes = adminCuenta.obtenerMejoresPuntajes();
+      ObservableList<CuentaUsuario> listaCuentas = FXCollections.observableArrayList();
+      if (cuentasConMejoresPuntajes != null) {
          for (int i = 0; i < cuentasConMejoresPuntajes.size(); i++) {
             listaCuentas.add(cuentasConMejoresPuntajes.get(i));
          }
          tablePuntuaciones.setItems(listaCuentas);
-      } catch (Exception ex) {
+      } else {
          Utileria.cargarAviso("titleAlerta", "mensajeErrorConexion");
       }
 

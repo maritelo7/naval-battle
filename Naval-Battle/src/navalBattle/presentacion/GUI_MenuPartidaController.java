@@ -37,7 +37,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-
 import navalBattle.logica.CuentaUsuario;
 import navalBattle.logica.InteraccionServidor;
 import navalBattle.recursos.Utileria;
@@ -51,8 +50,6 @@ import navalBattle.recursos.animaciones.SpriteAnimation;
  * @author José Alí Valdivia Ruiz
  */
 public class GUI_MenuPartidaController implements Initializable {
-
-   CuentaUsuario cuentaLogueada;
 
    @FXML
    private JFXButton buttonReglas;
@@ -74,11 +71,15 @@ public class GUI_MenuPartidaController implements Initializable {
    private Label labelIniciando;
    @FXML
    private ImageView imageVBoat;
+   private CuentaUsuario cuentaLogueada;
    final static String RECURSO_IDIOMA = "navalBattle.recursos.idiomas.Idioma";
-   InteraccionServidor interaccionServidor = new InteraccionServidor();
+   private final InteraccionServidor interaccionServidor = new InteraccionServidor();
 
    /**
     * Initializes the controller class.
+    *
+    * @param url
+    * @param rb
     */
    @Override
    public void initialize(URL url, ResourceBundle rb) {
@@ -88,18 +89,19 @@ public class GUI_MenuPartidaController implements Initializable {
       buttonCrearPartida.setOnAction(event -> {
          labelIniciando.setVisible(true);
          //ESTABLECER CONEXIÓN Y SUMARME AL POOL
+         if (cambiarConfiguracion()) {
+            cargarConfiguracionIp("titleRed", "mensajeConfServ");
+         }
          try {
-            if (cambiarConfiguracion()) {
-               cargarConfiguracionIp("titleRed", "mensajeConfServ");
-            }
             if (conectarServidor()) {
                prepararPartidaHost(event);
             } else {
                Utileria.cargarAviso("titleAlerta", "mensajeErrorConexion");
             }
-         } catch (InterruptedException | URISyntaxException | IOException ex) {
+         } catch (URISyntaxException | InterruptedException ex) {
             Logger.getLogger(GUI_MenuPartidaController.class.getName()).log(Level.SEVERE, null, ex);
          }
+
       });
 
       buttonUnirmePartida.setOnAction(event -> {
@@ -110,11 +112,10 @@ public class GUI_MenuPartidaController implements Initializable {
                cargarConfiguracionIp("titleRed", "mensajeConfServ");
             }
             String nickARetar = cargarConfiguracionNick("titleRed", "mensajeConfClien");
-
             if (nickARetar != null) {
                if (conectarServidor()) {
                   if (conectarInvitado(nickARetar)) {
-                     prepararPartidaCliente(event);
+                     prepararPartidaCliente(event, nickARetar);
                   }
                } else {
                   Utileria.cargarAviso("titleAlerta", "mensajeErrorConexion");
@@ -205,6 +206,12 @@ public class GUI_MenuPartidaController implements Initializable {
       cargarIdioma();
    }
 
+   /**
+    * Método para conectar con el servidor
+    *
+    * @return boolean en caso de ser exitoso
+    * @throws InterruptedException
+    */
    public boolean conectarServidor() throws InterruptedException {
       Utileria bandera = new Utileria(true);
       if (InteraccionServidor.socket == null) {
@@ -217,8 +224,14 @@ public class GUI_MenuPartidaController implements Initializable {
       return bandera.isBandera();
    }
 
+   /**
+    * Método para conectar con un adversario en especial
+    *
+    * @param nickARetar nombre del jugador
+    * @return boolean en caso de ser exitoso
+    */
    public boolean conectarInvitado(String nickARetar) {
-      Utileria bandera = new Utileria(true);
+      Utileria bandera = new Utileria(false);
       String nombreUsuario = cuentaLogueada.getNombreUsuario();
       try {
          interaccionServidor.conectarInvitado(nombreUsuario, nickARetar, bandera);
@@ -238,8 +251,9 @@ public class GUI_MenuPartidaController implements Initializable {
     * Método para cambiar de la ventana actual a otra
     *
     * @param event evento que desencadena un cambio de ventana
+    * @param nick nombre del adversario
     */
-   public void prepararPartidaCliente(Event event) {
+   public void prepararPartidaCliente(Event event, String nick) {
       Node node = (Node) event.getSource();
       Stage stage = (Stage) node.getScene().getWindow();
       try {
@@ -248,6 +262,7 @@ public class GUI_MenuPartidaController implements Initializable {
          GUI_PrepararPartidaController controller = loader.getController();
          controller.cargarCuenta(cuentaLogueada);
          controller.cargarInteraccionServidor(interaccionServidor);
+         controller.setNombreAdversario(nick);
          controller.activarReady();
          controller.cargarController(controller);
          controller.activarRecibirTablero();
@@ -264,6 +279,7 @@ public class GUI_MenuPartidaController implements Initializable {
     * Método para cambiar de la ventana actual a otra
     *
     * @param event evento que desencadena un cambio de ventana
+    * @throws java.net.URISyntaxException
     */
    public void prepararPartidaHost(Event event) throws URISyntaxException {
       Node node = (Node) event.getSource();
@@ -286,18 +302,116 @@ public class GUI_MenuPartidaController implements Initializable {
    }
 
    /**
-    * Método para cargar el idioma seleccionado por default en etiquetas y botones
+    * Método para cargar la configuración de IP del servidor
+    *
+    * @param title key del mensaje
+    * @param body key del mensaje
     */
-   public void cargarIdioma() {
+   public void cargarConfiguracionIp(String title, String body) {
       Locale locale = Locale.getDefault();
       ResourceBundle resources = ResourceBundle.getBundle(RECURSO_IDIOMA, locale);
-      buttonReglas.setText(resources.getString("buttonReglas"));
-      buttonPuntuacion.setText(resources.getString("buttonPuntuacion"));
-      buttonCrearPartida.setText(resources.getString("buttonCrearPartida"));
-      buttonUnirmePartida.setText(resources.getString("buttonUnirmePartida"));
-      labelSalir.setText(resources.getString("labelSalir"));
-      labelConfigurar.setText(resources.getString("labelConfigurar"));
-      labelIniciando.setText(resources.getString("labelIniciando"));
+      String titulo = resources.getString(title);
+      String mensaje = resources.getString(body);
+      Alert confirmacion = new Alert(Alert.AlertType.INFORMATION);
+      TextField tfNombreDispositivo = new TextField();
+      confirmacion.setTitle(titulo);
+      confirmacion.setHeaderText(mensaje);
+      confirmacion.setGraphic(tfNombreDispositivo);
+      ButtonType btAceptar = new ButtonType("OK", ButtonBar.ButtonData.CANCEL_CLOSE);
+      confirmacion.getButtonTypes().setAll(btAceptar);
+      confirmacion.showAndWait();
+      String numIp = tfNombreDispositivo.getText();
+      if (numIp.trim().isEmpty()) {
+         Utileria.cargarAviso("titleAlerta", "mensajeCamposLlenos");
+         cargarConfiguracionIp(title, body);
+      } else {
+         guardarPropiedad(numIp);
+      }
+   }
+
+   /**
+    * Método para cargar el nombre del jugador a retar
+    *
+    * @param title key del título
+    * @param body key del mensaje
+    * @return regresa el nombre ingresado
+    * @throws FileNotFoundException
+    * @throws IOException
+    */
+   public String cargarConfiguracionNick(String title, String body) throws FileNotFoundException, IOException {
+      Locale locale = Locale.getDefault();
+      ResourceBundle resources = ResourceBundle.getBundle(RECURSO_IDIOMA, locale);
+      String titulo = resources.getString(title);
+      String mensaje = resources.getString(body);
+      String btnNomCancelar = resources.getString("buttonCancelar");
+      Alert confirmacion = new Alert(Alert.AlertType.INFORMATION);
+      TextField tfNombre = new TextField();
+      confirmacion.setTitle(titulo);
+      confirmacion.setHeaderText(mensaje);
+      confirmacion.setGraphic(tfNombre);
+      ButtonType btnCancelar = new ButtonType(btnNomCancelar, ButtonBar.ButtonData.CANCEL_CLOSE);
+      ButtonType btnAceptar = new ButtonType("OK");
+      confirmacion.getButtonTypes().setAll(btnAceptar, btnCancelar);
+      Optional<ButtonType> eleccion = confirmacion.showAndWait();
+      String nick = tfNombre.getText();
+      if (eleccion.get() == btnAceptar) {
+         if (nick.trim().isEmpty()) {
+            Utileria.cargarAviso("titleAlerta", "mensajeCamposLlenos");
+            cargarConfiguracionIp(title, body);
+         }
+      }
+      return nick;
+   }
+
+   /**
+    * Método para confirmar la configuración de red
+    *
+    * @return boolean de decisión
+    */
+   public boolean cambiarConfiguracion() {
+      boolean check = false;
+      Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
+      Locale locale = Locale.getDefault();
+      ResourceBundle resources = ResourceBundle.getBundle(RECURSO_IDIOMA, locale);
+      String titulo = resources.getString("titleAlerta");
+      String mensaje = resources.getString("mensajeCambiarConfRed");
+      String btnNomCancelar = resources.getString("buttonCancelar");
+      String btnNomCambiar = resources.getString("titleRed");
+      confirmacion.setTitle(titulo);
+      confirmacion.setHeaderText(mensaje);
+      ButtonType btnCambiar = new ButtonType(btnNomCambiar);
+      ButtonType btnCancelar = new ButtonType(btnNomCancelar, ButtonBar.ButtonData.CANCEL_CLOSE);
+      confirmacion.getButtonTypes().setAll(btnCambiar, btnCancelar);
+      Optional<ButtonType> eleccion = confirmacion.showAndWait();
+      if (eleccion.get() == btnCambiar) {
+         check = true;
+      }
+      return check;
+   }
+
+   /**
+    * Método para guardar la configuración de red
+    *
+    * @param numIp ip del servidor
+    */
+   public void guardarPropiedad(String numIp) {
+      String dir = "src/navalBattle/recursos/ConfiguracionServidor.properties";
+      try {
+         FileInputStream in = new FileInputStream(dir);
+         Properties proper = new Properties();
+         proper.load(in);
+         in.close();
+         FileOutputStream out = new FileOutputStream(dir);
+         proper.setProperty("ipServidor", numIp);
+         proper.store(out, null);
+         in.close();
+      } catch (FileNotFoundException ex) {
+         Utileria.cargarAviso("titleAlerta", "mensajeErrorConexion");
+         Logger.getLogger(GUI_MenuPartidaController.class.getName()).log(Level.SEVERE, null, ex);
+      } catch (IOException ex) {
+         Utileria.cargarAviso("titleAlerta", "mensajeErrorConexion");
+         Logger.getLogger(GUI_MenuPartidaController.class.getName()).log(Level.SEVERE, null, ex);
+      }
    }
 
    /**
@@ -320,91 +434,19 @@ public class GUI_MenuPartidaController implements Initializable {
       }
    }
 
-   public void cargarConfiguracionIp(String title, String body) throws FileNotFoundException, IOException {
-      String numIp = null;
+   /**
+    * Método para cargar el idioma seleccionado por default en etiquetas y botones
+    */
+   public void cargarIdioma() {
       Locale locale = Locale.getDefault();
       ResourceBundle resources = ResourceBundle.getBundle(RECURSO_IDIOMA, locale);
-      String titulo = resources.getString(title);
-      String mensaje = resources.getString(body);
-      Alert confirmacion = new Alert(Alert.AlertType.INFORMATION);
-      TextField tfNombreDispositivo = new TextField();
-      confirmacion.setTitle(titulo);
-      confirmacion.setHeaderText(mensaje);
-      confirmacion.setGraphic(tfNombreDispositivo);
-      ButtonType btAceptar = new ButtonType("OK", ButtonBar.ButtonData.CANCEL_CLOSE);
-      confirmacion.getButtonTypes().setAll(btAceptar);
-      confirmacion.showAndWait();
-      numIp = tfNombreDispositivo.getText();
-      if (numIp.trim().isEmpty()) {
-         Utileria.cargarAviso("titleAlerta", "mensajeCamposLlenos");
-         cargarConfiguracionIp(title, body);
-      } else {
-         guardarPropiedad(numIp);
-      }
-   }
-
-   public String cargarConfiguracionNick(String title, String body) throws FileNotFoundException, IOException {
-      String nick = null;
-      Locale locale = Locale.getDefault();
-      ResourceBundle resources = ResourceBundle.getBundle(RECURSO_IDIOMA, locale);
-      String titulo = resources.getString(title);
-      String mensaje = resources.getString(body);
-      String btnNomCancelar = resources.getString("buttonCancelar");
-      Alert confirmacion = new Alert(Alert.AlertType.INFORMATION);
-      TextField tfNombre = new TextField();
-      confirmacion.setTitle(titulo);
-      confirmacion.setHeaderText(mensaje);
-      confirmacion.setGraphic(tfNombre);
-      ButtonType btnCancelar = new ButtonType(btnNomCancelar, ButtonBar.ButtonData.CANCEL_CLOSE);
-      ButtonType btnAceptar = new ButtonType("OK");
-      confirmacion.getButtonTypes().setAll(btnAceptar, btnCancelar);
-      Optional<ButtonType> eleccion = confirmacion.showAndWait();
-      nick = tfNombre.getText();
-      if (eleccion.get() == btnAceptar) {
-         if (nick.trim().isEmpty()) {
-            Utileria.cargarAviso("titleAlerta", "mensajeCamposLlenos");
-            cargarConfiguracionIp(title, body);
-         }
-      }
-      return nick;
-   }
-
-   public boolean cambiarConfiguracion() {
-      boolean check = false;
-      Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
-      Locale locale = Locale.getDefault();
-      ResourceBundle resources = ResourceBundle.getBundle(RECURSO_IDIOMA, locale);
-      String titulo = resources.getString("titleAlerta");
-      String mensaje = resources.getString("mensajeCambiarConfRed");
-      String btnNomCancelar = resources.getString("buttonCancelar");
-      String btnNomCambiar = resources.getString("titleRed");
-      confirmacion.setTitle(titulo);
-      confirmacion.setHeaderText(mensaje);
-      ButtonType btnCambiar = new ButtonType(btnNomCambiar);
-      ButtonType btnCancelar = new ButtonType(btnNomCancelar, ButtonBar.ButtonData.CANCEL_CLOSE);
-      confirmacion.getButtonTypes().setAll(btnCambiar, btnCancelar);
-      Optional<ButtonType> eleccion = confirmacion.showAndWait();
-      if (eleccion.get() == btnCambiar) {
-         check = true;
-      }
-      return check;
-   }
-
-   public void guardarPropiedad(String numIp) throws FileNotFoundException, IOException {
-      String dir = "src/navalBattle/recursos/ConfiguracionServidor.properties";
-      FileInputStream in = new FileInputStream(dir);
-      Properties proper = new Properties();
-      proper.load(in);
-      in.close();
-
-      FileOutputStream out = new FileOutputStream(dir);
-      proper.setProperty("ipServidor", numIp);
-      proper.store(out, null);
-      out.close();
-   }
-
-   public void cargarAviso(String tittle, String body) {
-      Utileria.cargarAviso(tittle, body);
+      buttonReglas.setText(resources.getString("buttonReglas"));
+      buttonPuntuacion.setText(resources.getString("buttonPuntuacion"));
+      buttonCrearPartida.setText(resources.getString("buttonCrearPartida"));
+      buttonUnirmePartida.setText(resources.getString("buttonUnirmePartida"));
+      labelSalir.setText(resources.getString("labelSalir"));
+      labelConfigurar.setText(resources.getString("labelConfigurar"));
+      labelIniciando.setText(resources.getString("labelIniciando"));
    }
 
    /**

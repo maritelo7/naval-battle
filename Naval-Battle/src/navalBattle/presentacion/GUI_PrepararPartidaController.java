@@ -90,20 +90,22 @@ public class GUI_PrepararPartidaController implements Initializable {
    private Label labelEspera;
 
    private boolean esHorizontal = true;
-   VBox columna = new VBox();
-   int tamanioNave = 0;
-   int[] numeroNaves = {3, 2, 2, 1, 1};
-   CuentaUsuario cuentaLogueada;
-   final static String RECURSO_IDIOMA = "navalBattle.recursos.idiomas.Idioma";
-   InteraccionServidor interaccionServidor = new InteraccionServidor();
-   GUI_PrepararPartidaController controller;
-   Tablero tableroEnemigo = new Tablero(true);
-   TableroSimple tableroEnemigoSimple = new TableroSimple(true);
-   boolean ready = false;
-   boolean soyHost = false;
-   String nombreAdversario;
+   private final VBox columna = new VBox();
+   private int tamanioNave = 0;
+   private final int[] numeroNaves = {3, 2, 2, 1, 1};
+   private CuentaUsuario cuentaLogueada;
+   private final static String RECURSO_IDIOMA = "navalBattle.recursos.idiomas.Idioma";
+   private InteraccionServidor interaccionServidor = new InteraccionServidor();
+   private GUI_PrepararPartidaController controller;
+   private Tablero tableroEnemigo = new Tablero(true);
+   private final TableroSimple tableroEnemigoSimple = new TableroSimple(true);
+   private boolean ready = false;
+   private boolean soyHost = false;
+   private String nombreAdversario;
    /**
     * Initializes the controller class.
+    * @param url
+    * @param rb
     */
    @Override
    public void initialize(URL url, ResourceBundle rb)  {
@@ -204,13 +206,26 @@ public class GUI_PrepararPartidaController implements Initializable {
       this.cuentaLogueada = cuenta;
    }
 
+   /**
+    * Método para cargar la instancia de la interacción del servidor creada en Menu partida
+    * @param interaccionServidor instancia
+    */
    public void cargarInteraccionServidor(InteraccionServidor interaccionServidor) {
       this.interaccionServidor = interaccionServidor;
    }
 
+   /**
+    * Método para cargar el controller de la ventana y así acceder dicha clase desde un evento externo
+    * @param controller
+    */
    public void cargarController(GUI_PrepararPartidaController controller) {
       this.controller = controller;
    }
+
+   /**
+    * Método para asignar el tablero enemigo
+    * @param tableroEnemigo
+    */
    public void setTableroEnemigo(Tablero tableroEnemigo){
       this.tableroEnemigo = tableroEnemigo;
    }
@@ -436,6 +451,7 @@ public class GUI_PrepararPartidaController implements Initializable {
    /**
     * Método para actualizar los números de naves disposibles y en caso de colocar todas habilitar
     * la continuación
+    * @throws java.lang.InterruptedException
     */
    public void actualizarNaves() throws InterruptedException {
       int restante = 0;
@@ -481,20 +497,19 @@ public class GUI_PrepararPartidaController implements Initializable {
       checkListo();
    }
 
-   public void enviarTablero() throws InterruptedException {
-      TableroSimple tableroJugador = recuperarTablero();
-      interaccionServidor.enviarTablero(cuentaLogueada.getNombreUsuario(), tableroJugador);
-   }
-
+   /**
+    * Método para verificar si ya se encuentra el tablero listo para avanzar
+    * @throws InterruptedException
+    */
    public void checkListo() throws InterruptedException {
       int sumaNavesRestantes = 0;
       for (int i = 1; i < 6; i++) {
          sumaNavesRestantes = sumaNavesRestantes + numeroNaves[i - 1];
       }
       if (sumaNavesRestantes == 0) {
-         labelEspera.setVisible(true);
-         Utileria.fadeConteo(labelEspera);
          if (!soyHost) {
+            labelEspera.setVisible(true);
+            Utileria.fadeConteo(labelEspera);
             notificarHost();
          }
          if (ready) {
@@ -502,9 +517,6 @@ public class GUI_PrepararPartidaController implements Initializable {
             buttonContinuar.setDisable(false);
          }
       }
-   }
-   public void notificarHost(){
-      interaccionServidor.adversarioListo(cuentaLogueada.getNombreUsuario());
    }
 
    /**
@@ -528,6 +540,11 @@ public class GUI_PrepararPartidaController implements Initializable {
       tableroJugadorSimple.setCasillasSimples(casillasSimples);
       return tableroJugadorSimple;
    }
+
+   /**
+    * Método para recuperar el tablero con todos sus elementos gráficos
+    * @return
+    */
    public Tablero recuperarTableroGrafico(){
       Tablero tableroJugador = new Tablero(false);
       ArrayList<Casilla> casillas = new ArrayList<>();
@@ -542,12 +559,36 @@ public class GUI_PrepararPartidaController implements Initializable {
       return tableroJugador;
    }
 
+   /**
+    * Método para activar la espera del servicio para recibir un adversario
+    * @throws URISyntaxException
+    * @throws UnknownHostException
+    * @throws IOException
+    */
    public void activarEspera() throws URISyntaxException, UnknownHostException, IOException {
       interaccionServidor.esperarAInvitado(cuentaLogueada.getNombreUsuario(), controller);
       soyHost = true;
    }
+
+   /**
+    * Método para activar la espera del tablero enemigo
+    */
    public void activarRecibirTablero(){
       interaccionServidor.esperarTablero(controller);
+   }
+   /**
+    * Método para notificar al adversario que el jugador ya terminó de preparar el tablero
+    */
+   public void notificarHost(){
+      interaccionServidor.adversarioListo(cuentaLogueada.getNombreUsuario());
+   }
+   /**
+    * Método para envíar el tablero al adversario
+    * @throws InterruptedException
+    */
+   public void enviarTablero() throws InterruptedException {
+      TableroSimple tableroJugador = recuperarTablero();
+      interaccionServidor.enviarTablero(cuentaLogueada.getNombreUsuario(), tableroJugador);
    }
 
    /**
@@ -630,11 +671,19 @@ public class GUI_PrepararPartidaController implements Initializable {
       labelEspera.setVisible(false);
    }
 
+   /**
+    * Método para activar si se puede avanzar de ventana
+    */
    public void activarReady(){
-      ready = true;
+      this.ready = true;
    }
+
+   /**
+    * Método para asignar el nombre del jugador adversario
+    * @param nombre
+    */
    public void setNombreAdversario(String nombre){
-      nombreAdversario = nombre;
+      this.nombreAdversario = nombre;
    }
 
 }

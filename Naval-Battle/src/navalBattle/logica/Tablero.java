@@ -13,14 +13,11 @@ import java.util.ArrayList;
  * @author javr
  */
 public class Tablero {
-   //private final Pane paneTablero;
    private boolean enemigo;
-//   private ArrayList<CasillaSimple> casillasSimples = new ArrayList<>();
    private ArrayList<Casilla> casillas = new ArrayList<>();
    
 
    public Tablero(boolean enemigo) {
-      //this.paneTablero = paneTablero;
       this.enemigo = enemigo;
    }
 
@@ -40,15 +37,5 @@ public class Tablero {
    public void setEnemigo(boolean enemigo) {
       this.enemigo = enemigo;
    }
-
-//   public ArrayList<CasillaSimple> getCasillasSimples() {
-//      return casillasSimples;
-//   }
-//
-//   public void setCasillasSimples(ArrayList<CasillaSimple> casillasSimples) {
-//      this.casillasSimples = casillasSimples;
-//   }
-//   
-   
    
 }

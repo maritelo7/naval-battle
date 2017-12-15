@@ -10,15 +10,14 @@ import java.util.ArrayList;
 
 /**
  *
- * @author javr
+ * @author Maribel Tello Rodriguez
+ * @author José Alí Valdivia Ruiz
  */
 public class TableroSimple {
-   //private final Pane paneTablero;
    private boolean enemigo;
    private ArrayList<CasillaSimple> casillasSimples = new ArrayList<>();
 
    public TableroSimple(boolean enemigo) {
-      //this.paneTablero = paneTablero;
       this.enemigo = enemigo;
    }
 

@@ -52,7 +52,7 @@
             </Label>
             <Label fx:id="labelConfirClave" prefHeight="20.0" prefWidth="222.0" text="labelConfirClave" textFill="WHITE" GridPane.rowIndex="4">
                <font>
-                  <Font name="Century Gothic" size="16.0" />
+                  <Font name="Century Gothic" size="14.0" />
                </font>
             </Label>
             <PasswordField fx:id="pFieldClave" GridPane.rowIndex="3" />
@@ -75,16 +75,6 @@
             <Font name="Century Gothic" size="16.0" />
          </font>
       </JFXButton>
-      <Label fx:id="labelIdioma" layoutX="585.0" layoutY="324.0" text="labelIdioma" textFill="WHITE">
-         <font>
-            <Font name="Century Gothic" size="16.0" />
-         </font>
-      </Label>
       <ComboBox fx:id="comboIdioma" layoutX="580.0" layoutY="356.0" prefWidth="150.0" />
-      <JFXButton fx:id="buttonBaja" layoutX="888.0" layoutY="561.0" minHeight="30.0" minWidth="120.0" style="-fx-background-color: #f82d13;" text="buttonBaja">
-         <font>
-            <Font name="Century Gothic" size="16.0" />
-         </font>
-      </JFXButton>
    </children>
 </AnchorPane>

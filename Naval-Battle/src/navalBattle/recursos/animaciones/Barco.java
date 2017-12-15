@@ -27,6 +27,10 @@ public class Barco  {
    private static final int WIDTH = 464;
    private static final int HEIGHT = 237;
 
+   /**
+    * Método para cargar la animación
+    * @return
+    */
    public ImageView barcoAnimacion() {
 
       final ImageView imageView = new ImageView(IMAGE);

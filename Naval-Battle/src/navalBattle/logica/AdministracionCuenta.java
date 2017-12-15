@@ -32,7 +32,8 @@ final static String UNIDAD_PERSISTENCIA = "Naval-BattlePU";
     * Método para registrar una Cuenta en la base de datos
     *
     * @param cuentaUsuario la cuenta a registrar
-    * @return si el registro de la cuenta fue exitoso o no
+    * @throws navalBattle.datos.exceptions.PreexistingEntityException
+    * @throws java.security.NoSuchAlgorithmException
     */
    @Override
    public void registrarCuenta(CuentaUsuario cuentaUsuario) throws PreexistingEntityException, NoSuchAlgorithmException {

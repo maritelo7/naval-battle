@@ -61,6 +61,9 @@
   		mostrarDisponible(nombreUsuario);
   		mostrarDisponible(nombreRetado);
   	});
+    socket.on("enviarRendicion", function (nombreUsuario) {
+      io.sockets.connected[encontrarIDAdversario(nombreUsuario)].emit("recibirRendicion", function () {});
+    });
 
   });
   function asignarAdversario(nombreUsuario, idRetado) {
