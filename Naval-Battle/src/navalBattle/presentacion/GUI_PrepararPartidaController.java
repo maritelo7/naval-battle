@@ -508,8 +508,6 @@ public class GUI_PrepararPartidaController implements Initializable {
       }
       if (sumaNavesRestantes == 0) {
          if (!soyHost) {
-            labelEspera.setVisible(true);
-            Utileria.fadeConteo(labelEspera);
             notificarHost();
          }
          if (ready) {
@@ -567,6 +565,8 @@ public class GUI_PrepararPartidaController implements Initializable {
     */
    public void activarEspera() throws URISyntaxException, UnknownHostException, IOException {
       interaccionServidor.esperarAInvitado(cuentaLogueada.getNombreUsuario(), controller);
+      labelEspera.setVisible(true);
+      Utileria.fadeConteo(labelEspera);
       soyHost = true;
    }
 

@@ -22,7 +22,7 @@ import navalBattle.datos.exceptions.PreexistingEntityException;
  * @author Mari
  */
 public class CuentaJpaController implements Serializable {
-   private EntityManagerFactory emf;
+   private final EntityManagerFactory emf;
    
    /**
     * Método para ininiciar la clase con un EMF específico

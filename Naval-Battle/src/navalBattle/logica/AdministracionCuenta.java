@@ -26,9 +26,10 @@ import navalBattle.datos.exceptions.PreexistingEntityException;
  * @author José Alí Valdivia Ruiz
  */
 public class AdministracionCuenta implements I_AdministracionCuenta {
-final static String UNIDAD_PERSISTENCIA = "Naval-BattlePU";
-    
-    /**
+
+   final static String UNIDAD_PERSISTENCIA = "Naval-BattlePU";
+
+   /**
     * Método para registrar una Cuenta en la base de datos
     *
     * @param cuentaUsuario la cuenta a registrar
@@ -51,21 +52,22 @@ final static String UNIDAD_PERSISTENCIA = "Naval-BattlePU";
     * @param nombreUsuario el nickname de la cuenta
     * @param clave la contraseña de la cuenta de usuario
     * @return la cuenta recuperada
+    * @throws java.security.NoSuchAlgorithmException
     */
    @Override
-   public CuentaUsuario consultarCuenta(String nombreUsuario, String clave) {
+   public CuentaUsuario consultarCuenta(String nombreUsuario, String clave) throws NoSuchAlgorithmException {
       CuentaUsuario cuentaUsuario = null;
       Cuenta cuentaRecuperada;
       EntityManagerFactory entityManagerFactory;
-      try {
-         entityManagerFactory = Persistence.createEntityManagerFactory(UNIDAD_PERSISTENCIA, null);
-         EntityManager entity = entityManagerFactory.createEntityManager();
-         String claveHasheada = getHash(clave);
-         cuentaRecuperada = (Cuenta) entity.createNamedQuery("Cuenta.iniciarSesion").setParameter("nombreUsuario", nombreUsuario).setParameter("clave", claveHasheada).getResultList().get(0);
-         cuentaUsuario = new CuentaUsuario(cuentaRecuperada.getNombreUsuario(), cuentaRecuperada.getClave(),
-             cuentaRecuperada.getLenguaje(), cuentaRecuperada.getPuntaje());
-      } catch (Exception ex) {
-         Logger.getLogger(AdministracionCuenta.class.getName()).log(Level.SEVERE, null, ex);
+      entityManagerFactory = Persistence.createEntityManagerFactory(UNIDAD_PERSISTENCIA, null);
+      EntityManager entity = entityManagerFactory.createEntityManager();
+      String claveHasheada = getHash(clave);
+      cuentaRecuperada = (Cuenta) entity.createNamedQuery("Cuenta.iniciarSesion").setParameter("nombreUsuario", nombreUsuario).setParameter("clave", claveHasheada).getResultList().get(0);
+      if (cuentaRecuperada != null ) {
+          cuentaUsuario = new CuentaUsuario(cuentaRecuperada.getNombreUsuario(), cuentaRecuperada.getClave(),
+          cuentaRecuperada.getLenguaje(), cuentaRecuperada.getPuntaje());
+      } else {
+         cuentaUsuario = new CuentaUsuario("0","0","0");
       }
       return cuentaUsuario;
    }
@@ -84,7 +86,7 @@ final static String UNIDAD_PERSISTENCIA = "Naval-BattlePU";
          entityManagerFactory = Persistence.createEntityManagerFactory(UNIDAD_PERSISTENCIA, null);
          CuentaJpaController controller = new CuentaJpaController(entityManagerFactory);
          Cuenta cuenta = new Cuenta(cuentaUsuario.getNombreUsuario(), cuentaUsuario.getClave(),
-         cuentaUsuario.getLenguaje(), cuentaUsuario.getPuntaje());
+             cuentaUsuario.getLenguaje(), cuentaUsuario.getPuntaje());
          controller.edit(cuenta);
          modificacionExitosa = true;
       } catch (Exception ex) {
@@ -139,16 +141,15 @@ final static String UNIDAD_PERSISTENCIA = "Naval-BattlePU";
    @Override
    public boolean registrarPuntajeMasAlto(CuentaUsuario cuenta, int puntajeObtenido) {
       boolean puntajeRegistrado = false;
-      if (cuenta.getPuntaje() < puntajeObtenido) {
          try {
             cuenta.setPuntaje(puntajeObtenido);
-            if (modificarCuenta(cuenta)){
+            if (modificarCuenta(cuenta)) {
                puntajeRegistrado = true;
-            } 
-         } catch (Exception ex) {           
+            }
+         } catch (Exception ex) {
             Logger.getLogger(AdministracionCuenta.class.getName()).log(Level.SEVERE, null, ex);
          }
-      }
+      
       return puntajeRegistrado;
    }
 

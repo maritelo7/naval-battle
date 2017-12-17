@@ -41,24 +41,28 @@ public class InteraccionServidor {
          final String numeroPuerto = resources.getString("puertoServidor");
          String ipServidor = resources.getString("ipServidor");
          socket = IO.socket("http://" + ipServidor + ":" + numeroPuerto);
-         socket.on(Socket.EVENT_DISCONNECT, (Object... os) -> {
-            Platform.runLater(() -> {
-               Utileria.cargarAviso("titleAviso", "mensajeErrorConexion");
-            });
-         });
-         socket.connect();
-         socket.emit("registrarDatos", nombreUsuario);
          socket.on(Socket.EVENT_CONNECT_ERROR, (Object... os) -> {
+            socket.close();
+            socket = null;
             synchronized (bandera) {
-               bandera.setBandera(false);
                bandera.notify();
             }
+            
          });
          socket.on(Socket.EVENT_CONNECT, (Object... os) -> {
             synchronized (bandera) {
+               bandera.setBandera(true);
                bandera.notify();
             }
          });
+         socket.on(Socket.EVENT_DISCONNECT, (Object... os) -> {
+            socket = null;
+            Platform.runLater(() -> {
+               Utileria.cargarAviso("titleAlerta", "mensajeErrorConexion");
+            });
+         });
+         socket.connect();
+         socket.emit("registrarDatos", nombreUsuario); 
       } catch (URISyntaxException e) {
          Logger.getLogger(InteraccionServidor.class.getName()).log(Level.SEVERE, null, e);
       }

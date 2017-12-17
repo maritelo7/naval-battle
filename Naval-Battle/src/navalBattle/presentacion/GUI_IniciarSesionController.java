@@ -30,7 +30,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.Label;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -124,32 +123,38 @@ public class GUI_IniciarSesionController implements Initializable {
       });
 
       buttonIniciar.setOnAction((ActionEvent event) -> {
-         CuentaUsuario cuenta = ingresar();
-         if (cuenta == null) {
-            Utileria.cargarAviso("titleAlerta", "mensajeDatosIncorrectosIniciarSesion");
-            limpiar();
-         } else {
-            if (!"0".equals(cuenta.getLenguaje())) {
-               Node node = (Node) event.getSource();
-               Stage stage = (Stage) node.getScene().getWindow();
-               try {
-                  FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_MenuPartida.fxml"));
-                  Scene scene = new Scene(loader.load());
-                  GUI_MenuPartidaController controller = loader.getController();
-                  controller.cargarCuenta(cuenta);
-                  stage.setScene(scene);
-                  stage.setResizable(false);
-                  stage.show();
-               } catch (IOException ex) {
-                  Logger.getLogger(GUI_IniciarSesionController.class.getName()).log(Level.SEVERE, null, ex);
-               }
-            } else {
+         if (validarCamposCuenta()) {
+            //CuentaUsuario cuenta = ingresar();
+            CuentaUsuario cuenta = new CuentaUsuario(tFieldNick.getText(), "0", "English");
+            if (cuenta == null) {
                Utileria.cargarAviso("titleAlerta", "mensajeErrorConexion");
                limpiar();
+            } else {
+               if (!"0".equals(cuenta.getLenguaje())) {
+                  Node node = (Node) event.getSource();
+                  Stage stage = (Stage) node.getScene().getWindow();
+                  try {
+                     FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_MenuPartida.fxml"));
+                     Scene scene = new Scene(loader.load());
+                     GUI_MenuPartidaController controller = loader.getController();
+                     controller.cargarCuenta(cuenta);
+                     stage.setScene(scene);
+                     stage.setResizable(false);
+                     stage.show();
+                  } catch (IOException ex) {
+                     Logger.getLogger(GUI_IniciarSesionController.class.getName()).log(Level.SEVERE, null, ex);
+                  }
+               } else {
+                  Utileria.cargarAviso("titleAlerta", "mensajeDatosIncorrectosIniciarSesion");
+                  limpiar();
+               }
             }
-         }
+         } else {
+            Utileria.cargarAviso("titleAlerta", "mensajeCamposLlenos");
+         } 
       });
    }
+
    /**
     * Método para el inicio de sesión, donde se recupera el nickname y la clave y se intenta loguear
     * en una cuenta
@@ -158,19 +163,14 @@ public class GUI_IniciarSesionController implements Initializable {
     */
    public CuentaUsuario ingresar() {
       CuentaUsuario cuentaRecuperada = null;
-      if (validarCamposCuenta()) {
          AdministracionCuenta adminCuenta = new AdministracionCuenta();
          String nickname = tFieldNick.getText();
          String clave = pFieldClave.getText();
          try {
             cuentaRecuperada = adminCuenta.consultarCuenta(nickname, clave);
-         } catch (Exception ex) {
-            cuentaRecuperada = new CuentaUsuario("0", "0", "0");
+         } catch (Exception ex) {  
             Logger.getLogger(GUI_IniciarSesionController.class.getName()).log(Level.SEVERE, null, ex);
          }
-      } else {
-         
-      }
       return cuentaRecuperada;
    }
 
@@ -195,7 +195,7 @@ public class GUI_IniciarSesionController implements Initializable {
    }
 
    /**
-    * Método para cargar el idioma establecido como default en etiquetas y botones 
+    * Método para cargar el idioma establecido como default en etiquetas y botones
     */
    public void cargarIdioma() {
       Locale locale = Locale.getDefault();
@@ -283,20 +283,7 @@ public class GUI_IniciarSesionController implements Initializable {
       tFieldNick.clear();
       pFieldClave.clear();
    }
-      /**
-    * Método auxiliar para limitar los caracteres introducidos en el field de nickname a solo letras
-    * mayúsculas, minúsculas y números
-    *
-    * @param e evento de teclado
-    */
-   @FXML
-   public void limitarCaracteresNick(KeyEvent e) {
-      String s = e.getCharacter();
-      char c = s.charAt(0);
-      if ((c > 'z' || c < 'A') && (c > '9' || c < '0')) {
-         e.consume();
-      }
-   }
+
    /**
     * Método auxiliar para comprobar que los campos obligatorios del Nickname y la Clave no están
     * nulos cuando se inicie la sesión

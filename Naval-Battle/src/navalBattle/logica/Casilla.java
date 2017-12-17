@@ -40,6 +40,7 @@ public class Casilla extends Rectangle {
    public void liberar(){
       setFill(Color.DEEPSKYBLUE);
       setStroke(Color.BLUE);
+      this.atacado = true;
    }
 
    public boolean isAtacado() {

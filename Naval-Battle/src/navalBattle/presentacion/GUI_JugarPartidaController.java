@@ -80,7 +80,7 @@ public class GUI_JugarPartidaController implements Initializable {
    private Pane paneTableroEnemigo;
    @FXML
    private ProgressBar pbConteo;
-   
+
    private final VBox columnasJugador = new VBox();
    private final VBox columnasEnemigo = new VBox();
    private Tablero tableroJugador;
@@ -100,6 +100,7 @@ public class GUI_JugarPartidaController implements Initializable {
 
    /**
     * Initializes the controller class.
+    *
     * @param url
     * @param rb
     */
@@ -116,19 +117,22 @@ public class GUI_JugarPartidaController implements Initializable {
       paneTableroEnemigo.setOnMouseClicked(event -> {
          this.ultimoEvent = event;
          Casilla casilla = (Casilla) event.getTarget();
-         Misil misil = new Misil((int) casilla.getX(), (int) casilla.getY());
-         enviarMisil(misil);
-         if (casilla.atacadaANave()) {
-            numeroTirosAcertados++;
-            ajustarMiTurno(true);
-            cargarSonidoDestruccion();
-            actualizarMiPuntuacion(numeroTirosAcertados);
-         } else {
-            numeroTirosFallidos++;
-            cederTurno();
-            ajustarMiTurno(false);
-            cargarSonidoAgua();  
+         if (!casilla.isAtacado()) {
+            Misil misil = new Misil((int) casilla.getX(), (int) casilla.getY());
+            enviarMisil(misil);
+            if (casilla.atacadaANave()) {
+               numeroTirosAcertados++;
+               ajustarMiTurno(true);
+               cargarSonidoDestruccion();
+               actualizarMiPuntuacion(numeroTirosAcertados);
+            } else {
+               numeroTirosFallidos++;
+               cederTurno();
+               ajustarMiTurno(false);
+               cargarSonidoAgua();
+            }
          }
+
       });
    }
 
@@ -141,6 +145,7 @@ public class GUI_JugarPartidaController implements Initializable {
       this.cuentaLogueada = cuenta;
       labelMiNombre.setText(cuentaLogueada.getNombreUsuario());
    }
+
    /**
     * Método para recibir el tablero del jugador
     *
@@ -151,6 +156,7 @@ public class GUI_JugarPartidaController implements Initializable {
       cargarTableroJugador();
 
    }
+
    /**
     * Método para recirbir el tablero del enemigo
     *
@@ -163,20 +169,23 @@ public class GUI_JugarPartidaController implements Initializable {
 
    /**
     * Método para asignar la interacción del servidor que se ha creado desde el menú de partida
+    *
     * @param interaccionServidor Instancia de la clase
     */
-   public void setInteraccionServidor(InteraccionServidor interaccionServidor){
+   public void setInteraccionServidor(InteraccionServidor interaccionServidor) {
       this.interaccionServidor = interaccionServidor;
    }
 
    /**
-    * Método para cargar el controller de la ventana y así la clase de interacción servidor
-    * puede invocar métodos de la clase
+    * Método para cargar el controller de la ventana y así la clase de interacción servidor puede
+    * invocar métodos de la clase
+    *
     * @param controller
     */
-   public void cargarController(GUI_JugarPartidaController controller){
+   public void cargarController(GUI_JugarPartidaController controller) {
       this.controller = controller;
    }
+
    /**
     * Método para cargar el tablero del jugador
     */
@@ -186,7 +195,7 @@ public class GUI_JugarPartidaController implements Initializable {
       for (int i = 0; i < 10; i++) {
          HBox filas = new HBox();
          for (int j = 0; j < 10; j++) {
-            Casilla casilla = new Casilla(j,i);
+            Casilla casilla = new Casilla(j, i);
             casilla.setNave(casillas.get(contador).getNave());
             casilla.setX(j);
             casilla.setY(i);
@@ -211,7 +220,7 @@ public class GUI_JugarPartidaController implements Initializable {
       for (int i = 0; i < 10; i++) {
          HBox filas = new HBox();
          for (int j = 0; j < 10; j++) {
-            Casilla casilla = new Casilla(j,i);
+            Casilla casilla = new Casilla(j, i);
             casilla.setNave(casillas.get(contador).getNave());
             casilla.setX(j);
             casilla.setY(i);
@@ -256,7 +265,9 @@ public class GUI_JugarPartidaController implements Initializable {
    }
 
    /**
-    * Método para liberar (colorear) las casillas colindantes en caso de destruir por completo una nave
+    * Método para liberar (colorear) las casillas colindantes en caso de destruir por completo una
+    * nave
+    *
     * @param casillas array con las casillas colindantes
     * @param jugador bandera para identificar tablero
     */
@@ -270,7 +281,7 @@ public class GUI_JugarPartidaController implements Initializable {
          y = (int) casilla.getY();
          for (Casilla colindante : getColindantes(x, y, jugador)) {
             if (!colindante.isAtacado()) {
-               casillaSimple = new CasillaSimple((int)colindante.getX(), (int)colindante.getY());
+               casillaSimple = new CasillaSimple((int) colindante.getX(), (int) colindante.getY());
                colindante.liberar();
                casillasALiberar.add(casillaSimple);
             }
@@ -282,6 +293,7 @@ public class GUI_JugarPartidaController implements Initializable {
 
    /**
     * Método para recolectar las casillas totales de la nave destruida con posición horizontal
+    *
     * @param casillaAtacada Última casilla atacada
     * @param jugador bandera para identificar el tablero
     * @return Array con las casillas colindantes
@@ -292,7 +304,7 @@ public class GUI_JugarPartidaController implements Initializable {
       int tamanio = casillaAtacada.getNave().getTamanio();
       ArrayList<Casilla> casillas = new ArrayList<>();
       for (int i = x; i > x - tamanio; i--) {
-         if (posicionValida(x, y)) {
+         if (posicionValida(i, y)) {
             Casilla casilla = getCasillaJugador(i, y, jugador);
             if (casilla.getNave() != null && casillas.size() < tamanio) {
                casillas.add(casilla);
@@ -303,7 +315,7 @@ public class GUI_JugarPartidaController implements Initializable {
       }
       if (casillas.size() < tamanio) {
          for (int i = x; i < x + tamanio; i++) {
-            if (posicionValida(x, y)) {
+            if (posicionValida(i, y)) {
                Casilla casilla = getCasillaJugador(i, y, jugador);
                if (casilla.getNave() != null && casillas.size() <= tamanio) {
                   casillas.add(casilla);
@@ -316,8 +328,9 @@ public class GUI_JugarPartidaController implements Initializable {
       return casillas;
    }
 
-   /** 
+   /**
     * Método para recolectar las casillas totales de la nave destruida con posición vertical
+    *
     * @param casillaAtacada Última casilla atacada
     * @param jugador bandera para identificar el tablero
     * @return Array con las casillas colindantes
@@ -374,10 +387,11 @@ public class GUI_JugarPartidaController implements Initializable {
       for (Point2D p : points) {
          if (posicionValida((int) p.getX(), (int) p.getY())) {
             colindantes.add(getCasillaJugador((int) p.getX(), (int) p.getY(), jugador));
-         }  
+         }
       }
       return colindantes.toArray(new Casilla[colindantes.size()]);
    }
+
    /**
     * Método para verificar si la posición seleccionada es válida
     *
@@ -388,6 +402,7 @@ public class GUI_JugarPartidaController implements Initializable {
    public boolean posicionValida(int x, int y) {
       return x >= 0 && x < 10 && y >= 0 && y < 10;
    }
+
    /**
     * Método para actualizar el estado del tablero del jugador
     *
@@ -401,7 +416,8 @@ public class GUI_JugarPartidaController implements Initializable {
          }
       }
    }
-      /**
+
+   /**
     * Método para configurar el turno del jugador
     *
     * @param esTurno boolean
@@ -416,12 +432,14 @@ public class GUI_JugarPartidaController implements Initializable {
          paneTableroEnemigo.disableProperty().set(true);
       }
    }
+
    /**
-    * Método para liberar las casillas del tablero enemigo que rodean a una nave que ha sido 
+    * Método para liberar las casillas del tablero enemigo que rodean a una nave que ha sido
     * completamente destruida
+    *
     * @param tableroActual tablero con arreglo de casillas actualizadas
     */
-   public void liberarCasillasEnemigo(TableroSimple tableroActual){
+   public void liberarCasillasEnemigo(TableroSimple tableroActual) {
       Casilla casilla;
       for (CasillaSimple casillasSimple : tableroActual.getCasillasSimples()) {
          casilla = getCasillaJugador(casillasSimple.getX(), casillasSimple.getY(), false);
@@ -429,20 +447,24 @@ public class GUI_JugarPartidaController implements Initializable {
       }
       reducirNaves(false);
    }
+
    /**
     * Método para envíar las casillas que necesitan ser actualizadas en el tablero del otro jugador
+    *
     * @param casillasSimples arreglo de casillas que no heredan de rectángulo
     */
-   public void actualizarTableroEnemigo(ArrayList<CasillaSimple> casillasSimples){
+   public void actualizarTableroEnemigo(ArrayList<CasillaSimple> casillasSimples) {
       TableroSimple tableroActualizado = new TableroSimple(true);
       tableroActualizado.setCasillasSimples(casillasSimples);
       interaccionServidor.enviarCasillasALiberar(cuentaLogueada.getNombreUsuario(), tableroActualizado);
    }
+
    /**
     * Método para actualizar la puntuación obtenida en el tablero del adversario remoto
+    *
     * @param tirosAcertados número de tiros para calcular el puntaje
     */
-   public void actualizarMiPuntuacion (int tirosAcertados){
+   public void actualizarMiPuntuacion(int tirosAcertados) {
       int puntos = tirosAcertados * 50;
       labelMiPuntuacion.setText(Integer.toString(puntos));
       interaccionServidor.enviarPuntuacion(cuentaLogueada.getNombreUsuario(), puntos);
@@ -450,52 +472,58 @@ public class GUI_JugarPartidaController implements Initializable {
 
    /**
     * Método para actualizar la puntuación local del tablero del enemigo
+    *
     * @param puntos puntuación que ha obtenido el enemigo
     */
-   public void actualizarPuntuacionEnemigo(int puntos){
+   public void actualizarPuntuacionEnemigo(int puntos) {
       labelPuntuacionEnemigo.setText(Integer.toString(puntos));
    }
 
    /**
     * Método para asignar el nombre del adversario en la etiqueta del tablero
+    *
     * @param nombre
     */
-   public void setNombreAdversario(String nombre){
+   public void setNombreAdversario(String nombre) {
       labelNombreAdversario.setText(nombre);
    }
+
    /**
     * Método para obtener la puntuación final de la partida
+    *
     * @return valor de puntuación final
     */
-   public int ajustarPuntuacion(){
+   public int ajustarPuntuacion() {
       int puntuacion;
       puntuacion = (numeroTirosAcertados * 50) - (numeroTirosFallidos * 10);
       if (puntuacion > 0) {
          return puntuacion;
-      } 
+      }
       return 0;
    }
+
    /**
     * Método para reducir las naves cuando se ha destruido completamente una. También lleva el
     * control para finalizar la partida en caso que uno jugador haya destruido todas las naves del
     * adversario.
+    *
     * @param jugador booleano para determinar a quién se deberá reducir naves
     */
-   public void reducirNaves(boolean jugador){
+   public void reducirNaves(boolean jugador) {
       if (jugador) {
          navesJugador--;
          if (navesJugador == 0) {
-            Utileria.cargarAviso("titleAlerta", "mensajeDerrota");
             timeLine.stop();
+            Utileria.cargarAviso("titleAlerta", "mensajeDerrota");
             regresarAMenu(ultimoEvent);
          }
       } else {
          navesEnemigo--;
          if (navesEnemigo == 0) {
+            timeLine.stop();
             int puntuacionFinal = ajustarPuntuacion();
             Utileria.cargarAviso("titleAlerta", "mensajeVictoria", Integer.toString(puntuacionFinal));
-            timeLine.stop();
-            interaccionServidor.dejarAdversario(cuentaLogueada.getNombreUsuario(), 
+            interaccionServidor.dejarAdversario(cuentaLogueada.getNombreUsuario(),
                 labelNombreAdversario.getText());
             comprobarPuntaje(puntuacionFinal);
             regresarAMenu(ultimoEvent);
@@ -506,22 +534,23 @@ public class GUI_JugarPartidaController implements Initializable {
    /**
     * Método para activar todos los servicios en espera del servidor
     */
-   public void activarServicios(){
+   public void activarServicios() {
       interaccionServidor.activarServiciosJugarPartida(controller);
    }
 
    /**
     * Método para enviar un Misil con coordenadas al tablero del jugador remoto
+    *
     * @param misil
     */
-   public void enviarMisil(Misil misil){
+   public void enviarMisil(Misil misil) {
       interaccionServidor.enviarMisil(cuentaLogueada.getNombreUsuario(), misil, controller);
    }
 
    /**
     * Método para notificar al adversario que es su turno
     */
-   public void cederTurno(){
+   public void cederTurno() {
       timeLine.playFrom(Duration.ZERO);
       timeLine.stop();
       interaccionServidor.cederTurno(cuentaLogueada.getNombreUsuario());
@@ -530,14 +559,14 @@ public class GUI_JugarPartidaController implements Initializable {
    /**
     * Método para notificar al adversario que se ha rendido el jugador
     */
-   public void notificarRendicion(){
+   public void notificarRendicion() {
       interaccionServidor.enviarRendicion(cuentaLogueada.getNombreUsuario());
    }
 
    /**
     * Método para finalizar la partida en caso que el jugador adversario se haya rendido
     */
-   public void enemigoRendido(){
+   public void enemigoRendido() {
       timeLine.stop();
       Utileria.cargarAviso("titleAlerta", "mensajeVictoria");
       Utileria.cargarAviso("titleAlerta", "mensajeRendicion");
@@ -546,39 +575,45 @@ public class GUI_JugarPartidaController implements Initializable {
    }
 
    /**
-    * Método para comprobar si la puntuación final es mayor a la actual registrada en la cuenta
-    * del jugador
+    * Método para comprobar si la puntuación final es mayor a la actual registrada en la cuenta del
+    * jugador
+    *
     * @param puntajeFinal
     */
-   public void comprobarPuntaje(int puntajeFinal){
-      boolean nuevoPuntaje;
-      AdministracionCuenta adminCuenta = new AdministracionCuenta();
-      nuevoPuntaje = adminCuenta.registrarPuntajeMasAlto(cuentaLogueada, puntajeFinal);
-      if (nuevoPuntaje) {
+   public void comprobarPuntaje(int puntajeFinal) {
+      if (cuentaLogueada.getPuntaje() < puntajeFinal) {
+         boolean check;
          Utileria.cargarAviso("titleAlerta", "mensajeNuevoPuntaje");
+         AdministracionCuenta adminCuenta = new AdministracionCuenta();
+         check = adminCuenta.registrarPuntajeMasAlto(cuentaLogueada, puntajeFinal);
+         if (check == false) {
+            Utileria.cargarAviso("titleAlerta", "mensajeErrorConexion");
+         }
       }
    }
 
    /**
     * Método para regresar al menú de la partida en caso de finalizar la partida
+    *
     * @param event
     */
-   public void regresarAMenu(Event event){
+   public void regresarAMenu(Event event) {
       Node node = (Node) event.getSource();
       Stage stage = (Stage) node.getScene().getWindow();
-         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_MenuPartida.fxml"));
-            Scene scene = new Scene(loader.load());
-            GUI_MenuPartidaController controller = loader.getController();
-            controller.cargarCuenta(cuentaLogueada);
-            loader.setController(controller);
-            stage.setScene(scene);
-            stage.setResizable(false);
-            stage.show();
-         } catch (IOException ex) {
-            Logger.getLogger(GUI_JugarPartidaController.class.getName()).log(Level.SEVERE, null, ex);
-         }
+      try {
+         FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_MenuPartida.fxml"));
+         Scene scene = new Scene(loader.load());
+         GUI_MenuPartidaController controller = loader.getController();
+         controller.cargarCuenta(cuentaLogueada);
+         loader.setController(controller);
+         stage.setScene(scene);
+         stage.setResizable(false);
+         stage.show();
+      } catch (IOException ex) {
+         Logger.getLogger(GUI_JugarPartidaController.class.getName()).log(Level.SEVERE, null, ex);
+      }
    }
+
    /**
     * Método para establer el conteo de 30 segundos del turno
     */
@@ -593,12 +628,13 @@ public class GUI_JugarPartidaController implements Initializable {
       );
       timeLine.playFromStart();
       Utileria.fadeConteo(labelTiempoRestante);
-      timeLine.setOnFinished(event ->{
+      timeLine.setOnFinished(event -> {
          cederTurno();
          ajustarMiTurno(false);
       });
 
    }
+
    /**
     * Método para cargar el recurso de sonido de destrucción de una parte de la nave
     */
@@ -623,6 +659,7 @@ public class GUI_JugarPartidaController implements Initializable {
       mediaP.setVolume(1);
       mediaP.play();
    }
+
    /**
     * Método para cargar el idioma seleccionado por default en etiquetas y botones
     */

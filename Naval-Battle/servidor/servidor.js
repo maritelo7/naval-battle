@@ -17,6 +17,7 @@
   		console.log("total conectados: "+ numUsuarios);
   	});
 
+
   	socket.on("envioRetador", function(nombreUsuario, nombreRetado) {
   		var usuarioEncontrado = usuarios.find(item => item.nombreUsuario == nombreRetado);
   		if (usuarioEncontrado == undefined) {
@@ -93,4 +94,5 @@
   		}
   	}
   }
+  
   

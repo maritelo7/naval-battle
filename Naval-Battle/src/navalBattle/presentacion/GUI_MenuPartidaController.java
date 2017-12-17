@@ -96,6 +96,7 @@ public class GUI_MenuPartidaController implements Initializable {
             if (conectarServidor()) {
                prepararPartidaHost(event);
             } else {
+               labelIniciando.setVisible(false);
                Utileria.cargarAviso("titleAlerta", "mensajeErrorConexion");
             }
          } catch (URISyntaxException | InterruptedException ex) {
@@ -118,6 +119,7 @@ public class GUI_MenuPartidaController implements Initializable {
                      prepararPartidaCliente(event, nickARetar);
                   }
                } else {
+                  labelIniciando.setVisible(false);
                   Utileria.cargarAviso("titleAlerta", "mensajeErrorConexion");
                }
             }
@@ -213,13 +215,11 @@ public class GUI_MenuPartidaController implements Initializable {
     * @throws InterruptedException
     */
    public boolean conectarServidor() throws InterruptedException {
-      Utileria bandera = new Utileria(true);
-      if (InteraccionServidor.socket == null) {
-         String nombreUsuario = cuentaLogueada.getNombreUsuario();
-         interaccionServidor.conectarServidor(nombreUsuario, bandera);
-         synchronized (bandera) {
-            bandera.wait();
-         }
+      Utileria bandera = new Utileria(false);
+      String nombreUsuario = cuentaLogueada.getNombreUsuario();
+      interaccionServidor.conectarServidor(nombreUsuario, bandera);
+      synchronized (bandera) {
+         bandera.wait();
       }
       return bandera.isBandera();
    }
