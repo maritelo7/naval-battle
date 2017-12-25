@@ -90,9 +90,11 @@ public class GUI_IniciarSesionController implements Initializable {
             case "Français":
                locale = new Locale("fr", "FR");
                break;
-            default:
+            case "Español":
                locale = Locale.ROOT;
                break;
+            default:
+               locale = Locale.getDefault();
          }
          Locale.setDefault(locale);
          cargarIdioma();
@@ -158,7 +160,6 @@ public class GUI_IniciarSesionController implements Initializable {
    /**
     * Método para el inicio de sesión, donde se recupera el nickname y la clave y se intenta loguear
     * en una cuenta
-    *
     * @return La cuenta a la cual corresponde el nickname y la clave
     */
    public CuentaUsuario ingresar() {
@@ -230,9 +231,10 @@ public class GUI_IniciarSesionController implements Initializable {
    }
 
    /**
-    * Método para cargar el sonido de la ventana
+    * Método para cargar el sonido de la ventana ya se por primera vez o después de regresar de otra
+    * ventana
     *
-    * @param estado
+    * @param estado Valor para definir si es necesario reproducir el sonido o no
     */
    public void cargarSonido(boolean estado) {
       URL resourceSonido = this.getClass().getResource("/navalBattle/recursos/sonidos/"
@@ -245,7 +247,6 @@ public class GUI_IniciarSesionController implements Initializable {
       } else {
          mediaP.stop();
       }
-
    }
 
    /**

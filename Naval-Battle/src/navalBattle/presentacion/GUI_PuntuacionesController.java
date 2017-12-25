@@ -110,7 +110,7 @@ public class GUI_PuntuacionesController implements Initializable {
    }
 
    /**
-    * Método para cargar los elementos de la tabla
+    * Método para cargar los elementos de la tabla de puntuaciones
     */
    public void cargarTabla() {
       tablePuntuaciones.setStyle("-fx-selection-bar: orange; -fx-selection-bar-non-focused: salmon");
@@ -125,7 +125,7 @@ public class GUI_PuntuacionesController implements Initializable {
    }
 
    /**
-    * Método para cargar la información en la tabla
+    * Método para cargar la información en la tabla de puntajes
     */
    public void cargarInformacionTabla() {
       AdministracionCuenta adminCuenta = new AdministracionCuenta();

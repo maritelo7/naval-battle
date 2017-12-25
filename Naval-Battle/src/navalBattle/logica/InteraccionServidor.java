@@ -42,8 +42,7 @@ public class InteraccionServidor {
          String ipServidor = resources.getString("ipServidor");
          socket = IO.socket("http://" + ipServidor + ":" + numeroPuerto);
          socket.on(Socket.EVENT_CONNECT_ERROR, (Object... os) -> {
-            socket.close();
-            socket = null;
+            cerrarConexion();
             synchronized (bandera) {
                bandera.notify();
             }
@@ -56,7 +55,7 @@ public class InteraccionServidor {
             }
          });
          socket.on(Socket.EVENT_DISCONNECT, (Object... os) -> {
-            socket = null;
+            cerrarConexion();
             Platform.runLater(() -> {
                Utileria.cargarAviso("titleAlerta", "mensajeErrorConexion");
             });
@@ -68,6 +67,13 @@ public class InteraccionServidor {
       }
    }
 
+   /**
+    * Método para cerrar la conexión del socket y prepararlo para una nueva conexión
+    */
+   public void cerrarConexion(){
+      socket.close();
+      socket = null;
+   }
    /**
     * Método para esperar a un adversario o activar un evento cuando se recibe un reto
     * @param jugador

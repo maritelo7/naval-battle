@@ -193,17 +193,19 @@ public class GUI_MenuPartidaController implements Initializable {
       this.cuentaLogueada = cuenta;
       String idioma = cuentaLogueada.getLenguaje();
       Locale locale;
-      switch (idioma) {
-         case "English":
-            locale = new Locale("en", "US");
-            break;
-         case "Français":
-            locale = new Locale("fr", "FR");
-            break;
-         default:
-            locale = Locale.ROOT;
-            break;
-      }
+         switch (idioma) {
+            case "English":
+               locale = new Locale("en", "US");
+               break;
+            case "Français":
+               locale = new Locale("fr", "FR");
+               break;
+            case "Español":
+               locale = Locale.ROOT;
+               break;
+            default:
+               locale = Locale.getDefault();
+         }
       Locale.setDefault(locale);
       cargarIdioma();
    }
@@ -227,7 +229,7 @@ public class GUI_MenuPartidaController implements Initializable {
    /**
     * Método para conectar con un adversario en especial
     *
-    * @param nickARetar nombre del jugador
+    * @param nickARetar nombre del jugador a ser retado
     * @return boolean en caso de ser exitoso
     */
    public boolean conectarInvitado(String nickARetar) {
@@ -239,7 +241,7 @@ public class GUI_MenuPartidaController implements Initializable {
             bandera.wait();
          }
          if (bandera.isBandera() == false) {
-            Utileria.cargarAviso("titleAlerta", "sinJugador");
+            Utileria.cargarAviso("titleAlerta", "mensajeSinJugador");
          }
       } catch (InterruptedException | URISyntaxException | UnknownHostException ex) {
          Logger.getLogger(GUI_MenuPartidaController.class.getName()).log(Level.SEVERE, null, ex);
@@ -248,10 +250,10 @@ public class GUI_MenuPartidaController implements Initializable {
    }
 
    /**
-    * Método para cambiar de la ventana actual a otra
+    * Método para cambiar de la ventana actual a PrepararPartida. Exclusivo para el cliente
     *
     * @param event evento que desencadena un cambio de ventana
-    * @param nick nombre del adversario
+    * @param nick nombre del adversario para usarlo en la siguiente ventana
     */
    public void prepararPartidaCliente(Event event, String nick) {
       Node node = (Node) event.getSource();
@@ -276,7 +278,7 @@ public class GUI_MenuPartidaController implements Initializable {
    }
 
    /**
-    * Método para cambiar de la ventana actual a otra
+    * Método para cambiar de la ventana actual a PrepararPartida. Exclusivo para el host
     *
     * @param event evento que desencadena un cambio de ventana
     * @throws java.net.URISyntaxException
@@ -304,8 +306,8 @@ public class GUI_MenuPartidaController implements Initializable {
    /**
     * Método para cargar la configuración de IP del servidor
     *
-    * @param title key del mensaje
-    * @param body key del mensaje
+    * @param title key del titulo del pop-up
+    * @param body key del mensaje del pop-up
     */
    public void cargarConfiguracionIp(String title, String body) {
       Locale locale = Locale.getDefault();
@@ -332,9 +334,9 @@ public class GUI_MenuPartidaController implements Initializable {
    /**
     * Método para cargar el nombre del jugador a retar
     *
-    * @param title key del título
-    * @param body key del mensaje
-    * @return regresa el nombre ingresado
+    * @param title key del título del pop-up
+    * @param body key del mensaje del pop-up
+    * @return regresa el nombre ingresado en el pop-up
     * @throws FileNotFoundException
     * @throws IOException
     */

@@ -109,6 +109,7 @@ public class GUI_JugarPartidaController implements Initializable {
       cargarIdioma();
 
       buttonRendirse.setOnAction(event -> {
+         timeLine.stop();
          Utileria.cargarAviso("titleDerrota", "mensajeDerrota");
          notificarRendicion();
          regresarAMenu(event);

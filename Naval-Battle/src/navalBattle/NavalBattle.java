@@ -34,14 +34,6 @@ public class NavalBattle extends Application {
       primaryStage.setScene(scene);
       primaryStage.setResizable(false);
       primaryStage.show();
-//      FXMLLoader loader = new FXMLLoader(getClass().getResource("presentacion/GUI_PrepararPartida.fxml"));
-//      Scene scene = new Scene(loader.load());
-//      GUI_PrepararPartidaController controller = loader.getController();
-//      loader.setController(controller);
-//      primaryStage.setScene(scene);
-//      primaryStage.setResizable(false);
-//      primaryStage.show();
-
    }
 
    /**

@@ -111,7 +111,7 @@ public class GUI_RegistrarController implements Initializable {
    /**
     * Método para guardar los cambios de la CuentaUsuario
     *
-    * @param event evento del botón
+    * @param event evento(nodo) del botón para accionar un cambio de ventana
     */
    public void accionButtonGuardar(Event event) {
       String mensaje;
@@ -123,7 +123,7 @@ public class GUI_RegistrarController implements Initializable {
          if (clave.equals(confirmacionClave)) {
             AdministracionCuenta adminCuenta = new AdministracionCuenta();
             if (cuentaLogueada == null) {
-               CuentaUsuario nuevaCuenta = new CuentaUsuario(nickname, clave, idioma);
+               CuentaUsuario nuevaCuenta = new CuentaUsuario(nickname, clave, idioma, 0);
                try {
                   adminCuenta.registrarCuenta(nuevaCuenta);
                   cuentaLogueada = adminCuenta.consultarCuenta(nickname, clave);
@@ -227,7 +227,7 @@ public class GUI_RegistrarController implements Initializable {
    /**
     * Método para cargar la confirmación antes de eliminar una cuenta
     *
-    * @param event
+    * @param event Evento(nodo) para desencadenar un cambio de ventana
     */
    public void cargarConfirmacionDeEliminarCuenta(Event event) {
       Locale locale = Locale.getDefault();

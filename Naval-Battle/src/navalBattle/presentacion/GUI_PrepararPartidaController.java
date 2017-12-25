@@ -137,9 +137,10 @@ public class GUI_PrepararPartidaController implements Initializable {
 
       });
       buttonRegresar.setOnAction(event -> {
-         Utileria.cargarAviso("titleCancelarPartida", "mensajeCancelarPartida");
+         Utileria.cargarAviso("titleAlerta", "mensajeCancelarPartida");
          if (nombreAdversario != null) {
             interaccionServidor.dejarAdversario(nombreAdversario, cuentaLogueada.getNombreUsuario());
+            interaccionServidor.cerrarConexion();
          }
          Node node = (Node) event.getSource();
          Stage stage = (Stage) node.getScene().getWindow();
