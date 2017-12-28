@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import javax.persistence.PersistenceException;
 import navalBattle.datos.Cuenta;
 import navalBattle.datos.CuentaJpaController;
 import navalBattle.datos.exceptions.NonexistentEntityException;
@@ -25,7 +26,7 @@ import navalBattle.datos.exceptions.PreexistingEntityException;
  * @author Maribel Tello Rodriguez
  * @author José Alí Valdivia Ruiz
  */
-public class AdministracionCuenta implements I_AdministracionCuenta {
+public class AdministracionCuenta {
 
    final static String UNIDAD_PERSISTENCIA = "Naval-BattlePU";
 
@@ -36,7 +37,7 @@ public class AdministracionCuenta implements I_AdministracionCuenta {
     * @throws navalBattle.datos.exceptions.PreexistingEntityException
     * @throws java.security.NoSuchAlgorithmException
     */
-   @Override
+ 
    public void registrarCuenta(CuentaUsuario cuentaUsuario) throws PreexistingEntityException, NoSuchAlgorithmException {
       EntityManagerFactory entityManagerFactory;
       entityManagerFactory = Persistence.createEntityManagerFactory(UNIDAD_PERSISTENCIA, null);
@@ -54,8 +55,8 @@ public class AdministracionCuenta implements I_AdministracionCuenta {
     * @return la cuenta recuperada
     * @throws java.security.NoSuchAlgorithmException
     */
-   @Override
-   public CuentaUsuario consultarCuenta(String nombreUsuario, String clave) throws NoSuchAlgorithmException {
+   
+   public CuentaUsuario consultarCuenta(String nombreUsuario, String clave) throws NoSuchAlgorithmException, ArrayIndexOutOfBoundsException, PersistenceException {
       CuentaUsuario cuentaUsuario = null;
       Cuenta cuentaRecuperada;
       EntityManagerFactory entityManagerFactory;
@@ -63,14 +64,11 @@ public class AdministracionCuenta implements I_AdministracionCuenta {
       EntityManager entity = entityManagerFactory.createEntityManager();
       String claveHasheada = getHash(clave);
       cuentaRecuperada = (Cuenta) entity.createNamedQuery("Cuenta.iniciarSesion").setParameter("nombreUsuario", nombreUsuario).setParameter("clave", claveHasheada).getResultList().get(0);
-      if (cuentaRecuperada != null ) {
-          cuentaUsuario = new CuentaUsuario(cuentaRecuperada.getNombreUsuario(), cuentaRecuperada.getClave(),
-          cuentaRecuperada.getLenguaje(), cuentaRecuperada.getPuntaje());
-      } else {
-         cuentaUsuario = new CuentaUsuario("0","0","0");
-      }
+      cuentaUsuario = new CuentaUsuario(cuentaRecuperada.getNombreUsuario(), cuentaRecuperada.getClave(),
+      cuentaRecuperada.getLenguaje(), cuentaRecuperada.getPuntaje());
       return cuentaUsuario;
    }
+
 
    /**
     * Método para modificar los valores de una Cuenta en la base de datos
@@ -78,7 +76,7 @@ public class AdministracionCuenta implements I_AdministracionCuenta {
     * @param cuentaUsuario la cuenta a modificar
     * @return indica si la modificación de la cuenta fue exitosa o no
     */
-   @Override
+
    public boolean modificarCuenta(CuentaUsuario cuentaUsuario) {
       boolean modificacionExitosa = false;
       EntityManagerFactory entityManagerFactory;
@@ -101,7 +99,7 @@ public class AdministracionCuenta implements I_AdministracionCuenta {
     * @param nombreUsuario el nickname de la cuenta
     * @return si la cuenta fue eliminada exitosamente
     */
-   @Override
+
    public boolean desactivarCuenta(String nombreUsuario) {
       boolean cuentaDesactivada = false;
       EntityManagerFactory entityManagerFactory;
@@ -121,7 +119,7 @@ public class AdministracionCuenta implements I_AdministracionCuenta {
     *
     * @return la lista de las cuentas
     */
-   @Override
+   
    public List<CuentaUsuario> obtenerMejoresPuntajes() {
       EntityManagerFactory entityManagerFactory;
       List<CuentaUsuario> cuentasConMejorPuntaje = null;
@@ -138,7 +136,7 @@ public class AdministracionCuenta implements I_AdministracionCuenta {
     * @param puntajeObtenido el puntaje obtenido
     * @return si el registro del nuevo puntaje fue exitoso
     */
-   @Override
+   
    public boolean registrarPuntajeMasAlto(CuentaUsuario cuenta, int puntajeObtenido) {
       boolean puntajeRegistrado = false;
          try {
@@ -160,7 +158,7 @@ public class AdministracionCuenta implements I_AdministracionCuenta {
     * @return el hash producido aplicando el método a la cadena pasada
     * @throws java.security.NoSuchAlgorithmException
     */
-   @Override
+  
    public String getHash(String string) throws NoSuchAlgorithmException {
       MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
       byte[] hash = messageDigest.digest(string.getBytes(Charset.forName("UTF-8")));

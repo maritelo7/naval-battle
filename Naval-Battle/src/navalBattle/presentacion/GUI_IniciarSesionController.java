@@ -12,6 +12,7 @@ import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
 import java.io.IOException;
 import java.net.URL;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -35,6 +36,7 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javax.persistence.PersistenceException;
 import navalBattle.logica.AdministracionCuenta;
 import navalBattle.logica.CuentaUsuario;
 import navalBattle.recursos.Utileria;
@@ -125,35 +127,37 @@ public class GUI_IniciarSesionController implements Initializable {
       });
 
       buttonIniciar.setOnAction((ActionEvent event) -> {
-         if (validarCamposCuenta()) {
-            //CuentaUsuario cuenta = ingresar();
-            CuentaUsuario cuenta = new CuentaUsuario(tFieldNick.getText(), "0", "English");
-            if (cuenta == null) {
-               Utileria.cargarAviso("titleAlerta", "mensajeErrorConexion");
-               limpiar();
-            } else {
-               if (!"0".equals(cuenta.getLenguaje())) {
-                  Node node = (Node) event.getSource();
-                  Stage stage = (Stage) node.getScene().getWindow();
-                  try {
-                     FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_MenuPartida.fxml"));
-                     Scene scene = new Scene(loader.load());
-                     GUI_MenuPartidaController controller = loader.getController();
-                     controller.cargarCuenta(cuenta);
-                     stage.setScene(scene);
-                     stage.setResizable(false);
-                     stage.show();
-                  } catch (IOException ex) {
-                     Logger.getLogger(GUI_IniciarSesionController.class.getName()).log(Level.SEVERE, null, ex);
-                  }
-               } else {
-                  Utileria.cargarAviso("titleAlerta", "mensajeDatosIncorrectosIniciarSesion");
-                  limpiar();
+        if (validarCamposCuenta()) {
+            //CuentaUsuario cuenta = new CuentaUsuario(tFieldNick.getText(), "0", "English");
+            CuentaUsuario cuenta;
+            try {
+               cuenta = ingresar();
+               Node node = (Node) event.getSource();
+               Stage stage = (Stage) node.getScene().getWindow();
+               try {
+                  FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_MenuPartida.fxml"));
+                  Scene scene = new Scene(loader.load());
+                  GUI_MenuPartidaController controller = loader.getController();
+                  controller.cargarCuenta(cuenta);
+                  stage.setScene(scene);
+                  stage.setResizable(false);
+                  stage.show();
+               } catch (IOException ex) {
+                  Logger.getLogger(GUI_IniciarSesionController.class.getName()).log(Level.SEVERE, null, ex);
                }
-            }
+            } catch (ArrayIndexOutOfBoundsException ex) {
+               Utileria.cargarAviso("titleAlerta", "mensajeDatosIncorrectosIniciarSesion");
+               limpiar();
+            } catch (PersistenceException ex) {
+               Utileria.cargarAviso("titleAlerta", "mensajeErrorConexion");
+               limpiar();            
+            } catch (NoSuchAlgorithmException ex) {
+              Logger.getLogger(GUI_IniciarSesionController.class.getName()).log(Level.SEVERE, null, ex);
+           }
+
          } else {
             Utileria.cargarAviso("titleAlerta", "mensajeCamposLlenos");
-         } 
+         }
       });
    }
 
@@ -162,16 +166,12 @@ public class GUI_IniciarSesionController implements Initializable {
     * en una cuenta
     * @return La cuenta a la cual corresponde el nickname y la clave
     */
-   public CuentaUsuario ingresar() {
+  public CuentaUsuario ingresar() throws ArrayIndexOutOfBoundsException, PersistenceException, NoSuchAlgorithmException {
       CuentaUsuario cuentaRecuperada = null;
-         AdministracionCuenta adminCuenta = new AdministracionCuenta();
-         String nickname = tFieldNick.getText();
-         String clave = pFieldClave.getText();
-         try {
-            cuentaRecuperada = adminCuenta.consultarCuenta(nickname, clave);
-         } catch (Exception ex) {  
-            Logger.getLogger(GUI_IniciarSesionController.class.getName()).log(Level.SEVERE, null, ex);
-         }
+      AdministracionCuenta adminCuenta = new AdministracionCuenta();
+      String nickname = tFieldNick.getText();
+      String clave = pFieldClave.getText();
+      cuentaRecuperada = adminCuenta.consultarCuenta(nickname, clave);
       return cuentaRecuperada;
    }
 
