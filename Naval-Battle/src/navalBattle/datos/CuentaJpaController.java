@@ -19,15 +19,12 @@ import navalBattle.datos.exceptions.PreexistingEntityException;
 
 /**
  *
- * @author Mari
+ * @author Maribel Tello Rodriguez
+ * @author José Alí Valdivia Ruiz
  */
 public class CuentaJpaController implements Serializable {
    private final EntityManagerFactory emf;
    
-   /**
-    * Método para ininiciar la clase con un EMF específico
-    * @param emf
-    */
    public CuentaJpaController(EntityManagerFactory emf) {
       this.emf = Persistence.createEntityManagerFactory("Naval-BattlePU", null);
    }
@@ -55,7 +52,7 @@ public class CuentaJpaController implements Serializable {
       }
    }
   
-   public void edit(Cuenta cuenta) throws NonexistentEntityException, Exception {
+   public void edit(Cuenta cuenta) throws NonexistentEntityException {
       EntityManager em = null;
       try {
          em = getEntityManager();

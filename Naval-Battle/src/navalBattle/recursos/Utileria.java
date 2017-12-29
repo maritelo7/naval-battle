@@ -22,7 +22,6 @@ import javafx.util.Duration;
  * @author José Alí Valdivia Ruiz
  */
 public class Utileria {
-
    boolean bandera;
 
    public boolean isBandera() {

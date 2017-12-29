@@ -8,9 +8,8 @@ package navalBattle.logica;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -21,26 +20,27 @@ import navalBattle.datos.exceptions.NonexistentEntityException;
 import navalBattle.datos.exceptions.PreexistingEntityException;
 
 /**
- * Clase para implementar las gestiones de la entidad cuenta
+ * Clase para implementar la gestión de la entidad cuenta
  *
  * @author Maribel Tello Rodriguez
  * @author José Alí Valdivia Ruiz
  */
 public class AdministracionCuenta {
-
    final static String UNIDAD_PERSISTENCIA = "Naval-BattlePU";
 
    /**
     * Método para registrar una Cuenta en la base de datos
     *
     * @param cuentaUsuario la cuenta a registrar
-    * @throws navalBattle.datos.exceptions.PreexistingEntityException
-    * @throws java.security.NoSuchAlgorithmException
+    * @throws navalBattle.datos.exceptions.PreexistingEntityException ocurre cuando la Cuenta a
+    * registrar ya existe
+    * @throws java.security.NoSuchAlgorithmException ocurre cuando un algoritmo es requerido pero no
+    * está disponible
     */
  
-   public void registrarCuenta(CuentaUsuario cuentaUsuario) throws PreexistingEntityException, NoSuchAlgorithmException {
-      EntityManagerFactory entityManagerFactory;
-      entityManagerFactory = Persistence.createEntityManagerFactory(UNIDAD_PERSISTENCIA, null);
+   public void registrarCuenta(CuentaUsuario cuentaUsuario) throws PersistenceException, PreexistingEntityException,
+       NoSuchAlgorithmException {
+      EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory(UNIDAD_PERSISTENCIA, null);
       CuentaJpaController controller = new CuentaJpaController(entityManagerFactory);
       Cuenta cuenta = new Cuenta(cuentaUsuario.getNombreUsuario(), getHash(cuentaUsuario.getClave()),
           cuentaUsuario.getLenguaje(), 0);
@@ -52,19 +52,19 @@ public class AdministracionCuenta {
     *
     * @param nombreUsuario el nickname de la cuenta
     * @param clave la contraseña de la cuenta de usuario
-    * @return la cuenta recuperada
-    * @throws java.security.NoSuchAlgorithmException
+    * @return la cuenta que fue solicitada, recuperada de la base de datos
+    * @throws java.security.NoSuchAlgorithmException ocurre cuando un algoritmo es requerido pero no
+    * está disponible
     */
    
-   public CuentaUsuario consultarCuenta(String nombreUsuario, String clave) throws NoSuchAlgorithmException, ArrayIndexOutOfBoundsException, PersistenceException {
-      CuentaUsuario cuentaUsuario = null;
+   public CuentaUsuario consultarCuenta(String nombreUsuario, String clave) throws NoSuchAlgorithmException,
+      ArrayIndexOutOfBoundsException, PersistenceException {
       Cuenta cuentaRecuperada;
-      EntityManagerFactory entityManagerFactory;
-      entityManagerFactory = Persistence.createEntityManagerFactory(UNIDAD_PERSISTENCIA, null);
+      EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory(UNIDAD_PERSISTENCIA, null);
       EntityManager entity = entityManagerFactory.createEntityManager();
       String claveHasheada = getHash(clave);
       cuentaRecuperada = (Cuenta) entity.createNamedQuery("Cuenta.iniciarSesion").setParameter("nombreUsuario", nombreUsuario).setParameter("clave", claveHasheada).getResultList().get(0);
-      cuentaUsuario = new CuentaUsuario(cuentaRecuperada.getNombreUsuario(), cuentaRecuperada.getClave(),
+      CuentaUsuario cuentaUsuario = new CuentaUsuario(cuentaRecuperada.getNombreUsuario(), cuentaRecuperada.getClave(),
       cuentaRecuperada.getLenguaje(), cuentaRecuperada.getPuntaje());
       return cuentaUsuario;
    }
@@ -73,45 +73,32 @@ public class AdministracionCuenta {
    /**
     * Método para modificar los valores de una Cuenta en la base de datos
     *
-    * @param cuentaUsuario la cuenta a modificar
-    * @return indica si la modificación de la cuenta fue exitosa o no
+    * @param cuentaUsuario la cuenta a modificar con los nuevos datos de clave o idioma
+    * @throws navalBattle.datos.exceptions.NonexistentEntityException ocurre cuando el objeto que se
+    * busca no es encontrado
     */
 
-   public boolean modificarCuenta(CuentaUsuario cuentaUsuario) {
-      boolean modificacionExitosa = false;
-      EntityManagerFactory entityManagerFactory;
-      try {
-         entityManagerFactory = Persistence.createEntityManagerFactory(UNIDAD_PERSISTENCIA, null);
-         CuentaJpaController controller = new CuentaJpaController(entityManagerFactory);
-         Cuenta cuenta = new Cuenta(cuentaUsuario.getNombreUsuario(), cuentaUsuario.getClave(),
-             cuentaUsuario.getLenguaje(), cuentaUsuario.getPuntaje());
-         controller.edit(cuenta);
-         modificacionExitosa = true;
-      } catch (Exception ex) {
-         Logger.getLogger(AdministracionCuenta.class.getName()).log(Level.SEVERE, null, ex);
-      }
-      return modificacionExitosa;
+   public void modificarCuenta(CuentaUsuario cuentaUsuario) throws NonexistentEntityException, PersistenceException{
+      EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory(UNIDAD_PERSISTENCIA, null);
+      CuentaJpaController controller = new CuentaJpaController(entityManagerFactory);
+      Cuenta cuenta = new Cuenta(cuentaUsuario.getNombreUsuario(), cuentaUsuario.getClave(),
+          cuentaUsuario.getLenguaje(), cuentaUsuario.getPuntaje());
+      controller.edit(cuenta); 
    }
 
    /**
     * Método para eliminar una Cuenta de la base de datos.
     *
-    * @param nombreUsuario el nickname de la cuenta
-    * @return si la cuenta fue eliminada exitosamente
+    * @param nombreUsuario el nickname de la cuenta que se eliminará de la base de datos
+    * @throws navalBattle.datos.exceptions.NonexistentEntityException ocurre cuando el objeto que se
+    * busca no es encontrado
     */
 
-   public boolean desactivarCuenta(String nombreUsuario) {
-      boolean cuentaDesactivada = false;
+   public void desactivarCuenta(String nombreUsuario)throws NonexistentEntityException, PersistenceException {
       EntityManagerFactory entityManagerFactory;
-      try {
          entityManagerFactory = Persistence.createEntityManagerFactory(UNIDAD_PERSISTENCIA, null);
          CuentaJpaController controller = new CuentaJpaController(entityManagerFactory);
          controller.destroy(nombreUsuario);
-         cuentaDesactivada = true;
-      } catch (NonexistentEntityException ex) {
-         Logger.getLogger(AdministracionCuenta.class.getName()).log(Level.SEVERE, null, ex);
-      }
-      return cuentaDesactivada;
    }
 
    /**
@@ -120,12 +107,17 @@ public class AdministracionCuenta {
     * @return la lista de las cuentas
     */
    
-   public List<CuentaUsuario> obtenerMejoresPuntajes() {
-      EntityManagerFactory entityManagerFactory;
-      List<CuentaUsuario> cuentasConMejorPuntaje = null;
-      entityManagerFactory = Persistence.createEntityManagerFactory(UNIDAD_PERSISTENCIA, null);
+   public List<CuentaUsuario> obtenerMejoresPuntajes() throws PersistenceException, 
+      ArrayIndexOutOfBoundsException {      
+      EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory(UNIDAD_PERSISTENCIA, null);
       EntityManager entity = entityManagerFactory.createEntityManager();
-      cuentasConMejorPuntaje = entity.createNamedQuery("Cuenta.obtenerPuntaje").setMaxResults(10).getResultList();
+      List<Cuenta> cuentasRecuperadas = entity.createNamedQuery("Cuenta.obtenerPuntaje").setMaxResults(10).getResultList(); 
+      List<CuentaUsuario> cuentasConMejorPuntaje = new ArrayList<>();
+      for (int i = 0; i < cuentasRecuperadas.size(); i++) {
+         Cuenta cuentaAux = cuentasRecuperadas.get(i);
+         CuentaUsuario cuentaUsuarioAux = new CuentaUsuario(cuentaAux.getNombreUsuario(), cuentaAux.getClave(), cuentaAux.getLenguaje(), cuentaAux.getPuntaje());
+         cuentasConMejorPuntaje.add(cuentaUsuarioAux);
+      }
       return cuentasConMejorPuntaje;
    }
 
@@ -134,29 +126,23 @@ public class AdministracionCuenta {
     *
     * @param cuenta la cuenta de la cual se va a registrar el puntaje
     * @param puntajeObtenido el puntaje obtenido
-    * @return si el registro del nuevo puntaje fue exitoso
+    * @throws navalBattle.datos.exceptions.NonexistentEntityException ocurre cuando el objeto que se
+    * busca no es encontrado
     */
    
-   public boolean registrarPuntajeMasAlto(CuentaUsuario cuenta, int puntajeObtenido) {
-      boolean puntajeRegistrado = false;
-         try {
-            cuenta.setPuntaje(puntajeObtenido);
-            if (modificarCuenta(cuenta)) {
-               puntajeRegistrado = true;
-            }
-         } catch (Exception ex) {
-            Logger.getLogger(AdministracionCuenta.class.getName()).log(Level.SEVERE, null, ex);
-         }
-      
-      return puntajeRegistrado;
+   public void registrarPuntajeMasAlto(CuentaUsuario cuenta, int puntajeObtenido) throws PersistenceException,
+       NonexistentEntityException {
+      cuenta.setPuntaje(puntajeObtenido);
+      modificarCuenta(cuenta);
    }
 
    /**
     * Método auxiliar para aplicar el hash a una cadena
     *
-    * @param string cadena a hashear
+    * @param string cadena de la cual se obtendrá el hash
     * @return el hash producido aplicando el método a la cadena pasada
-    * @throws java.security.NoSuchAlgorithmException
+    * @throws java.security.NoSuchAlgorithmException ocurre cuando un algoritmo es requerido pero no
+    * está disponible
     */
   
    public String getHash(String string) throws NoSuchAlgorithmException {

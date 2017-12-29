@@ -86,9 +86,9 @@ public class GUI_MenuPartidaController implements Initializable {
 
       cargarAnimacion();
       labelIniciando.setVisible(false);
+      
       buttonCrearPartida.setOnAction(event -> {
          labelIniciando.setVisible(true);
-         //ESTABLECER CONEXIÓN Y SUMARME AL POOL
          if (cambiarConfiguracion()) {
             cargarConfiguracionIp("titleRed", "mensajeConfServ");
          }
@@ -99,7 +99,7 @@ public class GUI_MenuPartidaController implements Initializable {
                labelIniciando.setVisible(false);
                Utileria.cargarAviso("titleAlerta", "mensajeErrorConexion");
             }
-         } catch (URISyntaxException | InterruptedException ex) {
+         } catch (InterruptedException ex) {
             Logger.getLogger(GUI_MenuPartidaController.class.getName()).log(Level.SEVERE, null, ex);
          }
 
@@ -107,12 +107,12 @@ public class GUI_MenuPartidaController implements Initializable {
 
       buttonUnirmePartida.setOnAction(event -> {
          labelIniciando.setVisible(true);
-         //ESTABLECER CONEXIÓN Y BUSCAR JUGADOR EN EL POOL
          try {
             if (cambiarConfiguracion()) {
                cargarConfiguracionIp("titleRed", "mensajeConfServ");
             }
             String nickARetar = cargarConfiguracionNick("titleRed", "mensajeConfClien");
+            //por que se hacen dos confirmaciones ... en cargarConfiguracionNick y aqui, de que el Nick no es NULL
             if (nickARetar != null) {
                if (conectarServidor()) {
                   if (conectarInvitado(nickARetar)) {
@@ -123,7 +123,7 @@ public class GUI_MenuPartidaController implements Initializable {
                   Utileria.cargarAviso("titleAlerta", "mensajeErrorConexion");
                }
             }
-         } catch (IOException | InterruptedException ex) {
+         } catch (InterruptedException ex) {
             Logger.getLogger(GUI_MenuPartidaController.class.getName()).log(Level.SEVERE, null, ex);
          }
       });
@@ -214,7 +214,7 @@ public class GUI_MenuPartidaController implements Initializable {
     * Método para conectar con el servidor
     *
     * @return boolean en caso de ser exitoso
-    * @throws InterruptedException
+    * @throws InterruptedException ocurre cuando el hilo es interrumpido
     */
    public boolean conectarServidor() throws InterruptedException {
       Utileria bandera = new Utileria(false);
@@ -230,7 +230,7 @@ public class GUI_MenuPartidaController implements Initializable {
     * Método para conectar con un adversario en especial
     *
     * @param nickARetar nombre del jugador a ser retado
-    * @return boolean en caso de ser exitoso
+    * @return boolean que regresa true si la conexión es exitosa
     */
    public boolean conectarInvitado(String nickARetar) {
       Utileria bandera = new Utileria(false);
@@ -243,7 +243,7 @@ public class GUI_MenuPartidaController implements Initializable {
          if (bandera.isBandera() == false) {
             Utileria.cargarAviso("titleAlerta", "mensajeSinJugador");
          }
-      } catch (InterruptedException | URISyntaxException | UnknownHostException ex) {
+      } catch (InterruptedException ex) {
          Logger.getLogger(GUI_MenuPartidaController.class.getName()).log(Level.SEVERE, null, ex);
       }
       return bandera.isBandera();
@@ -281,9 +281,8 @@ public class GUI_MenuPartidaController implements Initializable {
     * Método para cambiar de la ventana actual a PrepararPartida. Exclusivo para el host
     *
     * @param event evento que desencadena un cambio de ventana
-    * @throws java.net.URISyntaxException
     */
-   public void prepararPartidaHost(Event event) throws URISyntaxException {
+   public void prepararPartidaHost(Event event) {
       Node node = (Node) event.getSource();
       Stage stage = (Stage) node.getScene().getWindow();
       try {
@@ -300,6 +299,8 @@ public class GUI_MenuPartidaController implements Initializable {
          stage.show();
       } catch (IOException ex) {
          Logger.getLogger(GUI_MenuPartidaController.class.getName()).log(Level.SEVERE, null, ex);
+      } catch (URISyntaxException ex) {
+         Logger.getLogger(GUI_MenuPartidaController.class.getName()).log(Level.SEVERE, null, ex);
       }
    }
 
@@ -315,14 +316,14 @@ public class GUI_MenuPartidaController implements Initializable {
       String titulo = resources.getString(title);
       String mensaje = resources.getString(body);
       Alert confirmacion = new Alert(Alert.AlertType.INFORMATION);
-      TextField tfNombreDispositivo = new TextField();
+      TextField tfNumIP = new TextField();
       confirmacion.setTitle(titulo);
       confirmacion.setHeaderText(mensaje);
-      confirmacion.setGraphic(tfNombreDispositivo);
+      confirmacion.setGraphic(tfNumIP);
       ButtonType btAceptar = new ButtonType("OK", ButtonBar.ButtonData.CANCEL_CLOSE);
       confirmacion.getButtonTypes().setAll(btAceptar);
       confirmacion.showAndWait();
-      String numIp = tfNombreDispositivo.getText();
+      String numIp =  tfNumIP.getText();
       if (numIp.trim().isEmpty()) {
          Utileria.cargarAviso("titleAlerta", "mensajeCamposLlenos");
          cargarConfiguracionIp(title, body);
@@ -337,10 +338,8 @@ public class GUI_MenuPartidaController implements Initializable {
     * @param title key del título del pop-up
     * @param body key del mensaje del pop-up
     * @return regresa el nombre ingresado en el pop-up
-    * @throws FileNotFoundException
-    * @throws IOException
     */
-   public String cargarConfiguracionNick(String title, String body) throws FileNotFoundException, IOException {
+   public String cargarConfiguracionNick(String title, String body)  {
       Locale locale = Locale.getDefault();
       ResourceBundle resources = ResourceBundle.getBundle(RECURSO_IDIOMA, locale);
       String titulo = resources.getString(title);
@@ -368,7 +367,7 @@ public class GUI_MenuPartidaController implements Initializable {
    /**
     * Método para confirmar la configuración de red
     *
-    * @return boolean de decisión
+    * @return boolean de decisión que regresa true si se va a cambiar la configuración del servidor
     */
    public boolean cambiarConfiguracion() {
       boolean check = false;
@@ -406,7 +405,7 @@ public class GUI_MenuPartidaController implements Initializable {
          FileOutputStream out = new FileOutputStream(dir);
          proper.setProperty("ipServidor", numIp);
          proper.store(out, null);
-         in.close();
+         //in.close();
       } catch (FileNotFoundException ex) {
          Utileria.cargarAviso("titleAlerta", "mensajeErrorConexion");
          Logger.getLogger(GUI_MenuPartidaController.class.getName()).log(Level.SEVERE, null, ex);

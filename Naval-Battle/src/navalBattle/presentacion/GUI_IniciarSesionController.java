@@ -60,6 +60,8 @@ public class GUI_IniciarSesionController implements Initializable {
    @FXML
    private JFXButton buttonIniciar;
    @FXML
+   private JFXButton buttonAcerca;
+   @FXML
    private JFXTextField tFieldNick;
    @FXML
    private JFXPasswordField pFieldClave;
@@ -69,6 +71,7 @@ public class GUI_IniciarSesionController implements Initializable {
    private Label labelClave;
    @FXML
    private StackPane stackMensaje;
+   
    final static String IDIOMA_INGLES = "English";
    final static String RECURSO_IDIOMA = "navalBattle.recursos.idiomas.Idioma";
 
@@ -119,8 +122,7 @@ public class GUI_IniciarSesionController implements Initializable {
             GUI_PuntuacionesController controller = loader.getController();
             stage.setScene(scene);
             stage.setResizable(false);
-            stage.show();
-            controller.cargarInformacionTabla();
+            stage.show();            
          } catch (IOException ex) {
             Logger.getLogger(GUI_IniciarSesionController.class.getName()).log(Level.SEVERE, null, ex);
          }
@@ -153,8 +155,7 @@ public class GUI_IniciarSesionController implements Initializable {
                limpiar();            
             } catch (NoSuchAlgorithmException ex) {
               Logger.getLogger(GUI_IniciarSesionController.class.getName()).log(Level.SEVERE, null, ex);
-           }
-
+           } 
          } else {
             Utileria.cargarAviso("titleAlerta", "mensajeCamposLlenos");
          }
@@ -165,6 +166,8 @@ public class GUI_IniciarSesionController implements Initializable {
     * Método para el inicio de sesión, donde se recupera el nickname y la clave y se intenta loguear
     * en una cuenta
     * @return La cuenta a la cual corresponde el nickname y la clave
+    * @throws java.security.NoSuchAlgorithmException ocurre cuando un algoritmo es requerido pero no
+    * está disponible
     */
   public CuentaUsuario ingresar() throws ArrayIndexOutOfBoundsException, PersistenceException, NoSuchAlgorithmException {
       CuentaUsuario cuentaRecuperada = null;
@@ -208,6 +211,7 @@ public class GUI_IniciarSesionController implements Initializable {
       buttonRegistrar.setText(resources.getString("buttonRegistrar"));
       labelClave.setText(resources.getString("labelClave"));
       labelNick.setText(resources.getString("labelNick"));
+      buttonAcerca.setText(resources.getString("buttonAcerca"));
    }
 
    /**
@@ -250,7 +254,7 @@ public class GUI_IniciarSesionController implements Initializable {
    }
 
    /**
-    * Acción del botón buttonAcerca. Crea un mensaje de dialogo
+    * Acción del botón buttonAcerca que crea un mensaje de dialogo
     */
    @FXML
    public void mensajeAcerca() {

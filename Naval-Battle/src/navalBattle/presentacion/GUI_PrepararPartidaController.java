@@ -104,6 +104,7 @@ public class GUI_PrepararPartidaController implements Initializable {
    private String nombreAdversario;
    /**
     * Initializes the controller class.
+    * 
     * @param url
     * @param rb
     */
@@ -209,7 +210,7 @@ public class GUI_PrepararPartidaController implements Initializable {
 
    /**
     * Método para cargar la instancia de la interacción del servidor creada en Menu partida
-    * @param interaccionServidor instancia
+    * @param interaccionServidor instancia de la clase InteraccionServidor
     */
    public void cargarInteraccionServidor(InteraccionServidor interaccionServidor) {
       this.interaccionServidor = interaccionServidor;
@@ -217,7 +218,7 @@ public class GUI_PrepararPartidaController implements Initializable {
 
    /**
     * Método para cargar el controller de la ventana y así acceder dicha clase desde un evento externo
-    * @param controller
+    * @param controller controlador de esta clase GUI_PrepararPartidaController
     */
    public void cargarController(GUI_PrepararPartidaController controller) {
       this.controller = controller;
@@ -225,7 +226,7 @@ public class GUI_PrepararPartidaController implements Initializable {
 
    /**
     * Método para asignar el tablero enemigo
-    * @param tableroEnemigo
+    * @param tableroEnemigo tablero del adversario
     */
    public void setTableroEnemigo(Tablero tableroEnemigo){
       this.tableroEnemigo = tableroEnemigo;
@@ -276,16 +277,17 @@ public class GUI_PrepararPartidaController implements Initializable {
     *
     * @param casillaInicio casilla en donde inicia la nave
     * @param tamanio tamaño de la nave
-    * @return boolean si se peude colocar la nave
+    * @return boolean que es true si se puede colocar la nave
     */
    public boolean colocarHorizontal(Casilla casillaInicio, int tamanio) {
       int x = (int) casillaInicio.getX();
       int y = (int) casillaInicio.getY();
+      Casilla casilla;
       for (int i = x; i < x + tamanio; i++) {
          if (!posicionValida(i, y)) {
             return false;
          }
-         Casilla casilla = getCasilla(i, y);
+         casilla = getCasilla(i, y);
          if (casilla.getNave() != null) {
             return false;
          }
@@ -451,7 +453,7 @@ public class GUI_PrepararPartidaController implements Initializable {
 
    /**
     * Método para actualizar los números de naves disposibles y en caso de colocar todas habilitar
-    * la continuación
+    * el botón de continuación para jugar la partida
     * @throws java.lang.InterruptedException
     */
    public void actualizarNaves() throws InterruptedException {
@@ -461,7 +463,7 @@ public class GUI_PrepararPartidaController implements Initializable {
             numeroNaves[i - 1]--;
             restante = numeroNaves[i - 1];
          }
-      }
+      }      
       refrescarNumNaves();
       if (restante == 0) {
          Image image = new Image(getClass().getResourceAsStream("/navalBattle/recursos/imagenes/lineaRoja.png"));
@@ -565,7 +567,7 @@ public class GUI_PrepararPartidaController implements Initializable {
     * @throws IOException
     */
    public void activarEspera() throws URISyntaxException, UnknownHostException, IOException {
-      interaccionServidor.esperarAInvitado(cuentaLogueada.getNombreUsuario(), controller);
+      interaccionServidor.esperarAInvitado(controller);
       labelEspera.setVisible(true);
       Utileria.fadeConteo(labelEspera);
       soyHost = true;
@@ -577,12 +579,14 @@ public class GUI_PrepararPartidaController implements Initializable {
    public void activarRecibirTablero(){
       interaccionServidor.esperarTablero(controller);
    }
+   
    /**
     * Método para notificar al adversario que el jugador ya terminó de preparar el tablero
     */
    public void notificarHost(){
       interaccionServidor.adversarioListo(cuentaLogueada.getNombreUsuario());
    }
+   
    /**
     * Método para envíar el tablero al adversario
     * @throws InterruptedException

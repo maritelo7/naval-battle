@@ -36,6 +36,8 @@ import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import javax.persistence.PersistenceException;
+import navalBattle.datos.exceptions.NonexistentEntityException;
 import navalBattle.logica.AdministracionCuenta;
 import navalBattle.logica.Casilla;
 import navalBattle.logica.CasillaSimple;
@@ -150,7 +152,7 @@ public class GUI_JugarPartidaController implements Initializable {
    /**
     * Método para recibir el tablero del jugador
     *
-    * @param tableroJugador Tablero
+    * @param tableroJugador Tablero del jugador
     */
    public void setTableroJugador(Tablero tableroJugador) {
       this.tableroJugador = tableroJugador;
@@ -161,7 +163,7 @@ public class GUI_JugarPartidaController implements Initializable {
    /**
     * Método para recirbir el tablero del enemigo
     *
-    * @param tableroEnemigo Tablero
+    * @param tableroEnemigo Tablero del jugador adversario
     */
    public void setTableroEnemigo(Tablero tableroEnemigo) {
       this.tableroEnemigo = tableroEnemigo;
@@ -171,17 +173,17 @@ public class GUI_JugarPartidaController implements Initializable {
    /**
     * Método para asignar la interacción del servidor que se ha creado desde el menú de partida
     *
-    * @param interaccionServidor Instancia de la clase
+    * @param interaccionServidor Instancia de la clase InteraccionServidor
     */
    public void setInteraccionServidor(InteraccionServidor interaccionServidor) {
       this.interaccionServidor = interaccionServidor;
    }
 
    /**
-    * Método para cargar el controller de la ventana y así la clase de interacción servidor puede
+    * Método para cargar el controller de la ventana y así la clase de InteraccionServidor puede
     * invocar métodos de la clase
     *
-    * @param controller
+    * @param controller controlador de esta clase GUI_JugarPartidaController
     */
    public void cargarController(GUI_JugarPartidaController controller) {
       this.controller = controller;
@@ -398,7 +400,7 @@ public class GUI_JugarPartidaController implements Initializable {
     *
     * @param x Posición de x de la casilla
     * @param y Posición de y de la casilla
-    * @return Si es posible
+    * @return boolean que regresa true si la posición es válida
     */
    public boolean posicionValida(int x, int y) {
       return x >= 0 && x < 10 && y >= 0 && y < 10;
@@ -421,7 +423,7 @@ public class GUI_JugarPartidaController implements Initializable {
    /**
     * Método para configurar el turno del jugador
     *
-    * @param esTurno boolean
+    * @param esTurno boolean para permitir habilitar el tablero o no
     */
    public void ajustarMiTurno(boolean esTurno) {
       if (esTurno) {
@@ -483,7 +485,7 @@ public class GUI_JugarPartidaController implements Initializable {
    /**
     * Método para asignar el nombre del adversario en la etiqueta del tablero
     *
-    * @param nombre
+    * @param nombre nickname del jugador adversario
     */
    public void setNombreAdversario(String nombre) {
       labelNombreAdversario.setText(nombre);
@@ -542,7 +544,7 @@ public class GUI_JugarPartidaController implements Initializable {
    /**
     * Método para enviar un Misil con coordenadas al tablero del jugador remoto
     *
-    * @param misil
+    * @param misil misil que se envía
     */
    public void enviarMisil(Misil misil) {
       interaccionServidor.enviarMisil(cuentaLogueada.getNombreUsuario(), misil, controller);
@@ -579,24 +581,26 @@ public class GUI_JugarPartidaController implements Initializable {
     * Método para comprobar si la puntuación final es mayor a la actual registrada en la cuenta del
     * jugador
     *
-    * @param puntajeFinal
+    * @param puntajeFinal puntaje final de la partida que se acaba de jugar
     */
    public void comprobarPuntaje(int puntajeFinal) {
-      if (cuentaLogueada.getPuntaje() < puntajeFinal) {
-         boolean check;
+      if (cuentaLogueada.getPuntaje() < puntajeFinal) {        
          Utileria.cargarAviso("titleAlerta", "mensajeNuevoPuntaje");
          AdministracionCuenta adminCuenta = new AdministracionCuenta();
-         check = adminCuenta.registrarPuntajeMasAlto(cuentaLogueada, puntajeFinal);
-         if (check == false) {
+         try {
+            adminCuenta.registrarPuntajeMasAlto(cuentaLogueada, puntajeFinal);
+         } catch (PersistenceException ex) {
             Utileria.cargarAviso("titleAlerta", "mensajeErrorConexion");
-         }
+         } catch (NonexistentEntityException ex) {
+            Logger.getLogger(GUI_JugarPartidaController.class.getName()).log(Level.SEVERE, null, ex);
+         }        
       }
    }
 
    /**
     * Método para regresar al menú de la partida en caso de finalizar la partida
     *
-    * @param event
+    * @param event evento que desencadena un cambio de ventana
     */
    public void regresarAMenu(Event event) {
       Node node = (Node) event.getSource();

@@ -47,6 +47,7 @@ public class GUI_ReglasController implements Initializable {
    
    /**
     * Initializes the controller class.
+    * 
     * @param url
     * @param rb
     */
@@ -80,6 +81,7 @@ public class GUI_ReglasController implements Initializable {
          
       });
    }
+   
    /**
     * Método para cargar objeto cuenta y utilzar sus valores en este controller
     * @param cuenta la CuentaUsuario con la que se ha iniciado sesión

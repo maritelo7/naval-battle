@@ -12,7 +12,6 @@ import com.google.gson.JsonParser;
 import java.net.URISyntaxException;
 import io.socket.client.IO;
 import io.socket.client.Socket;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -23,17 +22,17 @@ import navalBattle.presentacion.GUI_PrepararPartidaController;
 import navalBattle.recursos.Utileria;
 
 /**
- * @author José Alí Valdivia
- * @author Maribel Tello
+ * @author Maribel Tello Rodriguez
+ * @author José Alí Valdivia Ruiz
  */
 public class InteraccionServidor {
 
-   public static Socket socket;
+   Socket socket;
 
    /**
     * Método para conectar con el servidor remoto y registrar los datos del jugador
-    * @param nombreUsuario
-    * @param bandera
+    * @param nombreUsuario nickname del jugador que intenta conectarse al servidor
+    * @param bandera instancia de la clase Utileria para utilizar un atributo booleano
     */
    public void conectarServidor(String nombreUsuario, Utileria bandera) {
       try {
@@ -45,14 +44,14 @@ public class InteraccionServidor {
             cerrarConexion();
             synchronized (bandera) {
                bandera.notify();
-            }
-            
+            }            
          });
          socket.on(Socket.EVENT_CONNECT, (Object... os) -> {
             synchronized (bandera) {
                bandera.setBandera(true);
                bandera.notify();
             }
+            
          });
          socket.on(Socket.EVENT_DISCONNECT, (Object... os) -> {
             cerrarConexion();
@@ -76,18 +75,14 @@ public class InteraccionServidor {
    }
    /**
     * Método para esperar a un adversario o activar un evento cuando se recibe un reto
-    * @param jugador
-    * @param controller
-    * @throws URISyntaxException
-    * @throws UnknownHostException
+    * @param controller controlador de la clase de GUI_PrepararPartidaController
     */
-   public void esperarAInvitado(String jugador, GUI_PrepararPartidaController controller) throws URISyntaxException, UnknownHostException {
+   public void esperarAInvitado(GUI_PrepararPartidaController controller)  {
       socket.on("retado", (Object... os) -> {
          String nombre = (String) os[0];
          Platform.runLater(() -> {
             Utileria.cargarAviso("titleRetado", "mensajeRetado", nombre);
             controller.setNombreAdversario(nombre);
-
          });
       });
       socket.on("esperarAdversario", (Object... os)->{
@@ -103,7 +98,7 @@ public class InteraccionServidor {
 
    /**
     * Método para notificar que el adversario está listo
-    * @param nombreUsuario
+    * @param nombreUsuario nickname del jugador
     */
    public void adversarioListo(String nombreUsuario){
       socket.emit("adversarioListo", nombreUsuario);
@@ -111,13 +106,11 @@ public class InteraccionServidor {
 
    /**
     * Método para conectar con un adversario y esperar la respuesta
-    * @param nombreUsuario
-    * @param nombreContrincante
-    * @param bandera
-    * @throws URISyntaxException
-    * @throws UnknownHostException
+    * @param nombreUsuario nickname del usuario que intenta conectarse
+    * @param nombreContrincante nickname del contrincante con el que desea jugar
+    * @param bandera instancia de la clase Utileria para utilizar un atributo boolean
     */
-   public void conectarInvitado(String nombreUsuario, String nombreContrincante, Utileria bandera) throws URISyntaxException, UnknownHostException {
+   public void conectarInvitado(String nombreUsuario, String nombreContrincante, Utileria bandera) {
       socket.emit("envioRetador", nombreUsuario, nombreContrincante);
       socket.on("sinJugadorRetado", (Object... os) -> {
          synchronized (bandera) {
@@ -135,8 +128,8 @@ public class InteraccionServidor {
 
    /**
     * Método par envíar un tablero al adversario
-    * @param nombreUsuario
-    * @param tablero
+    * @param nombreUsuario nickname del jugador del que se va a enviar el tablero
+    * @param tablero el tablero con las casillas y la disposición de las naves
     */
    public void enviarTablero(String nombreUsuario, TableroSimple tablero) {
       Gson gson = new Gson();
@@ -145,7 +138,7 @@ public class InteraccionServidor {
    
    /**
     * Método para activar la esperar del tablero enemigo
-    * @param controller
+    * @param controller controlador de la clase de GUI_PrepararPartidaController
     */
    public void esperarTablero(GUI_PrepararPartidaController controller) {
       Gson gson = new Gson();
@@ -180,7 +173,7 @@ public class InteraccionServidor {
 
    /**
     * Método para activar todos los eventos posibles que pueden ocurrir en una partida
-    * @param controller
+    * @param controller controlador de la clase GUI_JugarPartidaController
     */
    public void activarServiciosJugarPartida(GUI_JugarPartidaController controller) {
       JsonParser parser = new JsonParser();
@@ -222,9 +215,9 @@ public class InteraccionServidor {
    
    /**
     * Método para envíar un misil al tablero enemigo
-    * @param nombreUsuario
-    * @param misil
-    * @param controller
+    * @param nombreUsuario nickname del jugador
+    * @param misil misil que se envía al tablero enemigo
+    * @param controller controlador de la clase GUI_JugarPartidaController 
     */
    public void enviarMisil(String nombreUsuario, Misil misil, GUI_JugarPartidaController controller) {
       Gson gson = new Gson();
@@ -234,8 +227,8 @@ public class InteraccionServidor {
 
    /**
     * Método para envíar una puntuacion local 
-    * @param nombreUsuario
-    * @param puntaje
+    * @param nombreUsuario nickname del jugador
+    * @param puntaje puntaje obtenido del jugador
     */
    public void enviarPuntuacion (String nombreUsuario, int puntaje){
       socket.emit("enviarPuntuacion", nombreUsuario, puntaje);
@@ -243,8 +236,8 @@ public class InteraccionServidor {
 
    /**
     * Método para notificar al adversario que se abandonará la partida
-    * @param nombreUsuario
-    * @param retado
+    * @param nombreUsuario nickname del jugador
+    * @param retado nickname del adversario
     */
    public void dejarAdversario(String nombreUsuario, String retado){
       socket.emit("adiosAdversario", nombreUsuario, retado);
@@ -252,7 +245,7 @@ public class InteraccionServidor {
 
    /**
     * Método para notificar al adversario que ahora es su turno
-    * @param nombreUsuario
+    * @param nombreUsuario nickname del jugador
     */
    public void cederTurno(String nombreUsuario) {
       socket.emit("cederTurno", nombreUsuario);
@@ -260,8 +253,8 @@ public class InteraccionServidor {
 
    /**
     * Método para envíar un tablero con laa casillas actualizadas
-    * @param nombreUsuario
-    * @param tableroActualizado
+    * @param nombreUsuario nickname del jugador
+    * @param tableroActualizado tablero actualizado del jugador que se envía
     */
    public void enviarCasillasALiberar (String nombreUsuario, TableroSimple tableroActualizado){
       Gson gson = new Gson();
@@ -270,7 +263,7 @@ public class InteraccionServidor {
 
    /**
     * Método para envíar un rendición al jugador enemigo
-    * @param nombreUsuario
+    * @param nombreUsuario nickname del jugador
     */
    public void enviarRendicion(String nombreUsuario){
       socket.emit("enviarRendicion", nombreUsuario);

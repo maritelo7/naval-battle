@@ -13,8 +13,9 @@ import javafx.util.Duration;
 
 /**
  * Clase para crear la animación del barco
- * @author Maribel Tello Rodriguez
+ * 
  * @author José Alí Valdivia Ruiz
+ * @author Maribel Tello Rodriguez
  */
 public class Barco  {
 

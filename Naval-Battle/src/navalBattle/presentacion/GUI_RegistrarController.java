@@ -29,8 +29,9 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
+import javax.persistence.PersistenceException;
+import navalBattle.datos.exceptions.NonexistentEntityException;
 import navalBattle.datos.exceptions.PreexistingEntityException;
 import navalBattle.logica.AdministracionCuenta;
 import navalBattle.logica.CuentaUsuario;
@@ -138,8 +139,9 @@ public class GUI_RegistrarController implements Initializable {
                   adminCuenta.modificarCuenta(cuentaLogueada);
                   cuentaLogueada = adminCuenta.consultarCuenta(nickname, clave);
                   mensaje = "mensajeGuardado";
-               } catch (Exception e) {
+               } catch (NonexistentEntityException | PersistenceException | NoSuchAlgorithmException | ArrayIndexOutOfBoundsException e) {
                   mensaje = MENSAJE_ERROR;
+                  Logger.getLogger(GUI_RegistrarController.class.getName()).log(Level.SEVERE, null, e);
                }
             }
             accionButtonRegresar(event);
@@ -150,22 +152,6 @@ public class GUI_RegistrarController implements Initializable {
          mensaje = "mensajeCamposLlenos";
       }
       Utileria.cargarAviso(TITULO_ALERTA, mensaje);
-
-   }
-
-   /**
-    * Método auxiliar para limitar los caracteres introducidos en el field de nickname a solo letras
-    * mayúsculas, minúsculas y números
-    *
-    * @param e evento de teclado
-    */
-   @FXML
-   public void limitarCaracteresNick(KeyEvent e) {
-      String s = e.getCharacter();
-      char c = s.charAt(0);
-      if ((c > 'z' || c < 'a') && (c > '9' || c < '0')) {
-         e.consume();
-      }
    }
 
    /**
@@ -174,14 +160,19 @@ public class GUI_RegistrarController implements Initializable {
     */
    public void darDeBajaCuenta() {
       AdministracionCuenta adminCuenta = new AdministracionCuenta();
-      boolean check = adminCuenta.desactivarCuenta(cuentaLogueada.getNombreUsuario());
-      if (check) {
+      try {
+         adminCuenta.desactivarCuenta(cuentaLogueada.getNombreUsuario());
          cuentaLogueada = null;
          Utileria.cargarAviso(TITULO_ALERTA, "mensajeBaja");
-      } else {
+      } catch (NonexistentEntityException ex) {
+         Logger.getLogger(GUI_RegistrarController.class.getName()).log(Level.SEVERE, null, ex);
+      } catch (PersistenceException ex) {
          Utileria.cargarAviso(TITULO_ALERTA, MENSAJE_ERROR);
+      }       
+      
+        
       }
-   }
+   
 
    /**
     * Método para cambiar de la ventana actual a la anterior
@@ -225,7 +216,7 @@ public class GUI_RegistrarController implements Initializable {
    }
 
    /**
-    * Método para cargar la confirmación antes de eliminar una cuenta
+    * Método para cargar un pop up de confirmación antes de eliminar una cuenta
     *
     * @param event Evento(nodo) para desencadenar un cambio de ventana
     */
@@ -271,11 +262,10 @@ public class GUI_RegistrarController implements Initializable {
    }
 
    /**
-    * Método auxiliar para comprobar que los campos obligatorios del Nickname y la Clave no están
-    * nulos cuando se inicie la sesión
+    * Método auxiliar para comprobar que los campos obligatorios del nickname, clave y confirmación 
+    * de la clave no están nulos cuando se registre la cuenta o se guarden los cambios
     *
-    *
-    * @return regresa que es válido si ambos campos no están nulos
+    * @return regresa que es válido si ningún campo está nulo
     */
    public boolean validarCamposCuenta() {
       boolean esValido = false;

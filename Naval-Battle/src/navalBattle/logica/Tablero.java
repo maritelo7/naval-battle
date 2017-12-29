@@ -10,7 +10,8 @@ import java.util.ArrayList;
 
 /**
  *
- * @author javr
+ * @author José Alí Valdivia Ruiz
+ * @author Maribel Tello Rodriguez
  */
 public class Tablero {
    private boolean enemigo;

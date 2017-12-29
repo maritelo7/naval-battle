@@ -13,8 +13,9 @@ import javafx.util.Duration;
 
 /**
  * Clase secundaria utilizada para la animación del barco
- * @author Maribel Tello Rodriguez
+ * 
  * @author José Alí Valdivia Ruiz
+ * @author Maribel Tello Rodriguez
  */
 public class SpriteAnimation extends Transition {
 

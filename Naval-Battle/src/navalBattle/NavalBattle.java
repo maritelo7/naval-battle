@@ -16,12 +16,13 @@ import navalBattle.presentacion.GUI_IniciarSesionController;
 
 /**
  *
- * @author javr
+ * @author Maribel Tello Rodriguez
+ * @author José Alí Valdivia Ruiz
  */
 public class NavalBattle extends Application {
 
    @Override
-   public void start(Stage primaryStage) throws IOException {
+   public void start(Stage primaryStage) throws IOException  {
       FXMLLoader loader = new FXMLLoader(getClass().getResource("presentacion/GUI_IniciarSesion.fxml"));
       Scene scene = new Scene(loader.load());
       GUI_IniciarSesionController controller = loader.getController();

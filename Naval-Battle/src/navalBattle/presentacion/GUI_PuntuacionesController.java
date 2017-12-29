@@ -25,6 +25,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
+import javax.persistence.PersistenceException;
 import navalBattle.logica.AdministracionCuenta;
 import navalBattle.logica.CuentaUsuario;
 import navalBattle.recursos.Utileria;
@@ -56,9 +57,9 @@ public class GUI_PuntuacionesController implements Initializable {
     */
    @Override
    public void initialize(URL url, ResourceBundle rb) {
-
       cargarIdioma();
       cargarTabla();
+      cargarInformacionTabla();
       buttonRegresar.setOnAction(event -> {
          Node node = (Node) event.getSource();
          Stage stage = (Stage) node.getScene().getWindow();
@@ -121,7 +122,6 @@ public class GUI_PuntuacionesController implements Initializable {
       puntUsuario.setCellValueFactory(new PropertyValueFactory<>("puntaje"));
       puntUsuario.setPrefWidth(175);
       tablePuntuaciones.getColumns().addAll(nomUsuario, puntUsuario);
-
    }
 
    /**
@@ -130,17 +130,21 @@ public class GUI_PuntuacionesController implements Initializable {
    public void cargarInformacionTabla() {
       AdministracionCuenta adminCuenta = new AdministracionCuenta();
       List<CuentaUsuario> cuentasConMejoresPuntajes;
-      cuentasConMejoresPuntajes = adminCuenta.obtenerMejoresPuntajes();
-      ObservableList<CuentaUsuario> listaCuentas = FXCollections.observableArrayList();
-      if (cuentasConMejoresPuntajes != null) {
+      try {
+         cuentasConMejoresPuntajes = adminCuenta.obtenerMejoresPuntajes();
+         ObservableList<CuentaUsuario> listaCuentas = FXCollections.observableArrayList();
          for (int i = 0; i < cuentasConMejoresPuntajes.size(); i++) {
+            if(cuentasConMejoresPuntajes.get(i).getPuntaje() > 0){
             listaCuentas.add(cuentasConMejoresPuntajes.get(i));
+            }
          }
          tablePuntuaciones.setItems(listaCuentas);
-      } else {
+      } catch (PersistenceException e) {
          Utileria.cargarAviso("titleAlerta", "mensajeErrorConexion");
+      } catch (ArrayIndexOutOfBoundsException e) {
+         Logger.getLogger(GUI_PuntuacionesController.class.getName()).log(Level.SEVERE, null, e);
       }
-
+      
    }
 
 }

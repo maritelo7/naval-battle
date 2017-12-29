@@ -5,6 +5,7 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
 <AnchorPane id="AnchorPane" prefHeight="685.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="navalBattle.presentacion.GUI_ReglasController">
@@ -30,17 +31,17 @@
             <Font name="Century Gothic" size="14.0" />
          </font>
       </Label>
-      <Label fx:id="labelReglaCinco" layoutX="656.0" layoutY="503.0" prefHeight="95.0" prefWidth="558.0" text="labelReglaCinco">
+      <Label fx:id="labelReglaCinco" layoutX="680.0" layoutY="505.0" prefHeight="95.0" prefWidth="558.0" text="labelReglaCinco">
          <font>
             <Font name="Century Gothic" size="14.0" />
          </font>
       </Label>
-      <Label fx:id="labelReglaCuatro" layoutX="656.0" layoutY="384.0" prefHeight="73.0" prefWidth="544.0" text="labelReglaCuatro">
+      <Label fx:id="labelReglaCuatro" layoutX="680.0" layoutY="388.0" prefHeight="73.0" prefWidth="544.0" text="labelReglaCuatro">
          <font>
             <Font name="Century Gothic" size="14.0" />
          </font>
       </Label>
-      <Label fx:id="labelReglaTres" layoutX="656.0" layoutY="183.0" prefHeight="18.0" prefWidth="510.0" text="labelReglaTres">
+      <Label fx:id="labelReglaTres" layoutX="680.0" layoutY="183.0" prefHeight="18.0" prefWidth="510.0" text="labelReglaTres">
          <font>
             <Font name="Century Gothic" size="14.0" />
          </font>
@@ -52,7 +53,7 @@
       </ImageView>
       <ImageView fitHeight="127.0" fitWidth="158.0" layoutX="162.0" layoutY="220.0" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@../recursos/imagenes/reglaTresWrong.png" />
+            <Image url="@../recursos/imagenes/reglaUnoWrong.png" />
          </image>
       </ImageView>
       <ImageView fitHeight="126.0" fitWidth="158.0" layoutX="256.0" layoutY="474.0" pickOnBounds="true" preserveRatio="true">
@@ -60,10 +61,11 @@
             <Image url="@../recursos/imagenes/reglaDosRight.png" />
          </image>
       </ImageView>
-      <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="841.0" layoutY="189.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="890.0" layoutY="192.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../recursos/imagenes/reglaTresWrong.png" />
          </image>
       </ImageView>
+      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#1f5f97" height="495.0" layoutX="627.0" layoutY="161.0" stroke="BLACK" strokeType="INSIDE" width="26.0" />
    </children>
 </AnchorPane>
