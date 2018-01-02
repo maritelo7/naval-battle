@@ -39,7 +39,7 @@
       <ProgressBar fx:id="pbConteo" layoutX="543.0" layoutY="599.0" prefWidth="200.0" progress="1.0" />
       <Label fx:id="labelTurno" layoutX="569.0" layoutY="93.0" prefHeight="17.0" prefWidth="126.0" text="LabelTurno" textFill="#e47b25">
          <font>
-            <Font name="Century Gothic Bold" size="16.0" />
+            <Font name="Century Gothic" size="20.0" />
          </font>
       </Label>
       <Label fx:id="labelPuntuacionEnemigo" layoutX="358.0" layoutY="48.0" text="0">
@@ -60,6 +60,16 @@
       <Label fx:id="labelNombreAdversario" layoutX="-71.0" layoutY="179.0" prefHeight="29.0" prefWidth="200.0" rotate="-90.0" text="Label" textFill="#837f7f">
          <font>
             <Font size="24.0" />
+         </font>
+      </Label>
+      <Label fx:id="labelNavesRestantes" layoutX="805.0" layoutY="636.0" text="LabelNavesRestantes">
+         <font>
+            <Font name="Century Gothic" size="14.0" />
+         </font>
+      </Label>
+      <Label fx:id="labelNumRestantes" layoutX="966.0" layoutY="630.0" text="LabelNumRestantes" textFill="#dd1919">
+         <font>
+            <Font name="Century Gothic" size="24.0" />
          </font>
       </Label>
   </children>

@@ -112,7 +112,6 @@ public class GUI_MenuPartidaController implements Initializable {
                cargarConfiguracionIp("titleRed", "mensajeConfServ");
             }
             String nickARetar = cargarConfiguracionNick("titleRed", "mensajeConfClien");
-            //por que se hacen dos confirmaciones ... en cargarConfiguracionNick y aqui, de que el Nick no es NULL
             if (nickARetar != null) {
                if (conectarServidor()) {
                   if (conectarInvitado(nickARetar)) {
@@ -178,6 +177,7 @@ public class GUI_MenuPartidaController implements Initializable {
             stage.setScene(scene);
             stage.setResizable(false);
             stage.show();
+            controller.cargarInformacionTabla();
          } catch (IOException ex) {
             Logger.getLogger(GUI_MenuPartidaController.class.getName()).log(Level.SEVERE, null, ex);
          }
@@ -218,12 +218,17 @@ public class GUI_MenuPartidaController implements Initializable {
     */
    public boolean conectarServidor() throws InterruptedException {
       Utileria bandera = new Utileria(false);
-      String nombreUsuario = cuentaLogueada.getNombreUsuario();
-      interaccionServidor.conectarServidor(nombreUsuario, bandera);
-      synchronized (bandera) {
-         bandera.wait();
+      if (InteraccionServidor.socket == null) {
+         String nombreUsuario = cuentaLogueada.getNombreUsuario();
+         interaccionServidor.conectarServidor(nombreUsuario, bandera);
+         synchronized (bandera) {
+            bandera.wait();
+         }
+      }else{
+         bandera.setBandera(true);
       }
       return bandera.isBandera();
+
    }
 
    /**
@@ -241,6 +246,7 @@ public class GUI_MenuPartidaController implements Initializable {
             bandera.wait();
          }
          if (bandera.isBandera() == false) {
+            labelIniciando.setVisible(false);
             Utileria.cargarAviso("titleAlerta", "mensajeSinJugador");
          }
       } catch (InterruptedException ex) {
@@ -299,9 +305,7 @@ public class GUI_MenuPartidaController implements Initializable {
          stage.show();
       } catch (IOException ex) {
          Logger.getLogger(GUI_MenuPartidaController.class.getName()).log(Level.SEVERE, null, ex);
-      } catch (URISyntaxException ex) {
-         Logger.getLogger(GUI_MenuPartidaController.class.getName()).log(Level.SEVERE, null, ex);
-      }
+   }
    }
 
    /**

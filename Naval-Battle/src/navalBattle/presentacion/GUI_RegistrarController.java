@@ -131,8 +131,8 @@ public class GUI_RegistrarController implements Initializable {
                   mensaje = "mensajeGuardado";
                } catch (PreexistingEntityException ex) {
                   mensaje = "mensajeCuentaYaExistente";
-               } catch (NoSuchAlgorithmException ex) {
-                  mensaje = MENSAJE_ERROR;
+               } catch (NoSuchAlgorithmException | PersistenceException e) {
+                   mensaje = MENSAJE_ERROR;
                }
             } else {
                try {

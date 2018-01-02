@@ -59,7 +59,6 @@ public class GUI_PuntuacionesController implements Initializable {
    public void initialize(URL url, ResourceBundle rb) {
       cargarIdioma();
       cargarTabla();
-      cargarInformacionTabla();
       buttonRegresar.setOnAction(event -> {
          Node node = (Node) event.getSource();
          Stage stage = (Stage) node.getScene().getWindow();

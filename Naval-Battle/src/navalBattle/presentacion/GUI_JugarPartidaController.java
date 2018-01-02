@@ -75,6 +75,10 @@ public class GUI_JugarPartidaController implements Initializable {
    @FXML
    private Label labelNombreAdversario;
    @FXML
+   private Label labelNavesRestantes;
+   @FXML
+   private Label labelNumRestantes;
+   @FXML
    private JFXButton buttonRendirse;
    @FXML
    private Pane paneTableroJugador;
@@ -429,9 +433,9 @@ public class GUI_JugarPartidaController implements Initializable {
       if (esTurno) {
          paneTableroEnemigo.disableProperty().set(false);
          labelTurno.setVisible(true);
-         Utileria.fadeConteo(labelTurno);
          iniciarConteo();
       } else {
+         labelTurno.setVisible(false);
          paneTableroEnemigo.disableProperty().set(true);
       }
    }
@@ -518,10 +522,13 @@ public class GUI_JugarPartidaController implements Initializable {
          if (navesJugador == 0) {
             timeLine.stop();
             Utileria.cargarAviso("titleAlerta", "mensajeDerrota");
+            interaccionServidor.dejarAdversario(cuentaLogueada.getNombreUsuario(),
+                labelNombreAdversario.getText());
             regresarAMenu(ultimoEvent);
          }
       } else {
          navesEnemigo--;
+         labelNumRestantes.setText(navesEnemigo + "");
          if (navesEnemigo == 0) {
             timeLine.stop();
             int puntuacionFinal = ajustarPuntuacion();
@@ -677,6 +684,8 @@ public class GUI_JugarPartidaController implements Initializable {
       labelTurno.setText(resources.getString("labelTurno"));
       buttonRendirse.setText(resources.getString("buttonRendirse"));
       labelTurno.setVisible(false);
+      labelNumRestantes.setText(navesEnemigo + "");
+      labelNavesRestantes.setText(resources.getString("labelNavesRestantes"));
    }
 
 }

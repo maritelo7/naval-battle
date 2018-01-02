@@ -17,6 +17,7 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -102,6 +103,7 @@ public class GUI_PrepararPartidaController implements Initializable {
    private boolean ready = false;
    private boolean soyHost = false;
    private String nombreAdversario;
+   private Event ultimoEvent;
    /**
     * Initializes the controller class.
     * 
@@ -140,8 +142,8 @@ public class GUI_PrepararPartidaController implements Initializable {
       buttonRegresar.setOnAction(event -> {
          Utileria.cargarAviso("titleAlerta", "mensajeCancelarPartida");
          if (nombreAdversario != null) {
-            interaccionServidor.dejarAdversario(nombreAdversario, cuentaLogueada.getNombreUsuario());
-            interaccionServidor.cerrarConexion();
+            interaccionServidor.dejarAdversario(cuentaLogueada.getNombreUsuario(),nombreAdversario);
+            interaccionServidor.notificarAbandonoAdversario(nombreAdversario);
          }
          Node node = (Node) event.getSource();
          Stage stage = (Stage) node.getScene().getWindow();
@@ -174,6 +176,7 @@ public class GUI_PrepararPartidaController implements Initializable {
          tamanioNave = 1;
       });
       paneTablero.setOnMouseClicked(event -> {
+         ultimoEvent = event;
          if ( tamanioNave != 0) {
             Casilla casilla = (Casilla) event.getTarget();
             Nave nave = new Nave(tamanioNave, esHorizontal);
@@ -367,7 +370,7 @@ public class GUI_PrepararPartidaController implements Initializable {
     *
     * @param x Posición de x de la casilla
     * @param y Posición de y de la casilla
-    * @return Si es posible
+    * @return regresa true si la la posición es válida
     */
    public boolean posicionValida(double x, double y) {
       return x >= 0 && x < 10 && y >= 0 && y < 10;
@@ -454,7 +457,7 @@ public class GUI_PrepararPartidaController implements Initializable {
    /**
     * Método para actualizar los números de naves disposibles y en caso de colocar todas habilitar
     * el botón de continuación para jugar la partida
-    * @throws java.lang.InterruptedException
+    * @throws java.lang.InterruptedException ocurre cuando el hilo es interrumpido
     */
    public void actualizarNaves() throws InterruptedException {
       int restante = 0;
@@ -502,7 +505,7 @@ public class GUI_PrepararPartidaController implements Initializable {
 
    /**
     * Método para verificar si ya se encuentra el tablero listo para avanzar
-    * @throws InterruptedException
+    * @throws InterruptedException ocurre cuando el hilo es interrumpido
     */
    public void checkListo() throws InterruptedException {
       int sumaNavesRestantes = 0;
@@ -544,7 +547,7 @@ public class GUI_PrepararPartidaController implements Initializable {
 
    /**
     * Método para recuperar el tablero con todos sus elementos gráficos
-    * @return
+    * @return el tablero del jugador
     */
    public Tablero recuperarTableroGrafico(){
       Tablero tableroJugador = new Tablero(false);
@@ -562,11 +565,8 @@ public class GUI_PrepararPartidaController implements Initializable {
 
    /**
     * Método para activar la espera del servicio para recibir un adversario
-    * @throws URISyntaxException
-    * @throws UnknownHostException
-    * @throws IOException
     */
-   public void activarEspera() throws URISyntaxException, UnknownHostException, IOException {
+   public void activarEspera() {
       interaccionServidor.esperarAInvitado(controller);
       labelEspera.setVisible(true);
       Utileria.fadeConteo(labelEspera);
@@ -586,12 +586,14 @@ public class GUI_PrepararPartidaController implements Initializable {
    public void notificarHost(){
       interaccionServidor.adversarioListo(cuentaLogueada.getNombreUsuario());
    }
-   
+   public void notificarAbandono() {
+      Utileria.cargarAviso("titleAlerta", "mensajeAbandono");
+      regresarAMenu(ultimoEvent);
+   }
    /**
     * Método para envíar el tablero al adversario
-    * @throws InterruptedException
     */
-   public void enviarTablero() throws InterruptedException {
+   public void enviarTablero() {
       TableroSimple tableroJugador = recuperarTablero();
       interaccionServidor.enviarTablero(cuentaLogueada.getNombreUsuario(), tableroJugador);
    }
@@ -682,10 +684,30 @@ public class GUI_PrepararPartidaController implements Initializable {
    public void activarReady(){
       this.ready = true;
    }
-
+   /**
+    * Método para regresar al menú de la partida en caso de finalizar la partida
+    *
+    * @param event evento que desencadena un cambio de ventana
+    */
+   public void regresarAMenu(Event event) {
+      Node node = (Node) event.getSource();
+      Stage stage = (Stage) node.getScene().getWindow();
+      try {
+         FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_MenuPartida.fxml"));
+         Scene scene = new Scene(loader.load());
+         GUI_MenuPartidaController controller = loader.getController();
+         controller.cargarCuenta(cuentaLogueada);
+         loader.setController(controller);
+         stage.setScene(scene);
+         stage.setResizable(false);
+         stage.show();
+      } catch (IOException ex) {
+         Logger.getLogger(GUI_JugarPartidaController.class.getName()).log(Level.SEVERE, null, ex);
+      }
+   }
    /**
     * Método para asignar el nombre del jugador adversario
-    * @param nombre
+    * @param nombre nickname del jugador adversario
     */
    public void setNombreAdversario(String nombre){
       this.nombreAdversario = nombre;

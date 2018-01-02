@@ -84,7 +84,6 @@ public class GUI_IniciarSesionController implements Initializable {
    @Override
    public void initialize(URL url, ResourceBundle rb) {
       cargarIdioma();
-
       buttonIdioma.setOnAction((ActionEvent event) -> {
          String idioma = cargarAvisoIdioma();
          Locale locale;
@@ -119,10 +118,11 @@ public class GUI_IniciarSesionController implements Initializable {
             Stage stage = (Stage) node.getScene().getWindow();
             FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_Puntuaciones.fxml"));
             Scene scene = new Scene(loader.load());
-            GUI_PuntuacionesController controller = loader.getController();
+            GUI_PuntuacionesController controller = loader.getController();            
             stage.setScene(scene);
             stage.setResizable(false);
             stage.show();            
+            controller.cargarInformacionTabla();
          } catch (IOException ex) {
             Logger.getLogger(GUI_IniciarSesionController.class.getName()).log(Level.SEVERE, null, ex);
          }

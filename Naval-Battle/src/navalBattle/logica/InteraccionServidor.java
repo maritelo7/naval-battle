@@ -27,7 +27,7 @@ import navalBattle.recursos.Utileria;
  */
 public class InteraccionServidor {
 
-   Socket socket;
+   public static Socket socket;
 
    /**
     * Método para conectar con el servidor remoto y registrar los datos del jugador
@@ -70,8 +70,8 @@ public class InteraccionServidor {
     * Método para cerrar la conexión del socket y prepararlo para una nueva conexión
     */
    public void cerrarConexion(){
-      socket.close();
-      socket = null;
+         socket.close();
+         socket = null;        
    }
    /**
     * Método para esperar a un adversario o activar un evento cuando se recibe un reto
@@ -113,6 +113,7 @@ public class InteraccionServidor {
    public void conectarInvitado(String nombreUsuario, String nombreContrincante, Utileria bandera) {
       socket.emit("envioRetador", nombreUsuario, nombreContrincante);
       socket.on("sinJugadorRetado", (Object... os) -> {
+         cerrarConexion();
          synchronized (bandera) {
             bandera.notify();
          }
@@ -168,6 +169,11 @@ public class InteraccionServidor {
 
          });
 
+      });
+      socket.on("recibirAbandono", (Object... os)-> {
+         Platform.runLater(() -> {
+            controller.notificarAbandono();
+         });
       });
    }
 
@@ -249,6 +255,15 @@ public class InteraccionServidor {
     */
    public void cederTurno(String nombreUsuario) {
       socket.emit("cederTurno", nombreUsuario);
+   }
+   
+    /**
+     * Método para notificar al adversario que fue abandonado en la preparación de
+     * la partida
+     * @param retado nickname del adversario abandonado
+     */
+    public void notificarAbandonoAdversario (String retado){
+       socket.emit("notificarAbandono", retado);
    }
 
    /**
